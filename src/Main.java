@@ -6,7 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-
+//Checking push
 public class Main extends Application {
     public static RootPageController rootController;
 
