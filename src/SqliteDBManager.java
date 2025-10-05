@@ -33,7 +33,7 @@ public class SqliteDBManager {
         }
     }
 
-    // Check if song exists in songs already
+    // Check if song exists in the "Database" songs already
     public static boolean songExists(String path){
         String sql = "SELECT 1 FROM songs WHERE path = ?";
         try(Connection c = connect();
