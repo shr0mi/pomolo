@@ -1,6 +1,6 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SqliteDBManager {
 
@@ -68,6 +68,34 @@ public class SqliteDBManager {
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }
+    }
+
+    // Get All songs (for the homepage)
+    public static List<SongManager.SongInfo> getAllSongs(){
+        List<SongManager.SongInfo> songs = new ArrayList<>();
+
+        String sql = "SELECT fileName, path, artist, duration FROM songs";
+
+        try(Connection c = connect();
+            Statement stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery(sql)
+        ){
+            while(rs.next()){
+                SongManager.SongInfo s = new SongManager.SongInfo(
+                        rs.getString("fileName"),
+                        rs.getString("path"),
+                        rs.getString("artist"),
+                        rs.getInt("duration")
+                );
+
+                songs.add(s);
+
+            }
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+
+        return songs;
     }
 
 
