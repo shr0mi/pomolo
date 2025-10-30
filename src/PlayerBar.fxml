@@ -9,12 +9,11 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<HBox fx:id="playerBarPane" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="60.0" spacing="12.0" style="-fx-background-color: #1a1a1a;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PlayerBarController">
+<HBox fx:id="playerBarPane" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="60.0" spacing="12.0" style="-fx-background-color: rgba(26, 26, 26, 0.85);" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PlayerBarController">
     <children>
         <Button fx:id="prevButton" mnemonicParsing="false" onAction="#handlePrevious" styleClass="player-bar-button" text="Prev" />
         <Button fx:id="playPauseButton" mnemonicParsing="false" onAction="#handlePlayPause" styleClass="player-bar-button" text="Play" />
         <Button fx:id="nextButton" mnemonicParsing="false" onAction="#handleNext" styleClass="player-bar-button" text="Next" />
-
         <Text fx:id="currentSongText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="No song selected" HBox.hgrow="NEVER">
             <font>
                 <Font name="Monospaced" size="14.0" />
@@ -23,7 +22,6 @@
                 <Insets left="10.0" right="10.0" />
             </HBox.margin>
         </Text>
-
         <Text fx:id="currentTimeText" fill="#999999" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00">
             <font><Font name="Monospaced" size="12.0" /></font>
         </Text>
@@ -31,7 +29,6 @@
         <Text fx:id="totalTimeText" fill="#999999" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00">
             <font><Font name="Monospaced" size="12.0" /></font>
         </Text>
-
         <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Vol:">
             <font><Font name="Monospaced" size="12.0" /></font>
             <HBox.margin>

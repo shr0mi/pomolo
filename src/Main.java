@@ -13,14 +13,13 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception{
-        // --- MODIFIED: Use Main.class ---
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/rootPage.fxml"));
         Parent root = loader.load();
 
         rootController = loader.getController();
 
-        Scene scene = new Scene(root, 960, 600);
-        // --- MODIFIED: Use Main.class ---
+        // --- MODIFIED: Set height back to 540 ---
+        Scene scene = new Scene(root, 960, 540);
         scene.getStylesheets().add(Main.class.getResource("/home.css").toExternalForm());
         stage.setTitle("Lofi Music Player");
 

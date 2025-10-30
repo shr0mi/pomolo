@@ -1,5 +1,3 @@
-// Save as: src/PlayerBarController.java (OVERWRITE)
-
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,14 +12,11 @@ import java.io.IOException;
 
 public class PlayerBarController {
 
-    // --- Original FXML Fields ---
     @FXML private HBox playerBarPane;
     @FXML private Button prevButton;
     @FXML private Button playPauseButton;
     @FXML private Button nextButton;
     @FXML private Text currentSongText;
-
-    // --- NEW FXML Fields ---
     @FXML private Text currentTimeText;
     @FXML private Text totalTimeText;
     @FXML private Slider progressSlider;
@@ -35,10 +30,8 @@ public class PlayerBarController {
         playerManager = MusicPlayerManager.getInstance();
         bindControls();
 
-        // Add handler to go to the full player page when the text is clicked
         currentSongText.setOnMouseClicked(e -> goToPlayerPage());
 
-        // --- NEW: Add listeners for seeking with the progress slider ---
         progressSlider.setOnMousePressed(e -> isSliderBeingDragged = true);
         progressSlider.setOnMouseReleased(e -> {
             if (playerManager.totalDurationProperty().get() != null) {
@@ -52,20 +45,18 @@ public class PlayerBarController {
     }
 
     private void bindControls() {
-        // Bind Play/Pause button text
         playPauseButton.textProperty().bind(
                 Bindings.when(playerManager.isPlayingProperty())
                         .then("Pause")
                         .otherwise("Play")
         );
 
-        // Bind Current Song text
         currentSongText.textProperty().bind(
                 Bindings.createStringBinding(() -> {
                     SongManager.SongInfo song = playerManager.currentSongProperty().get();
                     if (song != null) {
                         String name = song.fileName;
-                        if (name.length() > 30) { // Shorter length now
+                        if (name.length() > 30) {
                             name = name.substring(0, 27) + "...";
                         }
                         return "Now Playing: " + name;
@@ -74,12 +65,8 @@ public class PlayerBarController {
                 }, playerManager.currentSongProperty())
         );
 
-        // --- NEW: Bind Volume, Progress, and Time ---
-
-        // Bind Volume Slider
         volumeSlider.valueProperty().bindBidirectional(playerManager.volumeProperty());
 
-        // Bind Progress Slider and Time Texts
         playerManager.currentTimeProperty().addListener((obs, oldTime, newTime) -> {
             if (!isSliderBeingDragged && playerManager.totalDurationProperty().get() != null) {
                 Duration total = playerManager.totalDurationProperty().get();
@@ -99,25 +86,15 @@ public class PlayerBarController {
         });
     }
 
-    // --- Button Handlers ---
-    @FXML
-    private void handlePlayPause() {
-        playerManager.playPause();
-    }
-    @FXML
-    private void handleNext() {
-        playerManager.next();
-    }
-    @FXML
-    private void handlePrevious() {
-        playerManager.previous();
-    }
+    @FXML private void handlePlayPause() { playerManager.playPause(); }
+    @FXML private void handleNext() { playerManager.next(); }
+    @FXML private void handlePrevious() { playerManager.previous(); }
 
-    // --- Navigation ---
     @FXML
     private void goToPlayerPage() {
         try {
-            Parent currentPage = (Parent) Main.getRootController().getPageContainer().getChildren().get(1);
+            // --- MODIFIED: The page container only has ONE child (index 0) ---
+            Parent currentPage = (Parent) Main.getRootController().getPageContainer().getChildren().get(0);
             if (currentPage.getUserData() != null && currentPage.getUserData().equals("playerPage")) {
                 return;
             }
@@ -128,12 +105,6 @@ public class PlayerBarController {
         }
     }
 
-    // --- NEW: Helper method copied from PlayerPageController ---
-    /**
-     * Formats a Duration object to a simple M:S string.
-     * @param duration The Duration object
-     * @return Formatted string (e.g., "02:03")
-     */
     private String formatDurationSimple(Duration duration) {
         if (duration == null || duration.isUnknown()) return "00:00";
         long seconds = (long) duration.toSeconds();

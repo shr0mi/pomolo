@@ -1,3 +1,5 @@
+// Save as: src/RootPageController.java (OVERWRITE)
+
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -6,7 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox; // Import HBox
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
@@ -15,10 +17,14 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class RootPageController {
-    @FXML private BorderPane rootBorderPane;
+
     @FXML private StackPane root;
     @FXML private ImageView backgroundImage;
-    @FXML private Node playerBar;
+
+    // --- THESE WERE MISSING FROM YOUR FILE ---
+    @FXML private StackPane pageContainer;
+    @FXML private HBox playerBar; // This must be HBox to match PlayerBar.fxml
+    // --- END ---
 
     UserProperties up = new UserProperties();
 
@@ -39,9 +45,9 @@ public class RootPageController {
                 showError("Image Error", "Could not load background image: " + imagePath);
             }
 
-            // --- MODIFIED: Use Main.class instead of getClass() ---
+            // Load the home page into the pageContainer
             Parent home = FXMLLoader.load(Main.class.getResource("/home.fxml"));
-            root.getChildren().add(home);
+            pageContainer.getChildren().add(home); // Load into the container
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,10 +55,11 @@ public class RootPageController {
         }
     }
 
+    // Page Navigation (swaps content in 'pageContainer')
     public void setPage(Parent node) {
         Parent currentPage = null;
-        if (root.getChildren().size() > 1) {
-            currentPage = (Parent) root.getChildren().get(1);
+        if (pageContainer.getChildren().size() > 0) {
+            currentPage = (Parent) pageContainer.getChildren().get(0);
         }
 
         if (currentPage != null) {
@@ -60,7 +67,7 @@ public class RootPageController {
             fadeout.setFromValue(1.0);
             fadeout.setToValue(0.0);
             fadeout.setOnFinished(e -> {
-                root.getChildren().setAll(backgroundImage, node);
+                pageContainer.getChildren().setAll(node); // Set in container
                 node.setOpacity(0.0);
                 FadeTransition fadeIn = new FadeTransition(Duration.millis(200), node);
                 fadeIn.setFromValue(0.0);
@@ -69,7 +76,7 @@ public class RootPageController {
             });
             fadeout.play();
         } else {
-            root.getChildren().setAll(backgroundImage, node);
+            pageContainer.getChildren().setAll(node); // Set in container
             node.setOpacity(0.0);
             FadeTransition fadeIn = new FadeTransition(Duration.millis(200), node);
             fadeIn.setFromValue(0.0);
@@ -99,17 +106,22 @@ public class RootPageController {
         alert.showAndWait();
     }
 
+    // --- Safety checks are still included ---
     public void hidePlayerBar() {
-        playerBar.setVisible(false);
-        playerBar.setManaged(false);
+        if (playerBar != null) {
+            playerBar.setVisible(false);
+            playerBar.setManaged(false);
+        }
     }
 
     public void showPlayerBar() {
-        playerBar.setVisible(true);
-        playerBar.setManaged(true);
+        if (playerBar != null) {
+            playerBar.setVisible(true);
+            playerBar.setManaged(true);
+        }
     }
 
     public StackPane getPageContainer() {
-        return root;
+        return pageContainer;
     }
 }

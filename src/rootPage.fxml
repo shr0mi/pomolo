@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 
-<BorderPane fx:id="rootBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="RootPageController">
-    <center>
-        <StackPane fx:id="root" BorderPane.alignment="CENTER">
-            <children>
-                <ImageView fx:id="backgroundImage" fitHeight="540.0" fitWidth="960.0" pickOnBounds="true" preserveRatio="false" />
-            </children>
+<StackPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="RootPageController">
+    <children>
+        <ImageView fx:id="backgroundImage" fitHeight="540.0" fitWidth="960.0" pickOnBounds="true" preserveRatio="false" />
+
+        <StackPane fx:id="pageContainer" prefHeight="540.0" prefWidth="960.0">
+            <padding>
+                <Insets bottom="60.0" />
+            </padding>
         </StackPane>
-    </center>
-    <bottom>
-        <fx:include fx:id="playerBar" source="/PlayerBar.fxml" BorderPane.alignment="CENTER" />
-    </bottom>
-</BorderPane>
+
+        <fx:include fx:id="playerBar" source="/PlayerBar.fxml" StackPane.alignment="BOTTOM_CENTER" />
+    </children>
+</StackPane>
