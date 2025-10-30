@@ -1,3 +1,5 @@
+// Save as: src/HomeController.java (OVERWRITE)
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +14,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class HomeController {
@@ -19,10 +22,22 @@ public class HomeController {
     @FXML private AnchorPane rootPane;
     @FXML private VBox vbox;
 
+    private MusicPlayerManager playerManager;
+    private List<SongManager.SongInfo> loadedSongs;
+
     //Initialize
     @FXML
     private void initialize(){
+        // Get the single instance of the player manager
+        playerManager = MusicPlayerManager.getInstance();
+
+        // Load songs and add them to the VBox
         loadSongs();
+
+        // Pass the loaded song list to the player manager
+        if (loadedSongs != null) {
+            playerManager.setQueue(loadedSongs);
+        }
     }
 
     //Go to settings
@@ -48,31 +63,55 @@ public class HomeController {
         if(file != null){
             SongManager.SongInfo music = SongManager.readMp3(file);
             SqliteDBManager.insertNewSong(music);
+
+            // Reload songs from DB
             loadSongs();
+            // Update the player manager's queue
+            if (loadedSongs != null) {
+                playerManager.setQueue(loadedSongs);
+            }
         }
     }
 
     // Load Songs and add them to the Vbox
     public void loadSongs(){
-        List<SongManager.SongInfo> songs = SqliteDBManager.getAllSongs();
+        loadedSongs = SqliteDBManager.getAllSongs();
         vbox.getChildren().clear(); // reset
-        for(SongManager.SongInfo s : songs){
-            vbox.getChildren().add(createSongRow(s));
+
+        int index = 0;
+        for(SongManager.SongInfo s : loadedSongs){
+            vbox.getChildren().add(createSongRow(s, index));
+            index++;
         }
     }
 
     // Create a hbox (music row)
-    public HBox createSongRow(SongManager.SongInfo song){
+    public HBox createSongRow(SongManager.SongInfo song, int index){
         HBox songRow = new HBox();
         songRow.setPrefHeight(40.0);
         songRow.setMaxWidth(Double.MAX_VALUE);
         songRow.getStyleClass().add("row-box");
 
+        // --- THIS IS THE KEY CHANGE ---
+        // On click, play the song AND navigate to the player page
+        songRow.setOnMouseClicked(e -> {
+            try {
+                // 1. Tell the manager to play the song
+                playerManager.playSong(index);
+
+                // 2. Load and navigate to the player page
+                Parent playerPage = FXMLLoader.load(getClass().getResource("PlayerPage.fxml"));
+                Main.getRootController().setPage(playerPage);
+
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
+
+
         GridPane grid = new GridPane();
-        //grid.setGridLinesVisible(true);
         grid.setMaxWidth(Double.MAX_VALUE);
         grid.setPrefHeight(30.0);
-        //grid.setPrefWidth(Double.MAX_VALUE);
         grid.setPadding(new Insets(0, 10, 0, 10));
 
         // Columns in Grid
@@ -111,13 +150,10 @@ public class HomeController {
         durationText.setFill(Color.WHITE);
         durationText.setFont(Font.font("Monospaced", 13));
 
-        // Add to grid
-        //grid.getChildren().addAll(titleText, artistText, durationText);
         grid.add(titleText, 0, 0);
         grid.add(artistText, 1, 0);
         grid.add(durationText, 2, 0);
 
-        // Add grid to Hbox
         songRow.getChildren().add(grid);
         HBox.setHgrow(grid, Priority.ALWAYS);
 
@@ -135,6 +171,4 @@ public class HomeController {
             return String.format("%02d min %02d s", m, s);
         }
     }
-
-
 }

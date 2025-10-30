@@ -1,49 +1,139 @@
+/* Save as: src/home.css (OVERWRITE) */
 .scroll-pane {
     -fx-background-color: transparent;
 }
-
 .scroll-pane .viewport {
     -fx-background-color: transparent;
 }
-
 .scroll-bar:vertical {
-    -fx-background-color: transparent;   /* background of the track */
-    -fx-pref-width: 8px;                 /* make it thinner */
+    -fx-background-color: transparent;
+    -fx-pref-width: 8px;
 }
-
 .scroll-bar:vertical .thumb {
-    -fx-background-color: #888;          /* scrollbar handle */
+    -fx-background-color: #888;
     -fx-background-radius: 4px;
 }
-
 .scroll-bar:vertical .thumb:hover {
-    -fx-background-color: #555;          /* darker on hover */
+    -fx-background-color: #555;
 }
-
 .scroll-bar:horizontal {
-    -fx-opacity: 0; /* completely hide horizontal bar if you don’t need it */
+    -fx-opacity: 0;
 }
-
-/* Top bar style */
 #topbar {
     -fx-border-color: white;
     -fx-border-width: 2;
 }
-
-/* Base style for the row HBox */
 .row-box {
     -fx-background-color: transparent;
     -fx-border-color: white;
     -fx-border-width: 1 2 1 2;
     -fx-padding: 10;
-    -fx-cursor: hand;   /* cursor changes like a button */
+    -fx-cursor: hand;
 }
-
-/* Hover state */
 .row-box:hover {
-    -fx-background-color: white;  /* background turns white */
+    -fx-background-color: white;
+}
+.row-box:hover Text {
+    -fx-fill: black;
 }
 
-.row-box:hover Text {
-    -fx-fill: black; /* change to white */
+/* ---
+--- PLAYER PAGE STYLES (NEW STYLES BELOW)
+---
+*/
+
+.player-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+    -fx-text-fill: white;
 }
+.player-button:hover {
+    -fx-opacity: 0.8;
+}
+
+#album-art-placeholder {
+    -fx-fill: #222222;
+    -fx-stroke: #ffffff22;
+    -fx-stroke-width: 1px;
+    -fx-arc-width: 20px;
+    -fx-arc-height: 20px;
+}
+
+#song-title-text {
+    -fx-font-family: "System", "Helvetica Neue", "Arial";
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-fill: white;
+}
+#song-artist-text {
+    -fx-font-family: "System", "Helvetica Neue", "Arial";
+    -fx-font-size: 16px;
+    -fx-fill: #b3b3b3;
+}
+.time-label {
+    -fx-font-family: "Monospaced", "Courier New";
+    -fx-fill: #b3b3b3;
+    -fx-font-size: 12px;
+}
+
+.control-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+}
+.control-button .svg-icon {
+    -fx-fill: #b3b3b3;
+}
+.control-button:hover .svg-icon {
+    -fx-fill: white;
+}
+#play-pause-button {
+    -fx-background-color: white;
+    -fx-background-radius: 50%;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.1, 0, 0);
+}
+#play-pause-button .svg-icon {
+    -fx-fill: black;
+}
+#play-pause-button:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+.control-button.active .svg-icon {
+    -fx-fill: #a481ee; /* Lofi purple accent */
+}
+
+.player-slider .track {
+    -fx-background-color: #535353;
+    -fx-background-radius: 5px;
+    -fx-pref-height: 6px;
+}
+.player-slider .thumb {
+    -fx-background-color: white;
+    -fx-pref-width: 14px;
+    -fx-pref-height: 14px;
+    -fx-background-radius: 50%;
+}
+.player-slider .thumb {
+    -fx-opacity: 0;
+}
+.player-slider:hover .thumb {
+    -fx-opacity: 1;
+}
+.player-slider > .colored-track {
+    -fx-background-color: #a481ee;
+    -fx-background-radius: 5px;
+}
+.row-box {
+    -fx-border-color: #777;
+    -fx-border-width: 0 0 1px 0;
+    -fx-padding: 5px;
+}
+
+/* --- New: Added hover effect and click cursor --- */
+.row-box:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-cursor: hand;
+}
+/* --- End New --- */

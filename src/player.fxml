@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox alignment="CENTER" layoutX="280.0" layoutY="100.0" prefHeight="340.0" prefWidth="400.0" spacing="20.0" style="-fx-background-color: rgba(0,0,0,0.6); -fx-background-radius: 20;">
+         <children>
+            <Text fx:id="songTitleText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Song Title">
+               <font>
+                  <Font name="Monospaced Bold" size="24.0" />
+               </font>
+            </Text>
+            <Text fx:id="artistText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Artist">
+               <font>
+                  <Font name="Monospaced Regular" size="18.0" />
+               </font>
+            </Text>
+            <HBox alignment="CENTER" prefHeight="30.0" prefWidth="360.0" spacing="10.0">
+               <children>
+                  <Label fx:id="currentTimeLabel" text="00:00" textFill="WHITE" />
+                  <Slider fx:id="progressSlider" HBox.hgrow="ALWAYS" />
+                  <Label fx:id="totalTimeLabel" text="00:00" textFill="WHITE" />
+               </children>
+               <VBox.margin>
+                  <Insets left="20.0" right="20.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="400.0" spacing="30.0">
+               <children>
+                  <Button fx:id="prevButton" mnemonicParsing="false" onAction="#handlePrev" text="Previous" />
+                  <Button fx:id="playPauseButton" mnemonicParsing="false" onAction="#handlePlayPause" prefHeight="40.0" prefWidth="80.0" text="Play" />
+                  <Button fx:id="nextButton" mnemonicParsing="false" onAction="#handleNext" text="Next" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="30.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <Label text="Volume" textFill="WHITE" />
+                  <Slider fx:id="volumeSlider" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <Button layoutX="30.0" layoutY="30.0" mnemonicParsing="false" onAction="#goBack" text="&lt; Back to List" />
+   </children>
+</AnchorPane>

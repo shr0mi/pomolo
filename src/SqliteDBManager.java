@@ -1,102 +1,83 @@
+// Save as: src/SqliteDBManager.java (OVERWRITE)
+
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SqliteDBManager {
 
-    // Connect with the DB and return the connection
-    public static Connection connect() throws SQLException{
-        String url = "jdbc:sqlite:songs.db";
-        var conn = DriverManager.getConnection(url);
-        return  conn;
+    private static final String APP_DIR = System.getProperty("user.home") + File.separator + ".LofiMusicPlayer";
+    private static final String DB_URL = "jdbc:sqlite:" + APP_DIR + File.separator + "songs.db";
+
+    public static Connection connect() throws SQLException {
+        new File(APP_DIR).mkdirs();
+        return DriverManager.getConnection(DB_URL);
     }
 
-    // Check if table exists. If it does not then create one
-    public static void createTable(){
-        String createSongs = """
+    public static void createTable() {
+        String sql = """
         CREATE TABLE IF NOT EXISTS songs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            fileName TEXT,
+            fileName TEXT NOT NULL,
             path TEXT NOT NULL UNIQUE,
             artist TEXT,
             duration INTEGER
         );
         """;
-
-        try(Connection c = connect();
-            var stmt = c.createStatement()
-        ){
-            stmt.execute(createSongs);
-            System.out.println("Table was created");
-        }catch (SQLException e){
-            System.out.println(e.getMessage());
+        try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            System.err.println("Error creating table: " + e.getMessage());
         }
     }
 
-    // Check if song exists in the "Database" songs already
-    public static boolean songExists(String path){
+    public static boolean songExists(String path) {
         String sql = "SELECT 1 FROM songs WHERE path = ?";
-        try(Connection c = connect();
-            var pstmt = c.prepareStatement(sql)
-        ){
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, path);
-            var rs = pstmt.executeQuery();
-            return rs.next();
-        }catch (SQLException e){
-            System.out.println(e.getMessage());
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            System.err.println("Error checking if song exists: " + e.getMessage());
         }
         return false;
     }
 
-    public static void insertNewSong(SongManager.SongInfo s){
-        createTable();
-        if(songExists(s.path)){
-            System.out.println("The song already exists in DB");
-            return;
+    public static void insertNewSong(SongManager.SongInfo song) {
+        if (song == null || song.path == null || songExists(song.path)) {
+            return; // Song is invalid or already exists
         }
-
-        String sql = "INSERT INTO songs(fileName,path,artist,duration) VALUES(?,?,?,?)";
-        try(Connection c = connect();
-            var pstmt = c.prepareStatement(sql)
-        ){
-            pstmt.setString(1, s.fileName);
-            pstmt.setString(2, s.path);
-            pstmt.setString(3, s.artist);
-            pstmt.setInt(4, s.duration);
+        createTable(); // Ensure table exists
+        String sql = "INSERT INTO songs(fileName, path, artist, duration) VALUES(?,?,?,?)";
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, song.fileName);
+            pstmt.setString(2, song.path);
+            pstmt.setString(3, song.artist);
+            pstmt.setInt(4, song.duration);
             pstmt.executeUpdate();
-            System.out.println("Song was inserted");
-        }catch (SQLException e){
-            System.out.println(e.getMessage());
+        } catch (SQLException e) {
+            System.err.println("Error inserting new song: " + e.getMessage());
         }
     }
 
-    // Get All songs (for the homepage)
-    public static List<SongManager.SongInfo> getAllSongs(){
+    public static List<SongManager.SongInfo> getAllSongs() {
         List<SongManager.SongInfo> songs = new ArrayList<>();
-
-        String sql = "SELECT fileName, path, artist, duration FROM songs";
-
-        try(Connection c = connect();
-            Statement stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery(sql)
-        ){
-            while(rs.next()){
-                SongManager.SongInfo s = new SongManager.SongInfo(
+        createTable(); // Ensure table exists
+        String sql = "SELECT fileName, path, artist, duration FROM songs ORDER BY fileName ASC";
+        try (Connection conn = connect(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                songs.add(new SongManager.SongInfo(
                         rs.getString("fileName"),
                         rs.getString("path"),
                         rs.getString("artist"),
                         rs.getInt("duration")
-                );
-
-                songs.add(s);
-
+                ));
             }
-        }catch (SQLException e){
-            System.out.println(e.getMessage());
+        } catch (SQLException e) {
+            System.err.println("Error getting all songs: " + e.getMessage());
         }
-
         return songs;
     }
-
-
 }

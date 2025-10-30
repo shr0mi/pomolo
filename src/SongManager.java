@@ -1,3 +1,5 @@
+// Save as: src/SongManager.java (OVERWRITE)
+
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.AudioHeader;
@@ -29,6 +31,7 @@ public class SongManager {
         String artist = "Unknown Artist";
         Integer durationSeconds = null;
 
+        // --- Updated: Whole method is wrapped in try-catch ---
         try{
             AudioFile audioFile = AudioFileIO.read(mp3);
 
@@ -48,19 +51,36 @@ public class SongManager {
                     durationSeconds = Integer.valueOf(len);
             }
 
+            // --- New: Fix for NullPointerException ---
+            // Default duration to 0 if it's null or invalid
+            if (durationSeconds == null) {
+                durationSeconds = 0;
+            }
+            // --- End New ---
+
             return new SongInfo(fileName, path, artist, durationSeconds);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            // --- Updated: Don't crash the app, return null to signal failure ---
+            e.printStackTrace(); // Log the error for debugging
+            return null;
+            // --- End Updated ---
         }
     }
 
     public static void main(String[] args) {
+        // ... (main method is for testing, left as-is)
         File file = new File("Calm Your Anxiety.mp3");
         SongInfo info = readMp3(file);
-        System.out.println("Filename: " + info.fileName);
-        System.out.println("path: " + info.path);
-        System.out.println("artist: " + info.artist);
-        System.out.println("duration: " + info.duration);
-        SqliteDBManager.insertNewSong(info);
+        if (info != null) { // Added null check
+            System.out.println("Filename: " + info.fileName);
+            System.out.println("path: " + info.path);
+            System.out.println("artist: " + info.artist);
+            System.out.println("duration: " + info.duration);
+            try {
+                SqliteDBManager.insertNewSong(info);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
