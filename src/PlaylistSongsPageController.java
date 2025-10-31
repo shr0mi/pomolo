@@ -1,4 +1,3 @@
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -15,41 +14,38 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class HomeController {
+public class PlaylistSongsPageController {
 
     @FXML private AnchorPane rootPane;
+    @FXML private Text playlistNameText;
     @FXML private VBox vbox;
 
+    private String playlistName;
     private MusicPlayerManager playerManager;
-    private List<SongManager.SongInfo> loadedSongs;
+
+    public void setPlaylistName(String name) {
+        this.playlistName = name;
+        playlistNameText.setText(name);
+        loadSongs();
+    }
 
     @FXML
-    private void initialize(){
-        // --- THIS LINE IS REMOVED ---
-        // Main.getRootController().showPlayerBar();
-        // --- END REMOVAL ---
-
+    private void initialize() {
         playerManager = MusicPlayerManager.getInstance();
-        loadSongs();
-        if (loadedSongs != null) {
-            playerManager.setQueue(loadedSongs);
+    }
+
+    private void loadSongs() {
+        List<SongManager.SongInfo> songs = SqliteDBManager.getSongsForPlaylist(playlistName);
+        vbox.getChildren().clear();
+        int index = 0;
+        for (SongManager.SongInfo s : songs) {
+            vbox.getChildren().add(createSongRow(s, index));
+            index++;
         }
     }
 
     @FXML
-    public void goToSettings(ActionEvent e) throws Exception{
-        Parent settings = FXMLLoader.load(Main.class.getResource("/settings.fxml"));
-        Main.getRootController().setPage(settings);
-    }
-
-    @FXML
-    public void goToPlaylists() throws IOException {
-        Parent playlists = FXMLLoader.load(Main.class.getResource("/playlists.fxml"));
-        Main.getRootController().setPage(playlists);
-    }
-
-    @FXML
-    private void AddNewMusic(){
+    private void AddNewMusic() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Music File");
         fileChooser.getExtensionFilters().addAll(
@@ -57,27 +53,15 @@ public class HomeController {
         );
         Stage stage = (Stage) rootPane.getScene().getWindow();
         File file = fileChooser.showOpenDialog(stage);
-        if(file != null){
+        if (file != null) {
             SongManager.SongInfo music = SongManager.readMp3(file);
             SqliteDBManager.insertNewSong(music);
+            SqliteDBManager.addSongToPlaylist(music, playlistName);
             loadSongs();
-            if (loadedSongs != null) {
-                playerManager.setQueue(loadedSongs);
-            }
         }
     }
 
-    public void loadSongs(){
-        loadedSongs = SqliteDBManager.getAllSongs();
-        vbox.getChildren().clear();
-        int index = 0;
-        for(SongManager.SongInfo s : loadedSongs){
-            vbox.getChildren().add(createSongRow(s, index));
-            index++;
-        }
-    }
-
-    public HBox createSongRow(SongManager.SongInfo song, int index){
+    public HBox createSongRow(SongManager.SongInfo song, int index) {
         HBox songRow = new HBox();
         songRow.setPrefHeight(40.0);
         songRow.setMaxWidth(Double.MAX_VALUE);
@@ -109,7 +93,7 @@ public class HomeController {
         grid.getColumnConstraints().addAll(col1, col2, col3);
 
         String fileName = song.fileName;
-        if(fileName.length() > 30){
+        if (fileName.length() > 30) {
             fileName = fileName.substring(0, 27) + "...";
         }
         Text titleText = new Text(fileName);
@@ -134,15 +118,21 @@ public class HomeController {
         return songRow;
     }
 
-    private String formatDuration(int seconds){
+    private String formatDuration(int seconds) {
         int h = seconds / 3600;
         int m = (seconds % 3600) / 60;
         int s = seconds % 60;
 
-        if(h>0){
+        if (h > 0) {
             return String.format("%d hr %02d min %02d s", h, m, s);
-        }else{
+        } else {
             return String.format("%02d min %02d s", m, s);
         }
+    }
+
+    @FXML
+    private void goBack() throws IOException {
+        Parent playlists = FXMLLoader.load(Main.class.getResource("/playlists.fxml"));
+        Main.getRootController().setPage(playlists);
     }
 }

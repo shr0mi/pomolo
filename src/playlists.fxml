@@ -12,11 +12,11 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="rootPane" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="HomeController">
+<AnchorPane fx:id="rootPane" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PlaylistsPageController">
     <children>
         <Rectangle arcHeight="5.0" arcWidth="5.0" height="552.0" layoutX="-9.0" layoutY="-10.0" opacity="0.6" stroke="BLACK" strokeType="INSIDE" width="978.0" />
 
-        <Text fill="WHITE" layoutX="449.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="MUSIC" textAlignment="CENTER">
+        <Text fill="WHITE" layoutX="425.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLAYLISTS" textAlignment="CENTER">
             <font>
                 <Font name="Monospaced Regular" size="25.0" />
             </font>
@@ -38,12 +38,12 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="TRACK" textAlignment="CENTER">
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="PLAYLIST" textAlignment="CENTER">
                             <font>
                                 <Font name="Monospaced Regular" size="13.0" />
                             </font>
                         </Text>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="ARTIST" textAlignment="CENTER" GridPane.columnIndex="1">
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="SONGS" textAlignment="CENTER" GridPane.columnIndex="1">
                             <font>
                                 <Font name="Monospaced Regular" size="13.0" />
                             </font>
@@ -58,7 +58,7 @@
             </children>
         </HBox>
         <Button layoutX="830.0" layoutY="30.0" mnemonicParsing="false" onAction="#goToSettings" text="Settings" />
-        <Button layoutX="720.0" layoutY="30.0" mnemonicParsing="false" onAction="#goToPlaylists" text="Playlists" />
-        <Button layoutX="75.0" layoutY="30.0" mnemonicParsing="false" onAction="#AddNewMusic" text="Add Music" />
+        <Button layoutX="720.0" layoutY="30.0" mnemonicParsing="false" onAction="#goToSongs" text="Songs" />
+        <Button layoutX="75.0" layoutY="30.0" mnemonicParsing="false" onAction="#AddNewPlaylist" text="Add Playlist" />
     </children>
 </AnchorPane>
