@@ -22,6 +22,7 @@ public class PlaylistSongsPageController {
 
     private String playlistName;
     private MusicPlayerManager playerManager;
+    private List<SongManager.SongInfo> playlistSongs;
 
     public void setPlaylistName(String name) {
         this.playlistName = name;
@@ -35,10 +36,10 @@ public class PlaylistSongsPageController {
     }
 
     private void loadSongs() {
-        List<SongManager.SongInfo> songs = SqliteDBManager.getSongsForPlaylist(playlistName);
+        playlistSongs = SqliteDBManager.getSongsForPlaylist(playlistName);
         vbox.getChildren().clear();
         int index = 0;
-        for (SongManager.SongInfo s : songs) {
+        for (SongManager.SongInfo s : playlistSongs) {
             vbox.getChildren().add(createSongRow(s, index));
             index++;
         }
@@ -68,6 +69,7 @@ public class PlaylistSongsPageController {
         songRow.getStyleClass().add("row-box");
 
         songRow.setOnMouseClicked(e -> {
+            playerManager.setQueue(playlistSongs);
             playerManager.playSong(index);
         });
 

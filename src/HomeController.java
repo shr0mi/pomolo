@@ -84,6 +84,7 @@ public class HomeController {
         songRow.getStyleClass().add("row-box");
 
         songRow.setOnMouseClicked(e -> {
+            playerManager.setQueue(loadedSongs);
             playerManager.playSong(index);
         });
 

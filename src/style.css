@@ -1,0 +1,19 @@
+.button {
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-text-fill: white;
+    -fx-font-family: "System";
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+.button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.35);
+}
+
+.button:pressed {
+    -fx-background-color: rgba(255, 255, 255, 0.5);
+}

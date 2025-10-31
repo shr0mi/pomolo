@@ -24,6 +24,7 @@ public class Main extends Application {
 
         Scene scene = new Scene(root, 960, 540);
         scene.getStylesheets().add(Main.class.getResource("/home.css").toExternalForm());
+        scene.getStylesheets().add(Main.class.getResource("/style.css").toExternalForm());
         stage.setTitle("Pomolo");
 
         stage.setResizable(false);
