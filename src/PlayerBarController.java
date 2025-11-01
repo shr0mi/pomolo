@@ -1,19 +1,24 @@
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
-import javafx.scene.shape.SVGPath;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import java.io.IOException;
+
 public class PlayerBarController {
 
-    @FXML private HBox playerBarPane;
+    @FXML private VBox playerBarPane;
     @FXML private Button prevButton;
     @FXML private Button playPauseButton;
     @FXML private Button nextButton;
-    @FXML private SVGPath playPauseIcon;
     @FXML private Text currentSongText;
     @FXML private Text currentTimeText;
     @FXML private Text totalTimeText;
@@ -22,9 +27,6 @@ public class PlayerBarController {
 
     private MusicPlayerManager playerManager;
     private boolean isSliderBeingDragged = false;
-
-    private static final String PLAY_ICON = "M6 4l8 6-8 6z";
-    private static final String PAUSE_ICON = "M6 4h4v12H6zm8 0h4v12h-4z";
 
     @FXML
     private void initialize() {
@@ -44,13 +46,11 @@ public class PlayerBarController {
     }
 
     private void bindControls() {
-        playerManager.isPlayingProperty().addListener((obs, wasPlaying, isNowPlaying) -> {
-            if (isNowPlaying) {
-                playPauseIcon.setContent(PAUSE_ICON);
-            } else {
-                playPauseIcon.setContent(PLAY_ICON);
-            }
-        });
+        playPauseButton.textProperty().bind(
+                Bindings.when(playerManager.isPlayingProperty())
+                        .then("Pause")
+                        .otherwise("Play")
+        );
 
         currentSongText.textProperty().bind(
                 Bindings.createStringBinding(() -> {
@@ -67,12 +67,44 @@ public class PlayerBarController {
         );
 
         volumeSlider.valueProperty().bindBidirectional(playerManager.volumeProperty());
+        //Initial Style
+        Platform.runLater(() -> {
+            StackPane vol_track = (StackPane) volumeSlider.lookup(".track");
+            if (vol_track != null) {
+                double val = volumeSlider.getValue();  // current value
+                String vol_style = String.format(
+                        "-fx-background-color: linear-gradient(to right, red %f%%, white %f%%);",
+                        val*100.0, val*100.0
+                );
+                vol_track.setStyle(vol_style);
+            }
+        });
+        // volume progress color setting
+        volumeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            StackPane vol_track = (StackPane) volumeSlider.lookup(".track");
+            if (vol_track != null) {
+                String vol_style = String.format(
+                        "-fx-background-color: linear-gradient(to right, red %f%%, white %f%%);",
+                        newVal.doubleValue()*100.0, newVal.doubleValue()*100.0
+                );
+                //System.out.println(newVal.doubleValue());
+                vol_track.setStyle(vol_style);
+            }
+        });
 
         playerManager.currentTimeProperty().addListener((obs, oldTime, newTime) -> {
             if (!isSliderBeingDragged && playerManager.totalDurationProperty().get() != null) {
                 Duration total = playerManager.totalDurationProperty().get();
                 if (total != null && total.greaterThan(Duration.ZERO)) {
-                    progressSlider.setValue(newTime.toSeconds() / total.toSeconds() * 100.0);
+                    double value = newTime.toSeconds() / total.toSeconds() * 100.0;
+                    progressSlider.setValue(value);
+
+                    // progress color setting
+                    StackPane track = (StackPane) progressSlider.lookup(".track");
+                    String style = String.format("-fx-background-color: linear-gradient(to right, red %f%%, white %f%%);",
+                            value, value);
+                    //System.out.println(value);
+                    track.setStyle(style);
                 }
             }
             currentTimeText.setText(formatDurationSimple(newTime));
@@ -98,4 +130,6 @@ public class PlayerBarController {
         long s = seconds % 60;
         return String.format("%02d:%02d", m, s);
     }
+
+
 }

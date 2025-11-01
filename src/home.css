@@ -26,14 +26,13 @@
 
 /* ---
 --- CONSOLIDATED SONG ROW STYLES
----
-*/
+--- */
 
 .row-box {
     -fx-background-color: transparent;
-    -fx-border-color: #777; /* Using the cleaner 1px border */
-    -fx-border-width: 0 0 1px 0;
-    -fx-padding: 10px 5px; /* Using 10 for top/bottom, 5 for left/right */
+    -fx-border-color: white;
+    -fx-border-width: 1 2 1 2;
+    -fx-padding: 10;
     -fx-cursor: hand;
 }
 
@@ -49,8 +48,7 @@
 
 /* ---
 --- PLAYER PAGE STYLES
----
-*/
+--- */
 
 .player-button {
     -fx-background-color: transparent;
@@ -114,24 +112,32 @@
     -fx-fill: #a481ee; /* Lofi purple accent */
 }
 
-.player-slider .track {
-    -fx-background-color: #535353;
-    -fx-background-radius: 5px;
-    -fx-pref-height: 6px;
-}
-.player-slider .thumb {
+/* --- The Track (background bar) --- */
+.slider .track {
     -fx-background-color: white;
-    -fx-pref-width: 14px;
-    -fx-pref-height: 14px;
+    -fx-background-radius: 2;
+    -fx-pref-height: 3; /* thin bar */
+}
+
+/* --- The Thumb (the draggable circle) --- */
+.slider .thumb {
+    -fx-background-color: red;
     -fx-background-radius: 50%;
+    -fx-pref-width: 14;
+    -fx-pref-height: 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 3, 0.5, 0, 1);
 }
-.player-slider .thumb {
-    -fx-opacity: 0;
+
+/* Optional hover effect for thumb */
+.slider .thumb:hover {
+    -fx-scale-x: 1.2;
+    -fx-scale-y: 1.2;
 }
-.player-slider:hover .thumb {
-    -fx-opacity: 1;
-}
-.player-slider > .colored-track {
-    -fx-background-color: #a481ee;
-    -fx-background-radius: 5px;
+
+.bottom-rectangle {
+       -fx-background-color: linear-gradient(
+           from 0% 0% to 0% 100%,  /* vertical gradient: top to bottom */
+           rgba(0,0,0,0.3) 0%,   /* top color */
+           rgba(0,0,0,0.9) 100%   /* bottom color */
+       );
 }
