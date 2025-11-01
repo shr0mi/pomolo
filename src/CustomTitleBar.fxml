@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
+
+<ToolBar fx:id="toolBar" prefHeight="30.0" styleClass="custom-title-bar" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CustomTitleBarController">
+    <items>
+        <Text fill="white" text="Pomolo" />
+        <HBox HBox.hgrow="ALWAYS" />
+        <Button onAction="#minimize" styleClass="window-button" text="-" />
+        <Button onAction="#close" styleClass="window-button" text="X" />
+    </items>
+</ToolBar>
