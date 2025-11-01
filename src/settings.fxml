@@ -9,13 +9,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="rootPane" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SettingsController">
     <children>
-        <Rectangle arcHeight="5.0" arcWidth="5.0" height="552.0" layoutX="-9.0" layoutY="-10.0" opacity="0.6" stroke="BLACK" strokeType="INSIDE" width="978.0" />
 
         <Text fill="WHITE" layoutX="426.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SETTINGS" textAlignment="CENTER">
             <font>

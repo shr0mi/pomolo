@@ -1,3 +1,4 @@
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -5,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -12,7 +15,7 @@ import java.io.IOException;
 
 public class PlayerBarController {
 
-    @FXML private HBox playerBarPane;
+    @FXML private VBox playerBarPane;
     @FXML private Button prevButton;
     @FXML private Button playPauseButton;
     @FXML private Button nextButton;
@@ -64,12 +67,44 @@ public class PlayerBarController {
         );
 
         volumeSlider.valueProperty().bindBidirectional(playerManager.volumeProperty());
+        //Initial Style
+        Platform.runLater(() -> {
+            StackPane vol_track = (StackPane) volumeSlider.lookup(".track");
+            if (vol_track != null) {
+                double val = volumeSlider.getValue();  // current value
+                String vol_style = String.format(
+                        "-fx-background-color: linear-gradient(to right, red %f%%, white %f%%);",
+                        val*100.0, val*100.0
+                );
+                vol_track.setStyle(vol_style);
+            }
+        });
+        // volume progress color setting
+        volumeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            StackPane vol_track = (StackPane) volumeSlider.lookup(".track");
+            if (vol_track != null) {
+                String vol_style = String.format(
+                        "-fx-background-color: linear-gradient(to right, red %f%%, white %f%%);",
+                        newVal.doubleValue()*100.0, newVal.doubleValue()*100.0
+                );
+                //System.out.println(newVal.doubleValue());
+                vol_track.setStyle(vol_style);
+            }
+        });
 
         playerManager.currentTimeProperty().addListener((obs, oldTime, newTime) -> {
             if (!isSliderBeingDragged && playerManager.totalDurationProperty().get() != null) {
                 Duration total = playerManager.totalDurationProperty().get();
                 if (total != null && total.greaterThan(Duration.ZERO)) {
-                    progressSlider.setValue(newTime.toSeconds() / total.toSeconds() * 100.0);
+                    double value = newTime.toSeconds() / total.toSeconds() * 100.0;
+                    progressSlider.setValue(value);
+
+                    // progress color setting
+                    StackPane track = (StackPane) progressSlider.lookup(".track");
+                    String style = String.format("-fx-background-color: linear-gradient(to right, red %f%%, white %f%%);",
+                            value, value);
+                    //System.out.println(value);
+                    track.setStyle(style);
                 }
             }
             currentTimeText.setText(formatDurationSimple(newTime));
@@ -95,4 +130,6 @@ public class PlayerBarController {
         long s = seconds % 60;
         return String.format("%02d:%02d", m, s);
     }
+
+
 }

@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -19,7 +20,7 @@ public class RootPageController {
     @FXML private StackPane root;
     @FXML private ImageView backgroundImage;
     @FXML private StackPane pageContainer;
-    @FXML private HBox playerBar;
+    @FXML private VBox playerBar;
 
     UserProperties up = new UserProperties();
 

@@ -3,17 +3,19 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Rectangle?>
 
-<StackPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="RootPageController">
+<StackPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="RootPageController">
     <children>
         <ImageView fx:id="backgroundImage" fitHeight="540.0" fitWidth="960.0" pickOnBounds="true" preserveRatio="false" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#00000073" height="557.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="973.0" />
 
-        <StackPane fx:id="pageContainer" prefHeight="540.0" prefWidth="960.0">
+        <StackPane fx:id="pageContainer" prefHeight="289.0" prefWidth="631.0">
             <padding>
                 <Insets bottom="60.0" />
             </padding>
         </StackPane>
 
-        <fx:include fx:id="playerBar" source="/PlayerBar.fxml" StackPane.alignment="BOTTOM_CENTER" />
+        <fx:include fx:id="playerBar" maxHeight="100.0" source="PlayerBar.fxml" StackPane.alignment="BOTTOM_CENTER" />
     </children>
 </StackPane>
