@@ -9,63 +9,63 @@
 <?import javafx.scene.text.Text?>
 
 <VBox fx:id="playerBarPane" spacing="6" styleClass="bottom-rectangle" stylesheets="@home.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PlayerBarController">
-    <HBox alignment="CENTER" prefWidth="200.0">
-        <children>
-            <Text fx:id="currentSongText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="No song selected" HBox.hgrow="NEVER">
-                <font>
-                    <Font name="Monospaced Regular" size="14.0" />
-                </font>
-                <HBox.margin>
-                    <Insets left="10.0" right="10.0" />
-                </HBox.margin>
-            </Text>
-        </children>
-        <padding>
-            <Insets bottom="20.0" />
-        </padding>
-    </HBox>
+   <HBox alignment="CENTER" prefWidth="200.0">
+      <children>
+        <Text fx:id="currentSongText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="No song selected" HBox.hgrow="NEVER">
+            <font>
+                <Font name="Monospaced Regular" size="14.0" />
+            </font>
+            <HBox.margin>
+                <Insets left="10.0" right="10.0" />
+            </HBox.margin>
+        </Text>
+      </children>
+      <padding>
+         <Insets bottom="20.0" />
+      </padding>
+   </HBox>
 
-    <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" spacing="12.0">
-        <children>
+<HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" spacing="12.0">
+    <children>
 
-            <HBox alignment="CENTER" prefWidth="200.0" spacing="10.0">
-                <children>
-                    <Button fx:id="prevButton" mnemonicParsing="false" onAction="#handlePrevious" styleClass="player-bar-button" text="Prev" />
-                    <Button fx:id="playPauseButton" mnemonicParsing="false" onAction="#handlePlayPause" styleClass="player-bar-button" text="Play" />
-                    <Button fx:id="nextButton" mnemonicParsing="false" onAction="#handleNext" styleClass="player-bar-button" text="Next" />
-                </children>
-            </HBox>
-            <Text fx:id="currentTimeText" fill="#999999" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00">
-                <font>
-                    <Font name="Monospaced" size="12.0" />
-                </font>
-            </Text>
-            <Slider fx:id="progressSlider" stylesheets="@home.css" HBox.hgrow="ALWAYS" />
-            <Text fx:id="totalTimeText" fill="#999999" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00">
-                <font>
-                    <Font name="Monospaced" size="12.0" />
-                </font>
-            </Text>
+         <HBox alignment="CENTER" prefWidth="200.0" spacing="10.0">
+            <children>
+              <Button fx:id="prevButton" mnemonicParsing="false" onAction="#handlePrevious" styleClass="player-bar-button" text="Prev" />
+              <Button fx:id="playPauseButton" mnemonicParsing="false" onAction="#handlePlayPause" styleClass="player-bar-button" text="Play" />
+              <Button fx:id="nextButton" mnemonicParsing="false" onAction="#handleNext" styleClass="player-bar-button" text="Next" />
+            </children>
+         </HBox>
+        <Text fx:id="currentTimeText" fill="#999999" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00">
+            <font>
+               <Font name="Monospaced" size="12.0" />
+            </font>
+        </Text>
+        <Slider fx:id="progressSlider" stylesheets="@home.css" HBox.hgrow="ALWAYS" />
+        <Text fx:id="totalTimeText" fill="#999999" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00">
+            <font>
+               <Font name="Monospaced" size="12.0" />
+            </font>
+        </Text>
 
-            <HBox alignment="CENTER_RIGHT">
-                <children>
-                    <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Vol:">
-                        <font>
-                            <Font name="Monospaced" size="12.0" />
-                        </font>
-                        <HBox.margin>
-                            <Insets left="15.0" />
-                        </HBox.margin>
-                    </Text>
-                    <Slider fx:id="volumeSlider" max="1.0" prefWidth="120.0" stylesheets="@home.css" value="0.8" />
-                </children>
-            </HBox>
-        </children>
-        <padding>
-            <Insets left="20.0" right="20.0" />
-        </padding>
-    </HBox>
+         <HBox alignment="CENTER_RIGHT">
+            <children>
+              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Vol:">
+                  <font>
+                     <Font name="Monospaced" size="12.0" />
+                  </font>
+                  <HBox.margin>
+                      <Insets left="15.0" />
+                  </HBox.margin>
+              </Text>
+              <Slider fx:id="volumeSlider" max="1.0" prefWidth="120.0" stylesheets="@home.css" value="0.8" />
+            </children>
+         </HBox>
+    </children>
     <padding>
-        <Insets bottom="20.0" top="20.0" />
+        <Insets left="20.0" right="20.0" />
     </padding>
+</HBox>
+   <padding>
+      <Insets bottom="20.0" top="20.0" />
+   </padding>
 </VBox>

@@ -24,7 +24,7 @@
                 <VBox fx:id="vbox" prefHeight="0.0" prefWidth="892.0" />
             </content>
         </ScrollPane>
-        <HBox fx:id="topBar" alignment="CENTER" layoutX="35.0" layoutY="109.0" prefHeight="43.0" prefWidth="906.0" style="-fx-border-color: white; -fx-border-width: 2px;">
+        <HBox fx:id="topBar" blendMode="SCREEN" layoutX="35.0" layoutY="109.0" prefHeight="43.0" prefWidth="906.0" style="-fx-border-color: white; -fx-border-width: 2px;">
             <children>
                 <GridPane prefHeight="30.0" prefWidth="920.0">
                     <columnConstraints>
