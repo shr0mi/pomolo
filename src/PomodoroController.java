@@ -8,8 +8,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.AudioClip;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
+
+import java.io.File;
 import java.util.Objects;
 
 public class PomodoroController {
@@ -21,15 +24,16 @@ public class PomodoroController {
     @FXML private HBox increaseButtonHBox, decreaseButtonHBox;
     @FXML private Button increaseHourButton, decreaseHourButton, increaseMinuteButton, decreaseMinuteButton, increaseSecondButton, decreaseSecondButton;
 
-    // --- STATIC STATE VARIABLES---
+    // STATIC STATE VARIABLES
     private static final int POMODORO_DEFAULT_MINUTES = 0;
-    private static final int SHORT_BREAK_SECONDS = 5 * 60;
     private static Timeline timeline;
     private static boolean isRunning = false, isPaused = false, isPomodoroSession = true;
     private static int editableHours = 0, editableMinutes = POMODORO_DEFAULT_MINUTES, editableSeconds = 0;
     private static double timeRemaining;
     private static long startTimeMillis;
     private static int sessionDurationSeconds;
+    private static AudioClip ringtone;
+
 
     @FXML
     public void initialize() {
@@ -39,6 +43,16 @@ public class PomodoroController {
             syncEditableTime();
         } else {
             updateTimerLabel((int) Math.ceil(timeRemaining));
+        }
+
+        if (ringtone == null) {
+            try {
+                File audioFile = new File("1_second_tone.mp3");
+                String soundPath = audioFile.toURI().toURL().toExternalForm();
+                ringtone = new AudioClip(soundPath);
+            } catch (Exception e) {
+                System.err.println("Alarm will be silent.");
+            }
         }
 
         if (timerProgressRing != null) {
@@ -137,6 +151,9 @@ public class PomodoroController {
         stopTimer();
         isRunning = false;
         isPaused = false;
+        if (ringtone != null) {
+            ringtone.play();
+        }
         if (isPomodoroSession) {
             isPomodoroSession = false;
             timeRemaining = SHORT_BREAK_SECONDS;
