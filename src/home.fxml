@@ -57,5 +57,7 @@
         </HBox>
         <Button layoutX="830.0" layoutY="30.0" mnemonicParsing="false" onAction="#goToSettings" text="Settings" />
         <Button layoutX="75.0" layoutY="30.0" mnemonicParsing="false" onAction="#AddNewMusic" text="Add Music" />
+        <Button fx:id="pomodoroButton" layoutX="200.0" layoutY="30.0" mnemonicParsing="false" text="Pomodoro" onAction="#goToPomodoro" />
+
     </children>
 </AnchorPane>

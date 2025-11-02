@@ -43,6 +43,14 @@ public class HomeController {
     }
 
     @FXML
+    public void goToPomodoro(ActionEvent e) throws Exception{
+        // Load the new Pomodoro FXML
+        Parent pomodoro = FXMLLoader.load(getClass().getResource("Pomodoro.fxml"));
+        // Use the main controller to switch the view
+        Main.getRootController().setPage(pomodoro);
+    }
+
+    @FXML
     private void AddNewMusic(){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Music File");

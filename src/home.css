@@ -144,3 +144,38 @@
        );
 }
 
+.pomodoro-button {
+    /* Base style: Transparent background, white text */
+    -fx-background-color: transparent;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: 'Monospaced Regular';
+    -fx-font-size: 16px;
+    -fx-padding: 12px 25px;
+
+    /* Make buttons rectangular and visible */
+    -fx-background-radius: 4px; /* A small radius for a slightly rounded rectangle */
+    -fx-border-color: white; /* Add a white border to define the rectangle */
+    -fx-border-width: 1px;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.4) , 10,0,0,0 );
+}
+
+.pomodoro-button:hover {
+    /* HOVER EFFECT: White background, black text */
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    /* Remove the border on hover if you want a cleaner look */
+    -fx-border-color: white;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.6) , 12,0,0,0 );
+}
+
+.pomodoro-button:disabled {
+    -fx-background-color: transparent;
+    -fx-text-fill: #AAAAAA;
+    -fx-opacity: 0.9;
+    -fx-effect: none;
+    -fx-cursor: default;
+}
+
+/* ... other styles (.scroll-pane, etc.) ... */
