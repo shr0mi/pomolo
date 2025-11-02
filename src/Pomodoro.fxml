@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import java.net.URL?>
+
+<AnchorPane fx:id="rootPane"
+            prefHeight="540.0" prefWidth="960.0"
+            xmlns="http://javafx.com/javafx/24.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="PomodoroController">
+
+    <stylesheets>
+        <URL value="@home.css" />
+    </stylesheets>
+
+    <HBox alignment="CENTER"
+          AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="30.0">
+        <Text fill="WHITE"
+              strokeType="OUTSIDE" strokeWidth="0.0"
+              text="POMODORO"
+              textAlignment="CENTER">
+            <font>
+                <Font name="Monospaced Regular" size="25.0" />
+            </font>
+        </Text>
+    </HBox>
+
+    <Button layoutX="880.0" layoutY="30.0" mnemonicParsing="false" onAction="#goToHome" text="X" />
+
+    <HBox alignment="CENTER"
+          layoutX="27.0" layoutY="88.0"
+          prefHeight="400.0" prefWidth="906.0"
+          spacing="100.0"
+          style="-fx-background-color: transparent;">
+        <padding>
+            <Insets top="40.0" right="40.0" bottom="40.0" left="40.0" />
+        </padding>
+
+        <!-- START: Timer Column -->
+        <VBox alignment="TOP_CENTER"
+              spacing="20.0"
+              HBox.hgrow="ALWAYS"
+              prefWidth="400">
+
+            <VBox alignment="CENTER" spacing="5">
+
+                <StackPane fx:id="timerContainer" alignment="CENTER" maxWidth="350" maxHeight="350">
+
+                    <!-- 1. Visual Rings (Background and Progress) -->
+                    <StackPane fx:id="ringVisualsStack" alignment="CENTER">
+
+                        <!-- 1a. Background Circle (The Track) -->
+                        <Circle radius="110.0"
+                                fill="transparent"
+                                stroke="#FFFFFF66"
+                                strokeWidth="2.0"
+                        />
+
+                        <!-- 1b. Progress Ring (Controlled by Java) -->
+                        <Circle fx:id="timerProgressRing"
+                                radius="110.0"
+                                fill="transparent"
+                                stroke="#FFFFFF"
+                                strokeWidth="5.0"
+                                strokeLineCap="ROUND"
+                        />
+                    </StackPane>
+
+                    <!-- 2. Timer Label -->
+                    <Label fx:id="timerLabel"
+                           text="00:25:00"
+                           alignment="CENTER"
+                           style="-fx-font-size: 40pt; -fx-text-fill: #FFFFFF; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5,0,0,0);"
+                           prefWidth="200.0">
+                        <font>
+                            <Font name="Inter" size="55.0" />
+                        </font>
+                    </Label>
+
+                    <!-- 3. Decrease Buttons HBox (FIXED: onAction points to unified method) -->
+                    <HBox fx:id="decreaseButtonHBox" alignment="CENTER" spacing="40.0" StackPane.alignment="BOTTOM_CENTER">
+                        <StackPane.margin>
+                            <Insets top="200.0" />
+                        </StackPane.margin>
+                        <Button fx:id="decreaseHourButton"
+                                text="-"
+                                onAction="#handleTimeAdjustment"
+                                styleClass="pomodoro-button" prefWidth="50.0" prefHeight="50.0" />
+                        <Button fx:id="decreaseMinuteButton"
+                                text="-"
+                                onAction="#handleTimeAdjustment"
+                                styleClass="pomodoro-button" prefWidth="50.0" prefHeight="50.0" />
+                        <Button fx:id="decreaseSecondButton"
+                                text="-"
+                                onAction="#handleTimeAdjustment"
+                                styleClass="pomodoro-button" prefWidth="50.0" prefHeight="50.0" />
+                    </HBox>
+
+                    <!-- 4. Increase Buttons HBox (FIXED: onAction points to unified method) -->
+                    <HBox  fx:id="increaseButtonHBox" alignment="CENTER" spacing="40.0" StackPane.alignment="TOP_CENTER">
+                        <StackPane.margin>
+                            <Insets bottom="200.0" />
+                        </StackPane.margin>
+                        <Button fx:id="increaseHourButton"
+                                text="+"
+                                onAction="#handleTimeAdjustment"
+                                styleClass="pomodoro-button" prefWidth="40.0" prefHeight="50.0" />
+                        <Button fx:id="increaseMinuteButton"
+                                text="+"
+                                onAction="#handleTimeAdjustment"
+                                styleClass="pomodoro-button" prefWidth="50.0" prefHeight="50.0" />
+                        <Button fx:id="increaseSecondButton"
+                                text="+"
+                                onAction="#handleTimeAdjustment"
+                                styleClass="pomodoro-button" prefWidth="40.0" prefHeight="50.0" />
+                    </HBox>
+                </StackPane>
+
+                <VBox alignment="CENTER" spacing="15.0">
+                    <Button fx:id="startButton"
+                            text="Start Pomodoro"
+                            onAction="#handleStartStop"
+                            styleClass="pomodoro-button"
+                            prefHeight="50.0"
+                            prefWidth="250.0"
+                            style="-fx-font-size: 15pt; -fx-font-family: monospace;"/>
+                </VBox>
+            </VBox>
+        </VBox>
+        <!-- END: Timer Column -->
+        <!-- START: Stats Column -->
+        <VBox alignment="TOP_LEFT"
+              spacing="10"
+              HBox.hgrow="ALWAYS"
+              prefWidth="400">
+            <padding>
+                <Insets top="15.0" right="15.0" bottom="15.0" left="15.0" />
+            </padding>
+            <Label fx:id="statsLabel"
+                   text="Loading statistics..."
+                   alignment="CENTER_LEFT"
+                   style="-fx-font-family: monospace; -fx-font-size: 14pt; -fx-text-fill: #E0E0E0;" />
+        </VBox>
+
+    </HBox>
+</AnchorPane>
