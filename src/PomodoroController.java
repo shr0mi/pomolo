@@ -11,7 +11,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.media.AudioClip;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
-
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 import java.io.File;
 import java.util.Objects;
 
@@ -26,6 +29,7 @@ public class PomodoroController {
 
     // STATIC STATE VARIABLES
     private static final int POMODORO_DEFAULT_MINUTES = 0;
+    private static int POMODORO_PREV_TIME = 0;
     private static Timeline timeline;
     private static boolean isRunning = false, isPaused = false, isPomodoroSession = true;
     private static int editableHours = 0, editableMinutes = POMODORO_DEFAULT_MINUTES, editableSeconds = 0;
@@ -33,44 +37,40 @@ public class PomodoroController {
     private static long startTimeMillis;
     private static int sessionDurationSeconds;
     private static AudioClip ringtone;
+    private static final String CONFIG_FILE_NAME = "config.properties";
+    private static final String DURATION_KEY = "pomodoro_duration_seconds";
 
 
     @FXML
     public void initialize() {
         boolean wasRunning = isRunning;
 
-        if (!isRunning && !isPaused) {
-            syncEditableTime();
-        } else {
-            updateTimerLabel((int) Math.ceil(timeRemaining));
+        if (editableMinutes == 0 && !isRunning && !isPaused) {
+            int savedDurationSeconds = manageDurationPersistence(null);
+            editableHours = savedDurationSeconds / 3600;
+            editableMinutes = (savedDurationSeconds % 3600) / 60;
+            editableSeconds = savedDurationSeconds % 60;
         }
-
+        if (!isRunning && !isPaused) { syncEditableTime();}
+        else { updateTimerLabel((int) Math.ceil(timeRemaining)); }
         if (ringtone == null) {
             try {
                 File audioFile = new File("1_second_tone.mp3");
                 String soundPath = audioFile.toURI().toURL().toExternalForm();
                 ringtone = new AudioClip(soundPath);
-            } catch (Exception e) {
-                System.err.println("Alarm will be silent.");
-            }
-        }
-
+            } catch (Exception e) { System.err.println("Alarm will be silent."); } }
         if (timerProgressRing != null) {
             final double circumference = 2 * Math.PI * timerProgressRing.getRadius();
             timerProgressRing.getStrokeDashArray().setAll(circumference);
             timerProgressRing.setRotate(-90);
-            setRingVisible(isRunning || isPaused);
-        }
-
+            setRingVisible(isRunning || isPaused); }
         updateTimerRingProgress();
         updateButtonStates();
-
-        if (wasRunning) {
-            startTimer(timeRemaining);
-        }
+        if (wasRunning) { startTimer(timeRemaining); }
     }
     private void syncEditableTime() {
         int totalEditableSeconds = editableHours * 3600 + editableMinutes * 60 + editableSeconds;
+        POMODORO_PREV_TIME  = totalEditableSeconds;
         timeRemaining = totalEditableSeconds;
         sessionDurationSeconds = totalEditableSeconds;
         updateTimerLabel(totalEditableSeconds);
@@ -82,7 +82,7 @@ public class PomodoroController {
         if (!isRunning) {
             if (timeRemaining < 0.1) {
                 if (isPomodoroSession) syncEditableTime();
-                else { timeRemaining = SHORT_BREAK_SECONDS; sessionDurationSeconds = SHORT_BREAK_SECONDS; }
+                else { timeRemaining = POMODORO_PREV_TIME; sessionDurationSeconds = POMODORO_PREV_TIME; }
                 if (timeRemaining < 1) return;
             }
             startTimer(timeRemaining);
@@ -114,8 +114,8 @@ public class PomodoroController {
         isPaused = false;
         if (isPomodoroSession) syncEditableTime();
         else {
-            timeRemaining = SHORT_BREAK_SECONDS;
-            sessionDurationSeconds = SHORT_BREAK_SECONDS;
+            timeRemaining = POMODORO_PREV_TIME;
+            sessionDurationSeconds = POMODORO_PREV_TIME;
             updateTimerLabel((int)timeRemaining);
         }
         setRingVisible(false);
@@ -156,8 +156,8 @@ public class PomodoroController {
         }
         if (isPomodoroSession) {
             isPomodoroSession = false;
-            timeRemaining = SHORT_BREAK_SECONDS;
-            sessionDurationSeconds = SHORT_BREAK_SECONDS;
+            timeRemaining = POMODORO_PREV_TIME;
+            sessionDurationSeconds = POMODORO_PREV_TIME;
         } else {
             isPomodoroSession = true;
             syncEditableTime();
@@ -181,6 +181,9 @@ public class PomodoroController {
         isPomodoroSession = true;
         syncEditableTime();
         updateButtonStates();
+        int newTotalSeconds = editableHours * 3600 + editableMinutes * 60 + editableSeconds;
+        manageDurationPersistence(newTotalSeconds);
+
     }
 
     private void updateTimerLabel(int totalSeconds) {
@@ -224,6 +227,33 @@ public class PomodoroController {
         if (ringVisualsStack != null) {
             ringVisualsStack.setVisible(visible);
             if (timerProgressRing != null) timerProgressRing.setVisible(isRunning || isPaused);
+        }
+    }
+
+    private int manageDurationPersistence(Integer newDuration) {
+        Properties prop = new Properties();
+        final int defaultDurationSeconds = POMODORO_DEFAULT_MINUTES * 60;
+        boolean isLoadOperation = newDuration == null;
+
+        try (FileInputStream input = new FileInputStream(CONFIG_FILE_NAME)) {
+            prop.load(input);
+        } catch (IOException ignored) {}
+
+        if (!isLoadOperation) {
+            prop.setProperty(DURATION_KEY, String.valueOf(newDuration));
+            try (FileOutputStream output = new FileOutputStream(CONFIG_FILE_NAME)) {
+                prop.store(output, null);
+            } catch (IOException ignored) {
+                System.err.println("Error saving duration.");
+            }
+            return defaultDurationSeconds;
+        }
+
+        try {
+            String savedDurationStr = prop.getProperty(DURATION_KEY, String.valueOf(defaultDurationSeconds));
+            return Integer.parseInt(savedDurationStr);
+        } catch (NumberFormatException ignored) {
+            return defaultDurationSeconds;
         }
     }
 
