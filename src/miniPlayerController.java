@@ -1,8 +1,11 @@
-import javafx.animation.ScaleTransition;
+import javafx.animation.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -17,10 +20,22 @@ public class miniPlayerController {
     @FXML
     private Button playPauseButton;
 
+    @FXML
+    private Button nextButton;
+
+    @FXML
+    private Button prevButton;
+
+    @FXML
+    private Circle glowRing;
+
     private double xOffset = 0;
     private double yOffset = 0;
 
     private final MusicPlayerManager musicManager = MusicPlayerManager.getInstance();
+
+    private Timeline glowPulse;
+    private ScaleTransition currentScale;
 
     @FXML
     public void initialize() {
@@ -36,14 +51,13 @@ public class miniPlayerController {
             stage.setY(event.getScreenY() - yOffset);
         });
 
-        // === HOVER ANIMATION ===
-        root.setOnMouseEntered(e -> animateScale(1.0));  // Normal size on hover
-        root.setOnMouseExited(e -> animateScale(0.85));  // Shrink when not hovered
+        // === HOVER SCALE ANIMATION (only affects size, not glow/beat) ===
+        root.setOnMouseEntered(e -> animateScale(root, 1.0));   // expand
+        root.setOnMouseExited(e -> animateScale(root, 0.75));   // shrink more
+        root.setScaleX(0.75);
+        root.setScaleY(0.75);
 
-        root.setScaleX(0.85);
-        root.setScaleY(0.85);
-
-        // === SONG TITLE ===
+        // === SONG TITLE SYNC ===
         var song = musicManager.currentSongProperty().get();
         if (song != null) songLabel.setText(song.fileName);
 
@@ -51,51 +65,129 @@ public class miniPlayerController {
             if (newSong != null) songLabel.setText(newSong.fileName);
         });
 
-        // === PLAY/PAUSE ICON SYNC ===
+        // === ICON SYNC ===
         updatePlayPauseIcon();
 
         musicManager.isPlayingProperty().addListener((obs, wasPlaying, isNowPlaying) -> {
             updatePlayPauseIcon();
+            updateGlowAnimation(isNowPlaying);
         });
+
+        // === INITIALIZE EFFECTS ===
+        setupGlowEffect();
+        updateGlowAnimation(musicManager.isPlayingProperty().get());
     }
 
-    private void animateScale(double targetScale) {
-        ScaleTransition st = new ScaleTransition(Duration.millis(250), root);
-        st.setToX(targetScale);
-        st.setToY(targetScale);
-        st.play();
+    // --- Helper: Smooth scale animation without stopping glow ---
+    private void animateScale(javafx.scene.Node node, double targetScale) {
+        if (currentScale != null) currentScale.stop();
+        currentScale = new ScaleTransition(Duration.millis(250), node);
+        currentScale.setToX(targetScale);
+        currentScale.setToY(targetScale);
+        currentScale.setInterpolator(Interpolator.EASE_BOTH);
+        currentScale.play();
     }
 
+    // --- Button animation (unchanged) ---
+    private void animateButtonClick(Button button, Runnable actionAfterShrink) {
+        ScaleTransition scaleDown = new ScaleTransition(Duration.millis(120), button);
+        scaleDown.setToX(0.8);
+        scaleDown.setToY(0.8);
+
+        FadeTransition fadeDown = new FadeTransition(Duration.millis(120), button);
+        fadeDown.setToValue(0.4);
+
+        ParallelTransition shrink = new ParallelTransition(scaleDown, fadeDown);
+        shrink.setOnFinished(e -> {
+            if (actionAfterShrink != null) actionAfterShrink.run();
+
+            ScaleTransition scaleUp = new ScaleTransition(Duration.millis(120), button);
+            scaleUp.setToX(1.0);
+            scaleUp.setToY(1.0);
+
+            FadeTransition fadeUp = new FadeTransition(Duration.millis(120), button);
+            fadeUp.setToValue(1.0);
+
+            new ParallelTransition(scaleUp, fadeUp).play();
+        });
+        shrink.play();
+    }
+
+    // --- Play/Pause icon styling ---
     private void updatePlayPauseIcon() {
-        if (MusicPlayerManager.getInstance().isPlayingProperty().get()) {
-            // Currently playing → show pause icon
+        if (musicManager.isPlayingProperty().get()) {
             playPauseButton.setText("⏸");
             playPauseButton.setStyle(
-                    "-fx-font-size: 22px; -fx-background-color: #E53935; -fx-text-fill: white; -fx-background-radius: 50%; -fx-pref-width: 50; -fx-pref-height: 50;"
+                    "-fx-font-size: 22px; -fx-background-color: #E53935; -fx-text-fill: white; "
+                            + "-fx-background-radius: 50%; -fx-pref-width: 50; -fx-pref-height: 50;"
             );
         } else {
-            // Currently paused → show play icon
             playPauseButton.setText("▶");
             playPauseButton.setStyle(
-                    "-fx-font-size: 22px; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 50%; -fx-pref-width: 50; -fx-pref-height: 50;"
+                    "-fx-font-size: 22px; -fx-background-color: #4CAF50; -fx-text-fill: white; "
+                            + "-fx-background-radius: 50%; -fx-pref-width: 50; -fx-pref-height: 50;"
             );
         }
     }
 
+    // === Glowing effect ===
+    private void setupGlowEffect() {
+        if (glowRing != null) {
+            DropShadow glow = new DropShadow();
+            glow.setColor(Color.web("#4CAF50"));
+            glow.setRadius(25);
+            glow.setSpread(0.3);
+            glowRing.setEffect(glow);
+
+            double baseRadius = glowRing.getRadius();
+
+            glowPulse = new Timeline(
+                    new KeyFrame(Duration.ZERO,
+                            new KeyValue(glowRing.opacityProperty(), 1.0),
+                            new KeyValue(glowRing.radiusProperty(), baseRadius),
+                            new KeyValue(glow.colorProperty(), Color.web("#4CAF50"))
+                    ),
+                    new KeyFrame(Duration.seconds(1.2),
+                            new KeyValue(glowRing.opacityProperty(), 0.4),
+                            new KeyValue(glowRing.radiusProperty(), baseRadius + 6),
+                            new KeyValue(glow.colorProperty(), Color.web("#80FFF9"))
+                    )
+            );
+            glowPulse.setCycleCount(Animation.INDEFINITE);
+            glowPulse.setAutoReverse(true);
+        }
+    }
+
+    private void updateGlowAnimation(boolean isPlaying) {
+        if (glowPulse == null) return;
+        if (isPlaying) {
+            glowPulse.play();
+        } else {
+            glowPulse.stop();
+            glowRing.setOpacity(0.3);
+            glowRing.setRadius(135);
+            DropShadow glow = (DropShadow) glowRing.getEffect();
+            if (glow != null) glow.setColor(Color.web("#4CAF50"));
+        }
+    }
+
+    // === Button Actions ===
     @FXML
     private void playPause() {
-        musicManager.playPause();
-        updatePlayPauseIcon();
+        animateButtonClick(playPauseButton, () -> {
+            musicManager.playPause();
+            updatePlayPauseIcon();
+        });
     }
 
     @FXML
     private void next() {
-        musicManager.next();
+        animateButtonClick(nextButton, () -> musicManager.next());
     }
 
     @FXML
     private void previous() {
-        musicManager.previous();
+        animateButtonClick(prevButton, () -> musicManager.previous());
     }
 
     @FXML
