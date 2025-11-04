@@ -46,7 +46,7 @@
                             <Circle radius="110.0" fill="transparent" stroke="#FFFFFF66" strokeWidth="2.0" />
                             <Circle fx:id="timerProgressRing" radius="110.0" fill="transparent" stroke="#FFFFFF" strokeWidth="5.0" strokeLineCap="ROUND"/>
                         </StackPane>
-                        <Label fx:id="timerLabel" text="00:25:00" alignment="CENTER" style="-fx-font-size: 40pt; -fx-text-fill: #FFFFFF; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5,0,0,0);" prefWidth="200.0">
+                        <Label fx:id="timerLabel" text="00:25:00" alignment="CENTER" style="-fx-font-size: 30pt; -fx-text-fill: #FFFFFF; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5,0,0,0);" prefWidth="200.0">
                             <font>
                                 <Font name="Inter" size="55.0" />
                             </font>
@@ -60,7 +60,6 @@
                             <Button fx:id="decreaseSecondButton" text="-" onAction="#handleTimeAdjustment" styleClass="pomodoro-button" prefWidth="50.0" prefHeight="50.0" />
                         </HBox>
 
-                        <!-- 4. Increase Buttons HBox (FIXED: onAction points to unified method) -->
                         <HBox  fx:id="increaseButtonHBox" alignment="CENTER" spacing="40.0" StackPane.alignment="TOP_CENTER">
                             <StackPane.margin>
                                 <Insets bottom="200.0" />
