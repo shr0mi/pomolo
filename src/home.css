@@ -149,8 +149,8 @@
     -fx-background-color: transparent;
     -fx-text-fill: #FFFFFF;
     -fx-font-family: 'Monospaced Regular';
-    -fx-font-size: 16px;
-    -fx-padding: 12px 25px;
+    -fx-font-size: 20px;
+    -fx-padding: 10px 20px;
 
     /* Make buttons rectangular and visible */
     -fx-background-radius: 4px; /* A small radius for a slightly rounded rectangle */
@@ -179,3 +179,40 @@
 }
 
 /* ... other styles (.scroll-pane, etc.) ... */
+
+.close-btn{
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-fond-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 5 10;
+    -fx-border-width: 1px;
+    -fx-border-color: white;
+}
+
+.close-btn:hover {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
+
+.icon-btn {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 8;
+    -fx-border-width: 1px;
+    -fx-border-color: white;
+}
+
+.icon-btn .iconli-font-icon {
+    -fx-icon-color: white;
+    -fx-icon-size: 20px;
+}
+
+.icon-btn:hover {
+    -fx-background-color: white;
+}
+
+.icon-btn:hover .iconli-font-icon {
+    -fx-icon-color: black;
+}

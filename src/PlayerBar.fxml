@@ -8,6 +8,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <VBox fx:id="playerBarPane" spacing="6" styleClass="bottom-rectangle" stylesheets="@home.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PlayerBarController">
    <HBox alignment="CENTER" prefWidth="200.0">
       <children>
@@ -30,9 +31,21 @@
 
          <HBox alignment="CENTER" prefWidth="200.0" spacing="10.0">
             <children>
-              <Button fx:id="prevButton" mnemonicParsing="false" onAction="#handlePrevious" styleClass="player-bar-button" text="Prev" />
-              <Button fx:id="playPauseButton" mnemonicParsing="false" onAction="#handlePlayPause" styleClass="player-bar-button" text="Play" />
-              <Button fx:id="nextButton" mnemonicParsing="false" onAction="#handleNext" styleClass="player-bar-button" text="Next" />
+                <Button fx:id="prevButton" mnemonicParsing="false" onAction="#handlePrevious" styleClass="icon-btn">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-backward" iconSize="22" styleClass="iconli-font-icon"/>
+                    </graphic>
+                </Button>
+                <Button fx:id="playPauseButton" mnemonicParsing="false" onAction="#handlePlayPause" styleClass="icon-btn">
+                    <graphic>
+                        <FontIcon fx:id="playPauseIcon" iconLiteral="fas-play" iconSize="22" styleClass="iconli-font-icon"/>
+                    </graphic>
+                </Button>
+                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#handleNext" styleClass="icon-btn">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-forward" iconSize="22" styleClass="iconli-font-icon"/>
+                    </graphic>
+                </Button>
             </children>
          </HBox>
         <Text fx:id="currentTimeText" fill="#999999" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00">

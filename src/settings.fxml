@@ -58,6 +58,6 @@
                 </VBox>
             </content>
         </ScrollPane>
-        <Button layoutX="880.0" layoutY="29.0" mnemonicParsing="false" onAction="#goToHome" text="X" />
+        <Button layoutX="880.0" layoutY="29.0" mnemonicParsing="false" onAction="#goToHome" text="X" styleClass="close-btn"/>
     </children>
 </AnchorPane>

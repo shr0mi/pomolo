@@ -10,6 +10,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.IOException;
 
@@ -18,6 +20,7 @@ public class PlayerBarController {
     @FXML private VBox playerBarPane;
     @FXML private Button prevButton;
     @FXML private Button playPauseButton;
+    @FXML private FontIcon playPauseIcon;
     @FXML private Button nextButton;
     @FXML private Text currentSongText;
     @FXML private Text currentTimeText;
@@ -46,11 +49,10 @@ public class PlayerBarController {
     }
 
     private void bindControls() {
-        playPauseButton.textProperty().bind(
-                Bindings.when(playerManager.isPlayingProperty())
-                        .then("Pause")
-                        .otherwise("Play")
-        );
+        //Play-pause button change
+        playerManager.isPlayingProperty().addListener((obs, wasPlaying, isNowPlaying)->{
+            playPauseIcon.setIconLiteral(isNowPlaying ? "fas-pause" : "fas-play");
+        });
 
         currentSongText.textProperty().bind(
                 Bindings.createStringBinding(() -> {
