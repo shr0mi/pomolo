@@ -12,8 +12,8 @@
            prefWidth="300" prefHeight="300"
            style="-fx-background-color: rgba(43,43,43,0.55); -fx-background-radius: 180;">
 
-    <!-- === Glowing Cyan Border (Smaller Circle) === -->
     <children>
+        <!-- === Glow Ring === -->
         <Circle fx:id="glowRing"
                 radius="135"
                 stroke="white"
@@ -24,35 +24,44 @@
             </effect>
         </Circle>
 
+        <!-- === Music Design (shown when not hovered) === -->
+        <StackPane fx:id="musicDesign" alignment="CENTER">
+            <Circle fx:id="visualCircle"
+                    radius="100"
+                    fill="#4CAF50"
+                    opacity="0.15" />
+        </StackPane>
 
-        <!-- === Content === -->
-        <VBox alignment="CENTER" spacing="18">
-            <Label text="🎵" style="-fx-font-size: 42px;" />
+        <!-- === Main UI (shown when hovered) === -->
+        <StackPane fx:id="uiContainer" alignment="CENTER">
+            <VBox alignment="CENTER" spacing="18">
+                <Label text="🎵" style="-fx-font-size: 42px;" />
 
-            <Label fx:id="songLabel"
-                   text="Now Playing"
-                   style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;" />
+                <Label fx:id="songLabel"
+                       text="Now Playing"
+                       style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;" />
 
-            <HBox alignment="CENTER" spacing="20">
-                <Button fx:id="prevButton"
-                        text="⏮"
-                        onAction="#previous"
-                        style="-fx-font-size: 18px; -fx-background-color: #444; -fx-text-fill: white; -fx-background-radius: 50%; -fx-pref-width: 40; -fx-pref-height: 40;" />
+                <HBox alignment="CENTER" spacing="20">
+                    <Button fx:id="prevButton"
+                            text="⏮"
+                            onAction="#previous"
+                            style="-fx-font-size: 18px; -fx-background-color: #444; -fx-text-fill: white; -fx-background-radius: 50%; -fx-pref-width: 40; -fx-pref-height: 40;" />
 
-                <Button fx:id="playPauseButton"
-                        text="▶"
-                        onAction="#playPause"
-                        style="-fx-font-size: 22px; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 50%; -fx-pref-width: 50; -fx-pref-height: 50;" />
+                    <Button fx:id="playPauseButton"
+                            text="▶"
+                            onAction="#playPause"
+                            style="-fx-font-size: 22px; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 50%; -fx-pref-width: 50; -fx-pref-height: 50;" />
 
-                <Button fx:id="nextButton"
-                        text="⏭"
-                        onAction="#next"
-                        style="-fx-font-size: 18px; -fx-background-color: #444; -fx-text-fill: white; -fx-background-radius: 50%; -fx-pref-width: 40; -fx-pref-height: 40;" />
-            </HBox>
+                    <Button fx:id="nextButton"
+                            text="⏭"
+                            onAction="#next"
+                            style="-fx-font-size: 18px; -fx-background-color: #444; -fx-text-fill: white; -fx-background-radius: 50%; -fx-pref-width: 40; -fx-pref-height: 40;" />
+                </HBox>
 
-            <Button text="⤴ Restore"
-                    onAction="#restoreMain"
-                    style="-fx-background-color: transparent; -fx-text-fill: lightgray; -fx-font-size: 13px; -fx-underline: true;" />
-        </VBox>
+                <Button text="⤴ Restore"
+                        onAction="#restoreMain"
+                        style="-fx-background-color: transparent; -fx-text-fill: lightgray; -fx-font-size: 13px; -fx-underline: true;" />
+            </VBox>
+        </StackPane>
     </children>
 </StackPane>
