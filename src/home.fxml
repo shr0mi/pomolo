@@ -67,11 +67,15 @@
                 <FontIcon iconLiteral="fas-plus" iconSize="20" styleClass="iconli-font-icon"/>
             </graphic>
         </Button>
-        <Button fx:id="pomodoroButton" layoutX="150.0" layoutY="30.0" mnemonicParsing="false" styleClass="icon-btn" onAction="#goToPomodoro">
+        <Button fx:id="pomodoroButton" layoutX="137.0" layoutY="30.0" mnemonicParsing="false" styleClass="icon-btn" onAction="#goToPomodoro">
             <graphic>
                 <FontIcon iconLiteral="fas-stopwatch" iconSize="20" styleClass="iconli-font-icon"/>
             </graphic>
         </Button>
-
+        <Button onAction="#goToPlaylists" layoutX="200.0" layoutY="30.0" text="Playlist" styleClass="icon-btn">
+            <graphic>
+                <FontIcon iconLiteral="fas-list" iconSize="20" styleClass="iconli-font-icon"/>
+            </graphic>
+        </Button>
     </children>
 </AnchorPane>

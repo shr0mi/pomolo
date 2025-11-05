@@ -43,11 +43,12 @@ public class HomeController {
     }
 
     @FXML
-
     public void goToPlaylists() throws IOException {
         Parent playlists = FXMLLoader.load(Main.class.getResource("/playlists.fxml"));
         Main.getRootController().setPage(playlists);
+    }
 
+    @FXML
     public void goToPomodoro(ActionEvent e) throws Exception{
         // Load the new Pomodoro FXML
         Parent pomodoro = FXMLLoader.load(getClass().getResource("Pomodoro.fxml"));

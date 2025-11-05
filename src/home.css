@@ -210,7 +210,12 @@
     -fx-text-fill: black;
 }
 
+.add-playlist-btn {
+    -fx-font-size: 13px;
+}
+
 .icon-btn {
+    -fx-text-fill: white;
     -fx-background-color: transparent;
     -fx-cursor: hand;
     -fx-padding: 8;
@@ -224,6 +229,7 @@
 }
 
 .icon-btn:hover {
+    -fx-text-fill: black;
     -fx-background-color: white;
 }
 

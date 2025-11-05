@@ -57,10 +57,9 @@
         </HBox>
         <HBox alignment="CENTER_LEFT" layoutX="35.0" layoutY="30.0" prefWidth="906.0" spacing="10.0">
             <children>
-                <Button onAction="#AddNewPlaylist" text="Add Playlist" />
+                <Button onAction="#AddNewPlaylist" text="Add Playlist" styleClass="close-btn, add-playlist-btn" />
                 <HBox HBox.hgrow="ALWAYS" />
-                <Button onAction="#goToSongs" text="Songs" />
-                <Button onAction="#goToSettings" text="Settings" />
+                <Button onAction="#goToSongs" text="X" styleClass="close-btn" />
             </children>
         </HBox>
     </children>
