@@ -18,6 +18,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import pages.confirmation_dialog.ConfirmationDialogController;
 import pages.new_playlist_dialog.NewPlaylistDialogController;
 import pages.playlist_songs.PlaylistSongsPageController;
 
@@ -131,15 +132,26 @@ public class PlaylistsPageController {
         Button deleteButton = new Button("Delete");
         deleteButton.setOnAction(e -> {
             e.consume(); // Prevent the row's onMouseClicked from firing
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Delete Playlist");
-            alert.setHeaderText("Are you sure you want to delete the playlist: " + playlist.name + "?");
-            alert.setContentText("This action cannot be undone.");
+            try {
+                FXMLLoader loader = new FXMLLoader(Main.class.getResource("/pages/confirmation_dialog/ConfirmationDialog.fxml"));
+                Parent root = loader.load();
+                ConfirmationDialogController controller = loader.getController();
+                controller.setMessage("Are you sure you want to delete the playlist: " + playlist.name + "?");
 
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.isPresent() && result.get() == ButtonType.OK){
-                SqliteDBManager.deletePlaylist(playlist.name);
-                loadPlaylists();
+                Stage dialogStage = new Stage();
+                dialogStage.initModality(Modality.APPLICATION_MODAL);
+                dialogStage.initOwner(rootPane.getScene().getWindow());
+                dialogStage.setScene(new Scene(root));
+                controller.setDialogStage(dialogStage);
+
+                dialogStage.showAndWait();
+
+                if (controller.isConfirmed()) {
+                    SqliteDBManager.deletePlaylist(playlist.name);
+                    loadPlaylists();
+                }
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
             }
         });
 

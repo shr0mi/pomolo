@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -16,7 +17,10 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import pages.all_songs.AllSongsPageController;
+import pages.confirmation_dialog.ConfirmationDialogController;
 
 import java.io.IOException;
 import java.util.List;
@@ -120,14 +124,26 @@ public class PlaylistSongsPageController {
         Button deleteButton = new Button("Delete");
         deleteButton.setOnAction(e -> {
             e.consume(); // Prevent the row's onMouseClicked from firing
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Remove Song");
-            alert.setHeaderText("Are you sure you want to remove the song: " + song.fileName + " from this playlist?");
+            try {
+                FXMLLoader loader = new FXMLLoader(Main.class.getResource("/pages/confirmation_dialog/ConfirmationDialog.fxml"));
+                Parent root = loader.load();
+                ConfirmationDialogController controller = loader.getController();
+                controller.setMessage("Are you sure you want to remove the song: " + song.fileName + " from this playlist?");
 
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.isPresent() && result.get() == ButtonType.OK){
-                SqliteDBManager.removeSongFromPlaylist(song, playlistName);
-                loadSongs();
+                Stage dialogStage = new Stage();
+                dialogStage.initModality(Modality.APPLICATION_MODAL);
+                dialogStage.initOwner(rootPane.getScene().getWindow());
+                dialogStage.setScene(new Scene(root));
+                controller.setDialogStage(dialogStage);
+
+                dialogStage.showAndWait();
+
+                if (controller.isConfirmed()) {
+                    SqliteDBManager.removeSongFromPlaylist(song, playlistName);
+                    loadSongs();
+                }
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
             }
         });
 

@@ -1,6 +1,6 @@
 .root {
     -fx-background-color: #2b2b2b;
-    -fx-font-family: "Segoe UI";
+    -fx-font-family: "System"; /* Changed to a more universal font */
 }
 
 .label {
@@ -25,4 +25,88 @@
 
 .button:hover {
     -fx-background-color: #45a049;
+}
+
+/* MiniPlayer specific styles */
+.mini-player-root {
+    -fx-background-color: rgba(43,43,43,0.55);
+    -fx-background-radius: 180;
+    -fx-font-family: "System"; /* Explicitly set for mini-player children */
+}
+
+.mini-player-song-label {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.mini-player-icon-label {
+    -fx-font-size: 42px;
+}
+
+.mini-player-control-button {
+    -fx-background-color: #5A4F6F; /* Darker purple-grey */
+    -fx-background-radius: 50%;
+    -fx-pref-width: 40;
+    -fx-pref-height: 40;
+}
+
+.mini-player-control-button .ikonli-font-icon {
+    -fx-icon-color: white;
+    -fx-icon-size: 18px;
+}
+
+.mini-player-control-button:hover {
+    -fx-background-color: white;
+}
+
+.mini-player-control-button:hover .ikonli-font-icon {
+    -fx-icon-color: black;
+}
+
+.mini-player-play-button {
+    -fx-background-color: #8A6FAD; /* Aesthetic purple for play */
+    -fx-background-radius: 50%;
+    -fx-pref-width: 50;
+    -fx-pref-height: 50;
+}
+
+.mini-player-play-button .ikonli-font-icon {
+    -fx-icon-color: white;
+    -fx-icon-size: 22px;
+}
+
+.mini-player-play-button:hover {
+    -fx-background-color: white;
+}
+
+.mini-player-play-button:hover .ikonli-font-icon {
+    -fx-icon-color: black;
+}
+
+.mini-player-pause-button {
+    -fx-background-color: #A080C0; /* Slightly lighter aesthetic purple for pause */
+    -fx-background-radius: 50%;
+    -fx-pref-width: 50;
+    -fx-pref-height: 50;
+}
+
+.mini-player-pause-button .ikonli-font-icon {
+    -fx-icon-color: white;
+    -fx-icon-size: 22px;
+}
+
+.mini-player-pause-button:hover {
+    -fx-background-color: white;
+}
+
+.mini-player-pause-button:hover .ikonli-font-icon {
+    -fx-icon-color: black;
+}
+
+.mini-player-restore-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: lightgray;
+    -fx-font-size: 13px;
+    -fx-underline: true;
 }

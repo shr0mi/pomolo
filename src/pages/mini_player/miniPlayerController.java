@@ -13,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 public class miniPlayerController {
 
@@ -22,6 +23,7 @@ public class miniPlayerController {
     @FXML private Circle visualCircle;
     @FXML private Label songLabel;
     @FXML private Button playPauseButton;
+    @FXML private FontIcon playPauseIcon; // Added fx:id for FontIcon
     @FXML private Button nextButton;
     @FXML private Button prevButton;
     @FXML private Circle glowRing;
@@ -38,8 +40,8 @@ public class miniPlayerController {
         setupGlowEffect();
 
         // Initial state: UI hidden, music design shown
-        root.setScaleX(0.5);
-        root.setScaleY(0.5);
+        root.setScaleX(0.3);
+        root.setScaleY(0.3);
         uiContainer.setOpacity(0);
         musicDesign.setOpacity(1);
 
@@ -56,7 +58,6 @@ public class miniPlayerController {
         );
         visualPulse.setAutoReverse(true);
         visualPulse.setCycleCount(Animation.INDEFINITE);
-        visualPulse.play();
 
         // Sync with MusicPlayerManager
         var song = musicManager.currentSongProperty().get();
@@ -69,9 +70,11 @@ public class miniPlayerController {
         musicManager.isPlayingProperty().addListener((obs, was, now) -> {
             updatePlayPauseIcon();
             updateGlowAnimation(now);
+            updateVisualAnimation(now); // Call new method here
         });
 
         updateGlowAnimation(musicManager.isPlayingProperty().get());
+        updateVisualAnimation(musicManager.isPlayingProperty().get()); // Initial call
     }
 
     private void setupDrag() {
@@ -93,7 +96,7 @@ public class miniPlayerController {
         root.setOnMouseExited(e -> {
             animateFade(uiContainer, 0.0);
             animateFade(musicDesign, 1.0);
-            animateScale(root, 0.5);
+            animateScale(root, 0.3);
         });
 
         root.setScaleX(0.75);
@@ -118,7 +121,7 @@ public class miniPlayerController {
     private void setupGlowEffect() {
         if (glowRing != null) {
             DropShadow glow = new DropShadow();
-            glow.setColor(Color.web("#4CAF50"));
+            glow.setColor(Color.web("#8A6FAD")); // Aesthetic purple
             glow.setRadius(25);
             glow.setSpread(0.3);
             glowRing.setEffect(glow);
@@ -129,12 +132,12 @@ public class miniPlayerController {
                     new KeyFrame(Duration.ZERO,
                             new KeyValue(glowRing.opacityProperty(), 1.0),
                             new KeyValue(glowRing.radiusProperty(), baseRadius),
-                            new KeyValue(glow.colorProperty(), Color.web("#4CAF50"))
+                            new KeyValue(glow.colorProperty(), Color.web("#8A6FAD")) // Aesthetic purple
                     ),
                     new KeyFrame(Duration.seconds(1.2),
                             new KeyValue(glowRing.opacityProperty(), 0.4),
                             new KeyValue(glowRing.radiusProperty(), baseRadius + 6),
-                            new KeyValue(glow.colorProperty(), Color.web("#80FFF9"))
+                            new KeyValue(glow.colorProperty(), Color.web("#A080C0")) // Slightly lighter aesthetic purple
                     )
             );
             glowPulse.setCycleCount(Animation.INDEFINITE);
@@ -151,7 +154,21 @@ public class miniPlayerController {
             glowRing.setOpacity(0.3);
             glowRing.setRadius(135);
             DropShadow glow = (DropShadow) glowRing.getEffect();
-            if (glow != null) glow.setColor(Color.web("#4CAF50"));
+            if (glow != null) glow.setColor(Color.web("#8A6FAD")); // Aesthetic purple
+        }
+    }
+
+    // New method to control visual animation
+    private void updateVisualAnimation(boolean isPlaying) {
+        if (visualPulse == null) return;
+        if (isPlaying) {
+            visualPulse.play();
+        } else {
+            visualPulse.stop();
+            // Reset visualCircle to its initial state when paused
+            visualCircle.setScaleX(1.0);
+            visualCircle.setScaleY(1.0);
+            visualCircle.setOpacity(0.15);
         }
     }
 
@@ -204,12 +221,13 @@ public class miniPlayerController {
     }
 
     private void updatePlayPauseIcon() {
+        playPauseButton.getStyleClass().removeAll("mini-player-play-button", "mini-player-pause-button");
         if (musicManager.isPlayingProperty().get()) {
-            playPauseButton.setText("⏸");
-            playPauseButton.setStyle("-fx-font-size: 22px; -fx-background-color: #E53935; -fx-text-fill: white; -fx-background-radius: 50%; -fx-pref-width: 50; -fx-pref-height: 50;");
+            playPauseButton.getStyleClass().add("mini-player-pause-button");
+            playPauseIcon.setIconLiteral("fas-pause"); // Update FontIcon directly
         } else {
-            playPauseButton.setText("▶");
-            playPauseButton.setStyle("-fx-font-size: 22px; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 50%; -fx-pref-width: 50; -fx-pref-height: 50;");
+            playPauseButton.getStyleClass().add("mini-player-play-button");
+            playPauseIcon.setIconLiteral("fas-play"); // Update FontIcon directly
         }
     }
 }
