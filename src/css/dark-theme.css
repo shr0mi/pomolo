@@ -1,0 +1,28 @@
+.root {
+    -fx-background-color: #2b2b2b;
+    -fx-font-family: "Segoe UI";
+}
+
+.label {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+}
+
+.text-field {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #ffffff;
+    -fx-prompt-text-fill: #a9a9a9;
+    -fx-border-color: #555555;
+    -fx-border-radius: 5;
+}
+
+.button {
+    -fx-background-color: #4CAF50; /* A green accent color */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+}
+
+.button:hover {
+    -fx-background-color: #45a049;
+}

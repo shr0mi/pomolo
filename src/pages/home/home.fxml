@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<AnchorPane fx:id="rootPane" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pages.home.HomeController">
+    <children>
+        <Text fill="WHITE" layoutX="449.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="MUSIC" textAlignment="CENTER">
+            <font>
+                <Font name="Monospaced Regular" size="25.0" />
+            </font>
+        </Text>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" layoutX="35.0" layoutY="159.0" prefHeight="300.0" prefWidth="906.0">
+            <content>
+                <VBox fx:id="vbox" prefHeight="0.0" prefWidth="892.0">
+                    <padding>
+                        <Insets bottom="60.0" />
+                    </padding>
+                </VBox>
+            </content>
+        </ScrollPane>
+        <HBox fx:id="topBar" blendMode="SCREEN" layoutX="35.0" layoutY="109.0" prefHeight="43.0" prefWidth="906.0" style="-fx-border-color: white; -fx-border-width: 2px;">
+            <children>
+                <GridPane prefHeight="30.0" prefWidth="920.0">
+                    <columnConstraints>
+                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="TRACK" GridPane.halignment="LEFT">
+                            <font>
+                                <Font name="Monospaced Regular" size="13.0" />
+                            </font>
+                        </Text>
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="ARTIST" textAlignment="CENTER" GridPane.columnIndex="1">
+                            <font>
+                                <Font name="Monospaced Regular" size="13.0" />
+                            </font>
+                        </Text>
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="DURATION" textAlignment="RIGHT" GridPane.columnIndex="2">
+                            <font>
+                                <Font name="Monospaced Regular" size="13.0" />
+                            </font>
+                        </Text>
+                    </children>
+                    <padding>
+                        <Insets left="10.0" right="10.0" />
+                    </padding>
+                </GridPane>
+            </children>
+        </HBox>
+        <Button layoutX="840.0" layoutY="30.0" mnemonicParsing="false" onAction="#goToSettings" styleClass="icon-btn">
+            <graphic>
+                <FontIcon iconLiteral="fas-cog" iconSize="20" styleClass="iconli-font-icon"/>
+            </graphic>
+        </Button>
+        <Button layoutX="75.0" layoutY="30.0" mnemonicParsing="false" onAction="#AddNewMusic" styleClass="icon-btn">
+            <graphic>
+                <FontIcon iconLiteral="fas-plus" iconSize="20" styleClass="iconli-font-icon"/>
+            </graphic>
+        </Button>
+        <Button fx:id="pomodoroButton" layoutX="137.0" layoutY="30.0" mnemonicParsing="false" styleClass="icon-btn" onAction="#goToPomodoro">
+            <graphic>
+                <FontIcon iconLiteral="fas-stopwatch" iconSize="20" styleClass="iconli-font-icon"/>
+            </graphic>
+        </Button>
+        <Button onAction="#goToPlaylists" layoutX="200.0" layoutY="30.0" text="Playlist" styleClass="icon-btn">
+            <graphic>
+                <FontIcon iconLiteral="fas-list" iconSize="20" styleClass="iconli-font-icon"/>
+            </graphic>
+        </Button>
+    </children>
+</AnchorPane>
