@@ -6,6 +6,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Collections;
 import java.util.List;
 
@@ -81,6 +82,9 @@ public class MusicPlayerManager {
 
         try {
             File file = new File(song.path);
+            if(!file.exists()){
+                throw new FileNotFoundException();
+            }
             Media media = new Media(file.toURI().toString());
             mediaPlayer = new MediaPlayer(media);
 
@@ -101,6 +105,7 @@ public class MusicPlayerManager {
         } catch (Exception e) {
             System.err.println("Error playing song: " + e.getMessage());
             isPlaying.set(false);
+            SqliteDBManager.removeSongFromDB(song.path);
         }
     }
 

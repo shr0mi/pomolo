@@ -148,6 +148,24 @@ public class SqliteDBManager {
         return false;
     }
 
+    public static void removeSongFromDB(String path){
+        if(songExists(path)){
+            String sql = "DELETE FROM songs WHERE path = ?";
+            try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, path);
+                int rows = pstmt.executeUpdate();
+                if (rows > 0) {
+                    System.out.println("Song removed from database: " + path);
+                } else {
+                    System.out.println("No song was deleted (unexpected).");
+                }
+            } catch (SQLException e) {
+                System.err.println("Error deleting song: " + e.getMessage());
+            }
+        }
+
+    }
+
     public static void insertNewSong(SongManager.SongInfo song) {
         if (song == null || song.path == null || songExists(song.path)) {
             return; // Song is invalid or already exists
