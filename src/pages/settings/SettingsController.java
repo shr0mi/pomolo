@@ -22,6 +22,7 @@ import java.util.Properties;
 public class SettingsController {
     @FXML private AnchorPane rootPane;
     @FXML private Text path_text;
+    @FXML private Slider overlayRectSlider;
     @FXML private Slider rainVolumeSlider;
     @FXML private Slider fireplaceVolumeSlider;
     @FXML private Slider windVolumeSlider;
@@ -73,6 +74,16 @@ public class SettingsController {
         windVolumeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
             double volume = newVal.doubleValue() / 100.0;
             PlayerBarController.APM.setWindVolume(volume);
+        });
+
+        // Control OverlayRect Opacity
+        // Set initial slider value
+        overlayRectSlider.setValue(Main.getRootController().getOverlayOpacity());
+
+        // Listen for changes
+        overlayRectSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            double opacity = newVal.doubleValue();
+            Main.getRootController().setOverlayOpacity(opacity);
         });
 
 

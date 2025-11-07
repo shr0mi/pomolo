@@ -55,6 +55,31 @@
                                 </GridPane>
                             </children>
                         </HBox>
+
+                        <HBox fx:id="topBar111" blendMode="SCREEN" prefHeight="43.0" prefWidth="906.0" styleClass="row-box" stylesheets="../../css/home.css">
+                            <children>
+                                <GridPane prefHeight="30.0" prefWidth="920.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <children>
+                                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Dark Overlay Opacity:" textAlignment="CENTER">
+                                            <font>
+                                                <Font name="Monospaced Regular" size="13.0" />
+                                            </font>
+                                        </Text>
+                                        <Slider fx:id="overlayRectSlider" GridPane.columnIndex="1" min="0" max="1"/>
+                                    </children>
+                                    <padding>
+                                        <Insets left="10.0" right="10.0" />
+                                    </padding>
+                                </GridPane>
+                            </children>
+                        </HBox>
                   <HBox fx:id="topBar11" blendMode="SCREEN" prefHeight="43.0" prefWidth="906.0" styleClass="row-box" stylesheets="../../css/home.css">
                      <children>
                         <GridPane prefHeight="30.0" prefWidth="920.0">

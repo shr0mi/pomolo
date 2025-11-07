@@ -5,12 +5,14 @@ import com.UserProperties;
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -22,6 +24,7 @@ public class RootPageController {
     @FXML private ImageView backgroundImage;
     @FXML private StackPane pageContainer;
     @FXML private VBox playerBar;
+    @FXML private Rectangle overlayRect;
 
     UserProperties up = new UserProperties();
 
@@ -103,6 +106,15 @@ public class RootPageController {
             // --- FIXING TYPO: Removed stray "D" ---
             showError("Image Error", "An error occurred while setting the background image: " + e.getMessage());
         }
+    }
+
+    // Control Overlay Rect opacity
+    public void setOverlayOpacity(double value) {
+        overlayRect.setOpacity(value);
+    }
+
+    public double getOverlayOpacity() {
+        return overlayRect.getOpacity();
     }
 
     public void showError(String title, String content) {

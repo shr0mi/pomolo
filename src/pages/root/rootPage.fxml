@@ -12,7 +12,7 @@
         <!-- Layer 1: Background and Overlay -->
         <ImageView fx:id="backgroundImage" fitHeight="540.0" fitWidth="960.0" pickOnBounds="true" preserveRatio="false" />
 
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#00000073" height="557.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="973.0" />
+      <Rectangle fx:id="overlayRect" arcHeight="5.0" arcWidth="5.0" fill="black" opacity="0.55" height="557.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="973.0" />
 
         <StackPane fx:id="pageContainer" prefHeight="289.0" prefWidth="631.0">
 
