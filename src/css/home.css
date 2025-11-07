@@ -61,6 +61,23 @@
     -fx-fill: black; /* Makes text black on hover */
 }
 
+/* --- row-box slider CSS for settings page  --- */
+.row-box .slider .track {
+    -fx-background-color: white; /* default line color */
+}
+.row-box .slider .thumb {
+    -fx-background-color: white; /* default knob color */
+}
+
+/* --- When hovered over the whole row --- */
+.row-box:hover .slider .track {
+    -fx-background-color: black; /* line turns black */
+}
+.row-box:hover .slider .thumb {
+    -fx-background-color: black; /* line turns black */
+}
+
+
 
 /* ---
 --- PLAYER PAGE STYLES
@@ -236,6 +253,20 @@
 
 .icon-btn:hover .iconli-font-icon {
     -fx-icon-color: black;
+}
+
+.icon-btn-selected {
+    -fx-text-fill: black;
+    -fx-background-color: white;
+    -fx-cursor: hand;
+    -fx-padding: 8;
+    -fx-border-width: 1px;
+    -fx-border-color: white;
+}
+
+.icon-btn-selected .iconli-font-icon {
+    -fx-icon-color: black;
+    -fx-icon-size: 20px;
 }
 
 

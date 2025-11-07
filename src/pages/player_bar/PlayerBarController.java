@@ -18,6 +18,7 @@ public class PlayerBarController {
     @FXML private VBox playerBarPane;
     @FXML private Button prevButton;
     @FXML private Button playPauseButton;
+    @FXML private Button ambientButton;
     @FXML private FontIcon playPauseIcon;
     @FXML private Button nextButton;
     @FXML private Text currentSongText;
@@ -28,6 +29,7 @@ public class PlayerBarController {
 
     private MusicPlayerManager playerManager;
     private boolean isSliderBeingDragged = false;
+    public static final AmbientPlayerManager APM = new AmbientPlayerManager();
 
     @FXML
     private void initialize() {
@@ -123,6 +125,17 @@ public class PlayerBarController {
     @FXML private void handlePlayPause() { playerManager.playPause(); }
     @FXML private void handleNext() { playerManager.next(); }
     @FXML private void handlePrevious() { playerManager.previous(); }
+    @FXML private void handleAmbient(){
+        if(!APM.isPlaying) {
+            ambientButton.getStyleClass().remove("icon-btn");
+            ambientButton.getStyleClass().add("icon-btn-selected");
+            APM.playAmbientMusic();
+        }else{
+            ambientButton.getStyleClass().remove("icon-btn-selected");
+            ambientButton.getStyleClass().add("icon-btn");
+            APM.stopAmbientMusic();
+        }
+    }
 
     private String formatDurationSimple(Duration duration) {
         if (duration == null || duration.isUnknown()) return "00:00";

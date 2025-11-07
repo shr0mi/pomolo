@@ -46,6 +46,11 @@
                         <FontIcon iconLiteral="fas-forward" iconSize="22" styleClass="iconli-font-icon"/>
                     </graphic>
                 </Button>
+                <Button fx:id="ambientButton" mnemonicParsing="false" onAction="#handleAmbient" styleClass="icon-btn">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-tree" iconSize="22" styleClass="iconli-font-icon"/>
+                    </graphic>
+                </Button>
 
             </children>
          </HBox>

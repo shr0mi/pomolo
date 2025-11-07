@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -54,12 +55,86 @@
                                 </GridPane>
                             </children>
                         </HBox>
+                  <HBox fx:id="topBar11" blendMode="SCREEN" prefHeight="43.0" prefWidth="906.0" styleClass="row-box" stylesheets="../../css/home.css">
+                     <children>
+                        <GridPane prefHeight="30.0" prefWidth="920.0">
+                           <columnConstraints>
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Rain Volume:" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="Monospaced Regular" size="13.0" />
+                                 </font>
+                              </Text>
+                              <Slider fx:id="rainVolumeSlider" GridPane.columnIndex="1" min="0" max="100"/>
+                           </children>
+                           <padding>
+                              <Insets left="10.0" right="10.0" />
+                           </padding>
+                        </GridPane>
+                     </children>
+                  </HBox>
+
+                        <HBox fx:id="topBar12" blendMode="SCREEN" prefHeight="43.0" prefWidth="906.0" styleClass="row-box" stylesheets="../../css/home.css">
+                            <children>
+                                <GridPane prefHeight="30.0" prefWidth="920.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <children>
+                                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Fireplace Volume:" textAlignment="CENTER">
+                                            <font>
+                                                <Font name="Monospaced Regular" size="13.0" />
+                                            </font>
+                                        </Text>
+                                        <Slider fx:id="fireplaceVolumeSlider" GridPane.columnIndex="1" min="0" max="100"/>
+                                    </children>
+                                    <padding>
+                                        <Insets left="10.0" right="10.0" />
+                                    </padding>
+                                </GridPane>
+                            </children>
+                        </HBox>
+
+                        <HBox fx:id="topBar13" blendMode="SCREEN" prefHeight="43.0" prefWidth="906.0" styleClass="row-box" stylesheets="../../css/home.css">
+                            <children>
+                                <GridPane prefHeight="30.0" prefWidth="920.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <children>
+                                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Wind Volume:" textAlignment="CENTER">
+                                            <font>
+                                                <Font name="Monospaced Regular" size="13.0" />
+                                            </font>
+                                        </Text>
+                                        <Slider fx:id="windVolumeSlider" GridPane.columnIndex="1" min="0" max="100"/>
+                                    </children>
+                                    <padding>
+                                        <Insets left="10.0" right="10.0" />
+                                    </padding>
+                                </GridPane>
+                            </children>
+                        </HBox>
                     </children>
                 </VBox>
             </content>
         </ScrollPane>
 
-        <Button layoutX="880.0" layoutY="29.0" mnemonicParsing="false" onAction="#goToHome" text="X" styleClass="close-btn"/>
+        <Button layoutX="880.0" layoutY="29.0" mnemonicParsing="false" onAction="#goToHome" styleClass="close-btn" text="X" />
 
     </children>
 </AnchorPane>

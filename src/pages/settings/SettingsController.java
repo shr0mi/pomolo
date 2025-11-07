@@ -1,16 +1,19 @@
 package pages.settings;
 
 import com.Main;
+import com.MusicPlayerManager;
 import com.UserProperties;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import pages.player_bar.PlayerBarController;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +22,9 @@ import java.util.Properties;
 public class SettingsController {
     @FXML private AnchorPane rootPane;
     @FXML private Text path_text;
+    @FXML private Slider rainVolumeSlider;
+    @FXML private Slider fireplaceVolumeSlider;
+    @FXML private Slider windVolumeSlider;
 
     UserProperties up = new UserProperties();
 
@@ -41,6 +47,35 @@ public class SettingsController {
         } catch (IOException e) {
             showError("Properties Error", "Could not load user settings: " + e.getMessage());
         }
+
+        // Set initial slider value
+        rainVolumeSlider.setValue(PlayerBarController.APM.getRainVolume() * 100);
+
+        // Listen for changes
+        rainVolumeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            double volume = newVal.doubleValue() / 100.0;
+            PlayerBarController.APM.setRainVolume(volume);
+        });
+
+        // Set initial slider value
+        fireplaceVolumeSlider.setValue(PlayerBarController.APM.getFireplaceVolume() * 100);
+
+        // Listen for changes
+        fireplaceVolumeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            double volume = newVal.doubleValue() / 100.0;
+            PlayerBarController.APM.setFireplaceVolume(volume);
+        });
+
+        // Set initial slider value
+        windVolumeSlider.setValue(PlayerBarController.APM.getWindVolume() * 100);
+
+        // Listen for changes
+        windVolumeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            double volume = newVal.doubleValue() / 100.0;
+            PlayerBarController.APM.setWindVolume(volume);
+        });
+
+
     }
 
     @FXML
