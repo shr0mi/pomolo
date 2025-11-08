@@ -6,29 +6,21 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.media.AudioClip;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
-import org.kordamp.ikonli.javafx.FontIcon;
-
 import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 import java.io.File;
-import java.util.Objects;
-import static javafx.scene.paint.Color.WHITE;
+import javafx.scene.chart.BarChart;
 
 public class PomodoroController {
     // FXML Component Bindings
@@ -38,8 +30,7 @@ public class PomodoroController {
     @FXML private Circle timerProgressRing;
     @FXML private HBox increaseButtonHBox, decreaseButtonHBox;
     @FXML private Button increaseHourButton, decreaseHourButton, increaseMinuteButton, decreaseMinuteButton, increaseSecondButton, decreaseSecondButton;
-    @FXML private VBox taskListVBox;
-    @FXML private Button addtask, removetask;
+    @FXML private BarChart<String, Number> pomodoroBarChart;
     // STATIC STATE VARIABLES
     private static final int POMODORO_DEFAULT_MINUTES = 0;
     private static int POMODORO_PREV_TIME = 0;
@@ -52,7 +43,6 @@ public class PomodoroController {
     private static AudioClip ringtone;
     private static final String CONFIG_FILE_NAME = "config.properties";
     private static final String DURATION_KEY = "pomodoro_duration_seconds";
-    private static int taskCounter = 1;
 
     @FXML
     public void initialize() {
@@ -214,75 +204,6 @@ public class PomodoroController {
         try { String savedDurationStr = prop.getProperty(DURATION_KEY, String.valueOf(defaultDurationSeconds)); return Integer.parseInt(savedDurationStr); }
 
         catch (NumberFormatException ignored) { return defaultDurationSeconds; } }
-    @FXML
-    private void addtask(ActionEvent event) {
-        String taskText = "New Task " + taskCounter++;
-        HBox newTask = createTaskItem(taskText);
-        // Add the new task to the VBox inside the ScrollPane
-        taskListVBox.getChildren().add(newTask);
-    }
 
-    @FXML
-    private void removetask(ActionEvent event) {
-        // Simple implementation: remove the last task added
-        if (!taskListVBox.getChildren().isEmpty()) {
-            taskListVBox.getChildren().remove(taskListVBox.getChildren().size() - 1);
-            // Decrement the counter if you want tasks to be numbered sequentially again
-            if (taskCounter > 1) taskCounter--;
-        }
-    }
-
-    @FXML
-    private void toggleTaskStatus(ActionEvent event) {
-        Button statusButton = (Button) event.getSource();
-        FontIcon icon = (FontIcon) statusButton.getGraphic();
-
-        // Get the current status (defaults to false if not set)
-        boolean isComplete = (boolean) statusButton.getUserData();
-
-        if (isComplete) {
-            // Task is now incomplete: switch to empty square
-            icon.setIconLiteral("far-square");
-            statusButton.setUserData(false);
-            // Optional: Change Text color/style of the parent HBox's Text node if needed
-        } else {
-            // Task is now complete: switch to checkmark
-            icon.setIconLiteral("fas-check-square");
-            statusButton.setUserData(true);
-            // Optional: Change Text color/style to show completion
-        }
-    }
-
-    /**
-     * Helper method to create a single HBox component for a task.
-     * @param taskText The descriptive text for the task.
-     * @return The complete HBox node.
-     */
-    private HBox createTaskItem(String taskText) {
-        HBox taskBox = new HBox();
-        taskBox.setAlignment(Pos.CENTER_LEFT);
-        taskBox.setSpacing(10.0);
-        taskBox.setPadding(new Insets(5, 5, 5, 5));
-
-        // Task Text
-        Text text = new Text(taskText);
-        text.setFill(WHITE);
-        text.getStyleClass().add("task-text");
-        HBox.setHgrow(text, Priority.ALWAYS);
-
-        // Check Button
-        FontIcon icon = new FontIcon("far-square");
-        icon.setIconSize(20);
-        icon.getStyleClass().add("iconli-font-icon");
-
-        Button statusButton = new Button();
-        statusButton.setGraphic(icon);
-        statusButton.getStyleClass().add("pomodoro-icon-btn");
-        statusButton.setOnAction(this::toggleTaskStatus);
-        statusButton.setUserData(false); // Stores task status (false = incomplete)
-
-        taskBox.getChildren().addAll(text, statusButton);
-        return taskBox;
-    }
 
 }

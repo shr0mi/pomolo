@@ -189,7 +189,6 @@
     -fx-icon-size: 20px;
 }
 
-/* --- POMODORO HOVER STATE --- */
 .pomodoro-icon-btn:hover {
     -fx-text-fill: black;
     -fx-background-color: white;
@@ -199,7 +198,6 @@
     -fx-icon-color: black;
 }
 
-/* --- POMODORO SELECTED STATE --- */
 .pomodoro-icon-btn-selected {
     -fx-text-fill: black;
     -fx-background-color: white;
@@ -223,6 +221,37 @@
     -fx-padding:4px;
 }
 
+/* --- BAR GRAPH STYLE --- */
+.chart-bar {
+    -fx-bar-fill: #80E0FF;
+    -fx-stroke: transparent;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: transparent;
+}
+.chart-vertical-grid-lines {
+    -fx-stroke: transparent;
+}
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.axis {
+    -fx-tick-label-fill: #E0E0E0;
+    -fx-stroke: transparent;
+    -fx-tick-mark-stroke: transparent;
+}
+
+.chart-content > .axis.y {
+    -fx-stroke: transparent;
+    -fx-tick-mark-stroke: transparent;
+}
+
+.chart-content > .axis.x {
+    -fx-stroke: white;
+    -fx-tick-mark-stroke: white;
+}
 /* ... other styles (.scroll-pane, etc.) ... */
 
 .close-btn{
@@ -281,5 +310,6 @@
     -fx-icon-color: black;
     -fx-icon-size: 20px;
 }
+
 
 
