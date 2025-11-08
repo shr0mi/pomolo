@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -28,77 +29,129 @@
 
     <Button layoutX="880.0" layoutY="30.0" mnemonicParsing="false" onAction="#goToHome" text="X" styleClass="close-btn"/>
 
-    <HBox alignment="CENTER" layoutX="27.0" layoutY="88.0" prefHeight="400.0" prefWidth="906.0" spacing="100.0" style="-fx-background-color: transparent;">
+    <HBox alignment="CENTER" layoutX="27.0" layoutY="88.0" prefHeight="400.0" prefWidth="906.0" spacing="20.0" style="-fx-background-color: transparent;">
         <padding>
-            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+            <Insets bottom="90.0" left="10.0" right="10.0"/>
         </padding>
-        <VBox alignment="TOP_CENTER" prefWidth="400" spacing="20.0" HBox.hgrow="ALWAYS">
-            <HBox alignment="CENTER" spacing="40.0">
-                <VBox alignment="CENTER" spacing="50.0">
-                    <Button fx:id="playButton" onAction="#handlePlay" prefHeight="50.0" prefWidth="50.0" style="-fx-font-size: 20pt; -fx-font-family: monospace;" styleClass="icon-btn">
+        <VBox alignment="TOP_CENTER" prefWidth="300" spacing="10.0" styleClass="pom-box">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+
+                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="TASKS" textAlignment="LEFT">
+                    <font>
+                        <Font name="Monospaced Regular" size="25.0" />
+                    </font>
+                </Text>
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <Button fx:id="addtask" onAction="#addtask" styleClass="pomodoro-icon-btn">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-plus" iconSize="22" styleClass="iconli-font-icon"/>
+                    </graphic>
+                </Button>
+                <Button fx:id="removetask" onAction="#removetask" styleClass="pomodoro-icon-btn">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-minus" iconSize="22" styleClass="iconli-font-icon"/>
+                    </graphic>
+                </Button>
+
+            </HBox>
+
+            <Line stroke="WHITE" startX="0.0" endX="280.0" strokeWidth="1.0" />
+
+            <ScrollPane fx:id="taskScrollPane" fitToWidth="true" VBox.vgrow="ALWAYS">
+                <style>
+                    -fx-background-color: transparent;
+                    -fx-border-color: transparent;
+                </style>
+
+                <VBox fx:id="taskListVBox" spacing="8.0" style="-fx-padding: 5 0 0 0;">
+
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Text fill="WHITE" text="Example Task Item" HBox.hgrow="ALWAYS" />
+
+                        <Button fx:id="taskStatusButton" styleClass="pomodoro-icon-btn" onAction="#toggleTaskStatus">
+                            <graphic>
+                                <FontIcon iconLiteral="far-square" iconSize="20" styleClass="iconli-font-icon"/>
+                            </graphic>
+                        </Button>
+                    </HBox>
+
+                </VBox>
+            </ScrollPane>
+
+        </VBox>
+        <VBox alignment="TOP_CENTER" prefWidth="300" spacing="20.0">
+            <HBox alignment="CENTER" spacing="10.0" styleClass = "pom-box">
+                <VBox alignment="CENTER" spacing="30.0">
+                    <Button fx:id="playButton" onAction="#handlePlay" prefHeight="50.0" prefWidth="50.0" style="-fx-font-size: 20pt; -fx-font-family: monospace;" styleClass="pomodoro-icon-btn">
                         <graphic>
                             <FontIcon iconLiteral="fas-play" iconSize="22" styleClass="iconli-font-icon"/>
                         </graphic>
                     </Button>
-                    <Button fx:id="pauseButton" onAction="#handlePause" prefHeight="50.0" prefWidth="50.0" style="-fx-font-size: 20pt; -fx-font-family: monospace;" styleClass="icon-btn">
+                    <Button fx:id="pauseButton" onAction="#handlePause" prefHeight="50.0" prefWidth="50.0" style="-fx-font-size: 20pt; -fx-font-family: monospace;" styleClass="pomodoro-icon-btn">
                         <graphic>
                             <FontIcon iconLiteral="fas-pause" iconSize="22" styleClass="iconli-font-icon"/>
                         </graphic>
                     </Button>
-                    <Button fx:id="stopButton" onAction="#handleStop" prefHeight="50.0" prefWidth="50.0" style="-fx-font-size: 15pt; -fx-font-family: monospace;" styleClass="icon-btn">
+                    <Button fx:id="stopButton" onAction="#handleStop" prefHeight="50.0" prefWidth="50.0" style="-fx-font-size: 15pt; -fx-font-family: monospace;" styleClass="pomodoro-icon-btn">
                         <graphic>
                             <FontIcon iconLiteral="fas-stop" iconSize="22" styleClass="iconli-font-icon"/>
                         </graphic>
                     </Button>
                 </VBox>
 
-                <VBox alignment="CENTER" spacing="5">
+                <VBox alignment="CENTER" spacing="2">
                     <StackPane fx:id="timerContainer" alignment="CENTER" maxHeight="350" maxWidth="350">
                         <StackPane fx:id="ringVisualsStack" alignment="CENTER">
                             <Circle fill="transparent" radius="110.0" stroke="#FFFFFF66" strokeWidth="4.0" />
                             <Circle fx:id="timerProgressRing" fill="transparent" radius="110.0" stroke="#FFFFFF" strokeLineCap="ROUND" strokeWidth="10.0" />
                         </StackPane>
-                        <Label fx:id="timerLabel" alignment="CENTER" prefWidth="200.0" style="-fx-font-size: 25pt; -fx-text-fill: #FFFFFF; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5,0,0,0); -fx-font-family: monospace; -fx-fond-weight: bold;" text="00:25:00">
+                        <Label fx:id="timerLabel" alignment="CENTER" prefWidth="200.0" style="-fx-font-size: 30pt; -fx-text-fill: #FFFFFF; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5,0,0,0); -fx-font-family: monospace; -fx-fond-weight: bold;" text="00:25:00">
                             <font>
                                 <Font name="Inter" size="55.0" />
                             </font>
                         </Label>
-                        <HBox fx:id="decreaseButtonHBox" alignment="CENTER" spacing="40.0" StackPane.alignment="CENTER">
+                        <HBox fx:id="decreaseButtonHBox" alignment="CENTER" spacing="20.0" StackPane.alignment="CENTER">
                             <StackPane.margin>
                                 <Insets top="200.0" />
                             </StackPane.margin>
-                            <Button fx:id="decreaseHourButton" onAction="#handleTimeAdjustment" prefHeight="50.0" prefWidth="50.0" styleClass="icon-btn">
+                            <Button fx:id="decreaseHourButton" onAction="#handleTimeAdjustment" prefHeight="50.0" prefWidth="50.0" styleClass="pomodoro-icon-btn">
                                 <graphic>
                                     <FontIcon iconLiteral="fas-minus" iconSize="22" styleClass="iconli-font-icon"/>
                                 </graphic>
                             </Button>
-                            <Button fx:id="decreaseMinuteButton" onAction="#handleTimeAdjustment" prefHeight="50.0" prefWidth="50.0" styleClass="icon-btn">
+                            <Button fx:id="decreaseMinuteButton" onAction="#handleTimeAdjustment" prefHeight="50.0" prefWidth="50.0" styleClass="pomodoro-icon-btn">
                                 <graphic>
                                     <FontIcon iconLiteral="fas-minus" iconSize="22" styleClass="iconli-font-icon"/>
                                 </graphic>
                             </Button>
-                            <Button fx:id="decreaseSecondButton" onAction="#handleTimeAdjustment" prefHeight="50.0" prefWidth="50.0" styleClass="icon-btn">
+                            <Button fx:id="decreaseSecondButton" onAction="#handleTimeAdjustment" prefHeight="50.0" prefWidth="50.0" styleClass="pomodoro-icon-btn">
                                 <graphic>
                                     <FontIcon iconLiteral="fas-minus" iconSize="22" styleClass="iconli-font-icon"/>
                                 </graphic>
                             </Button>
                         </HBox>
 
-                        <HBox fx:id="increaseButtonHBox" alignment="CENTER" spacing="40.0" StackPane.alignment="TOP_CENTER">
+                        <HBox fx:id="increaseButtonHBox" alignment="CENTER" spacing="20.0" StackPane.alignment="TOP_CENTER">
                             <StackPane.margin>
                                 <Insets bottom="200.0" />
                             </StackPane.margin>
-                            <Button fx:id="increaseHourButton" onAction="#handleTimeAdjustment" prefHeight="50.0" prefWidth="50.0" styleClass="icon-btn">
+                            <Button fx:id="increaseHourButton" onAction="#handleTimeAdjustment" prefHeight="50.0" prefWidth="50.0" styleClass="pomodoro-icon-btn">
                             <graphic>
                                 <FontIcon iconLiteral="fas-plus" iconSize="22" styleClass="iconli-font-icon"/>
                             </graphic>
                             </Button>
-                            <Button fx:id="increaseMinuteButton" onAction="#handleTimeAdjustment" prefHeight="50.0" prefWidth="50.0" styleClass="icon-btn">
+                            <Button fx:id="increaseMinuteButton" onAction="#handleTimeAdjustment" prefHeight="50.0" prefWidth="50.0" styleClass="pomodoro-icon-btn">
                                 <graphic>
                                     <FontIcon iconLiteral="fas-plus" iconSize="22" styleClass="iconli-font-icon"/>
                                 </graphic>
                             </Button>
-                            <Button fx:id="increaseSecondButton" onAction="#handleTimeAdjustment" prefHeight="50.0" prefWidth="50.0" styleClass="icon-btn">
+                            <Button fx:id="increaseSecondButton" onAction="#handleTimeAdjustment" prefHeight="50.0" prefWidth="50.0" styleClass="pomodoro-icon-btn">
                                 <graphic>
                                     <FontIcon iconLiteral="fas-plus" iconSize="22" styleClass="iconli-font-icon"/>
                                 </graphic>
@@ -109,7 +162,7 @@
             </HBox>
         </VBox>
         <!--Stats Column -->
-        <VBox alignment="TOP_LEFT" prefWidth="400" spacing="10" HBox.hgrow="ALWAYS">
+        <VBox alignment="TOP_LEFT" prefWidth="300" spacing="10" styleClass="pom-box">
             <padding>
                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
             </padding>
