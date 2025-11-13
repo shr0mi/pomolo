@@ -85,14 +85,55 @@ public class SimpleHttpServer {
                 return;
             }
 
-            exchange.getResponseHeaders().add("Content-Type", "audio/mpeg");
-            exchange.sendResponseHeaders(200, currentMusicFile.length());
+            long fileLength = currentMusicFile.length();
+            String range = exchange.getRequestHeaders().getFirst("Range");
+
+            long start = 0;
+            long end = fileLength - 1;
+
+            if (range != null && range.startsWith("bytes=")) {
+                String[] parts = range.substring(6).split("-");
+                try {
+                    start = Long.parseLong(parts[0]);
+                    if (parts.length > 1 && !parts[1].isEmpty()) {
+                        end = Long.parseLong(parts[1]);
+                    }
+                } catch (NumberFormatException ignored) {}
+            }
+
+            if (end >= fileLength) end = fileLength - 1;
+            long contentLength = end - start + 1;
+
+            // Set headers
+            exchange.getResponseHeaders().set("Content-Type", "audio/mpeg");
+            exchange.getResponseHeaders().set("Accept-Ranges", "bytes");
+            exchange.getResponseHeaders().set("Content-Range", "bytes " + start + "-" + end + "/" + fileLength);
+            exchange.getResponseHeaders().set("Content-Length", String.valueOf(contentLength));
+
+            if (range != null) {
+                exchange.sendResponseHeaders(206, contentLength); // Partial Content
+            } else {
+                exchange.sendResponseHeaders(200, fileLength); // Full file
+            }
+
             try (OutputStream os = exchange.getResponseBody();
                  FileInputStream fis = new FileInputStream(currentMusicFile)) {
-                fis.transferTo(os);
+
+                fis.skip(start);
+                byte[] buffer = new byte[8192];
+                long bytesRemaining = contentLength;
+
+                while (bytesRemaining > 0) {
+                    int bytesToRead = (int) Math.min(buffer.length, bytesRemaining);
+                    int bytesRead = fis.read(buffer, 0, bytesToRead);
+                    if (bytesRead == -1) break;
+                    os.write(buffer, 0, bytesRead);
+                    bytesRemaining -= bytesRead;
+                }
             }
         }
     }
+
 
     static class MyHandler implements HttpHandler {
         @Override
@@ -114,7 +155,7 @@ public class SimpleHttpServer {
                         else if (e.data === 'PAUSE') audio.pause();
                         else if (e.data.startsWith('SEEK:')){
                             const time = parseFloat(e.data.split(':')[1]);
-                        
+                          
                             // Ensure audio is ready before seeking
                             if (audio.readyState >= 2) {  // HAVE_METADATA
                                 audio.currentTime = time;
