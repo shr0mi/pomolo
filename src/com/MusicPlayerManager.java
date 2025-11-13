@@ -1,9 +1,12 @@
 package com;
 
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+import server.SimpleHttpServer;
+import server.SyncWebSocketServer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -102,6 +105,9 @@ public class MusicPlayerManager {
             mediaPlayer.setOnEndOfMedia(this::next);
             mediaPlayer.setVolume(volume.get());
 
+            // Tell websocket to change music file
+            SimpleHttpServer.setCurrentMusic(file);
+
         } catch (Exception e) {
             System.err.println("Error playing song: " + e.getMessage());
             isPlaying.set(false);
@@ -114,9 +120,15 @@ public class MusicPlayerManager {
             if (isPlaying.get()) {
                 mediaPlayer.pause();
                 isPlaying.set(false);
+
+                // Tell web socket to pause the music
+                SyncWebSocketServer.broadcast("PAUSE");
             } else {
                 mediaPlayer.play();
                 isPlaying.set(true);
+
+                // Tell web socket to play the music
+                SyncWebSocketServer.broadcast("PLAY");
             }
         } else if (!songQueue.isEmpty()) {
             playSong(0);
@@ -138,6 +150,22 @@ public class MusicPlayerManager {
     public void seek(Duration duration) {
         if (mediaPlayer != null) {
             mediaPlayer.seek(duration);
+
+            // Wait a bit for the seek to complete
+            Platform.runLater(() -> {
+                try {
+                    Thread.sleep(100); // Small delay
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                // Broadcast the actual current time after seek
+                double seconds = mediaPlayer.getCurrentTime().toSeconds();
+                String message = "SEEK:" + seconds;
+                System.out.println("Broadcasting seek position: " + message);
+                SyncWebSocketServer.broadcast(message);
+
+            });
         }
     }
 

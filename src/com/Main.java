@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import pages.root.RootPageController;
+import server.SimpleHttpServer;
 
 public class Main extends Application {
     public static RootPageController rootController;
@@ -38,6 +39,9 @@ public class Main extends Application {
         fadeIn.setFromValue(0.0);
         fadeIn.setToValue(1.0);
         fadeIn.play();
+
+        //Start http and websocket server
+        SimpleHttpServer.startHttpServer();
     }
 
     @Override
