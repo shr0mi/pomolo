@@ -12,6 +12,10 @@ import java.net.InetSocketAddress;
 import java.util.Scanner;
 
 public class SimpleHttpServer {
+    // store the current track being served
+    private static volatile File currentMusicFile = null;
+
+
     public static void main(String[] args){
         try {
             // Create an HttpServer instance
@@ -20,22 +24,18 @@ public class SimpleHttpServer {
 
 
 
-            // Serve MP3
-            server.createContext("/music", exchange -> {
-                File file = new File("/home/shromi/Downloads/Save_your_tears.mp3");
-                exchange.getResponseHeaders().add("Content-Type", "audio/mpeg");
-                exchange.sendResponseHeaders(200, file.length());
-                try (OutputStream os = exchange.getResponseBody();
-                     FileInputStream fis = new FileInputStream(file)) {
-                    fis.transferTo(os);
-                }
-            });
+            // Serve MP3 dynamically
+            server.createContext("/music", new MusicHandler());
+
+            // Start web socket server
             WebSocketLauncher.startServer();
 
+            // Start htttp server with default configuration
             server.setExecutor(null);
             server.start();
             System.out.println("HTTP server at http://<host-ip>:8081");
 
+            // Control Test
             Scanner sc = new Scanner(System.in);
             while(true) {
                 System.out.println("Enter code:");
@@ -47,7 +47,10 @@ public class SimpleHttpServer {
                 }else if(x==2){
                     SyncWebSocketServer.broadcast("PAUSE");
                 }else{
-                    SyncWebSocketServer.broadcast("PLAY");
+                    System.out.println("Enter track path:");
+                    String path = sc.nextLine().trim();
+                    File music = new File(path);
+                    setCurrentMusic(music);
                 }
             }
 
@@ -55,6 +58,39 @@ public class SimpleHttpServer {
             System.out.println("Error starting the server: " + e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    // --- NEW METHOD ---
+    public static void setCurrentMusic(File file) {
+        if (file != null && file.exists() && file.isFile()) {
+            currentMusicFile = file;
+            SyncWebSocketServer.broadcast("NEW_TRACK:/music?t=" + System.currentTimeMillis());
+            System.out.println("Now serving: " + file.getName());
+        } else {
+            System.out.println("Invalid file selected for streaming.");
+        }
+    }
+
+    // --- NEW HANDLER FOR /music ---
+    static class MusicHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (currentMusicFile == null) {
+                String msg = "No music file selected yet.";
+                exchange.sendResponseHeaders(404, msg.length());
+                try (OutputStream os = exchange.getResponseBody()) {
+                    os.write(msg.getBytes());
+                }
+                return;
+            }
+
+            exchange.getResponseHeaders().add("Content-Type", "audio/mpeg");
+            exchange.sendResponseHeaders(200, currentMusicFile.length());
+            try (OutputStream os = exchange.getResponseBody();
+                 FileInputStream fis = new FileInputStream(currentMusicFile)) {
+                fis.transferTo(os);
+            }
         }
     }
 
@@ -77,6 +113,11 @@ public class SimpleHttpServer {
                         if (e.data === 'PLAY') audio.play();
                         else if (e.data === 'PAUSE') audio.pause();
                         else if (e.data.startsWith('SEEK:')) audio.currentTime = parseFloat(e.data.split(':')[1]);
+                        else if (e.data.startsWith('NEW_TRACK:')) {
+                            audio.src = e.data.split(':')[1];
+                            audio.load();
+                            audio.play();
+                        }
                     };
                   </script>
                 </body>
