@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
@@ -62,6 +63,16 @@ public class RootPageController {
             e.printStackTrace();
             showError("Application Error", "An unexpected error occurred during initialization: " + e.getMessage());
         }
+
+        backgroundImage.fitWidthProperty().bind(root.widthProperty());
+        backgroundImage.fitHeightProperty().bind(root.heightProperty());
+
+        overlayRect.widthProperty().bind(((Region) overlayRect.getParent()).widthProperty());
+        overlayRect.heightProperty().bind(((Region) overlayRect.getParent()).heightProperty());
+
+        // Bind pageContainer to fill width and adjust height (leaving 100px for player bar)
+        pageContainer.prefWidthProperty().bind(root.widthProperty());
+        pageContainer.prefHeightProperty().bind(root.heightProperty().subtract(130)); // 30 for title bar + 100 for player bar
     }
 
     // Page Navigation (This part is for page-to-page and is correct)

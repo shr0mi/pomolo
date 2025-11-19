@@ -23,7 +23,8 @@ public class Main extends Application {
         Parent root = loader.load();
         rootController = loader.getController();
 
-        Scene scene = new Scene(root, 960, 540);
+        Scene scene = new Scene(root, 1280, 720);
+        //Scene scene = new Scene(root, 960, 540);
         scene.getStylesheets().add(Main.class.getResource("/css/home.css").toExternalForm());
 
         // 1. Remove default window decorations

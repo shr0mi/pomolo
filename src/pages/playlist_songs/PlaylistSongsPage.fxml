@@ -14,23 +14,29 @@
 
 <AnchorPane fx:id="rootPane" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pages.playlist_songs.PlaylistSongsPageController">
     <children>
-        <Text fx:id="playlistNameText" fill="WHITE" layoutX="425.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLAYLIST" textAlignment="CENTER">
+        <HBox alignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+        <Text fx:id="playlistNameText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="PLAYLIST" textAlignment="CENTER">
             <font>
                 <Font name="Monospaced Regular" size="25.0" />
             </font>
         </Text>
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" layoutX="35.0" layoutY="159.0" prefHeight="300.0" prefWidth="906.0">
+        </HBox>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="300.0"
+                    AnchorPane.leftAnchor="35.0"
+                    AnchorPane.rightAnchor="35.0"
+                    AnchorPane.topAnchor="159.0"
+        >
             <content>
-                <VBox fx:id="vbox" prefHeight="0.0" prefWidth="892.0">
+                <VBox fx:id="vbox" prefHeight="0.0">
                     <padding>
                         <Insets bottom="60.0" />
                     </padding>
                 </VBox>
             </content>
         </ScrollPane>
-        <HBox fx:id="topBar" alignment="CENTER" layoutX="35.0" layoutY="109.0" prefHeight="43.0" prefWidth="906.0" style="-fx-border-color: white; -fx-border-width: 2px;">
+        <HBox fx:id="topBar" alignment="CENTER" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" AnchorPane.topAnchor="109.0" prefHeight="43.0" prefWidth="906.0" style="-fx-border-color: white; -fx-border-width: 2px;">
             <children>
-                <GridPane prefHeight="30.0" prefWidth="920.0">
+                <GridPane prefHeight="30.0" HBox.hgrow="ALWAYS">
                     <columnConstraints>
                         <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" percentWidth="40.0" />
                         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" percentWidth="20.0" />
@@ -63,11 +69,11 @@
                 </GridPane>
             </children>
         </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="35.0" layoutY="30.0" prefWidth="906.0" spacing="10.0">
+        <HBox alignment="CENTER_LEFT" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" AnchorPane.topAnchor="30.0" spacing="10.0">
             <children>
-                <Button onAction="#AddNewMusic" text="Add Music" />
+                <Button onAction="#AddNewMusic" text="Add Music" styleClass="close-btn, add-playlist-btn" />
                 <HBox HBox.hgrow="ALWAYS" />
-                <Button onAction="#goBack" text="Back" />
+                <Button onAction="#goBack" text="X" styleClass="close-btn"/>
             </children>
         </HBox>
     </children>
