@@ -2,6 +2,8 @@ package com;
 
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -24,13 +26,14 @@ public class Main extends Application {
         Parent root = loader.load();
         rootController = loader.getController();
 
-        Scene scene = new Scene(root, 960, 540);
+        Scene scene = new Scene(root, 1280, 720);
         scene.getStylesheets().add(Main.class.getResource("/css/home.css").toExternalForm());
 
         // 1. Remove default window decorations
         stage.initStyle(StageStyle.UNDECORATED);
         stage.setTitle("Pomolo");
         stage.setResizable(false);
+
 
         stage.setScene(scene);
         stage.show();

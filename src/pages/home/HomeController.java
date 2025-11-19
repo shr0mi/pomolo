@@ -23,6 +23,7 @@ import java.util.List;
 
 public class HomeController {
 
+    @FXML private HBox topBar;
     @FXML private AnchorPane rootPane;
     @FXML private VBox vbox;
 
