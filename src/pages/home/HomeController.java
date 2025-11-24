@@ -15,7 +15,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.concurrent.Task;
+import javafx.application.Platform;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,6 +81,66 @@ public class HomeController {
             loadSongs();
             if (loadedSongs != null) {
                 playerManager.setQueue(loadedSongs);
+            }
+        }
+    }
+
+    @FXML
+    private void importFolder() {
+        DirectoryChooser dirChooser = new DirectoryChooser();
+        dirChooser.setTitle("Select Folder to Import");
+        Stage stage = (Stage) rootPane.getScene().getWindow();
+        File dir = dirChooser.showDialog(stage);
+        if (dir == null || !dir.isDirectory()) return;
+
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                scanAndImport(dir);
+                return null;
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            // Refresh UI on JavaFX Application Thread
+            Platform.runLater(() -> {
+                loadSongs();
+                if (loadedSongs != null) {
+                    playerManager.setQueue(loadedSongs);
+                }
+            });
+        });
+
+        task.setOnFailed(e -> {
+            // Optionally log or show an alert; for now just print stack
+            Throwable ex = task.getException();
+            if (ex != null) ex.printStackTrace();
+        });
+
+        Thread th = new Thread(task, "ImportFolderTask");
+        th.setDaemon(true);
+        th.start();
+    }
+
+    private void scanAndImport(File directory) {
+        File[] files = directory.listFiles();
+        if (files == null) return;
+        for (File f : files) {
+            if (f.isDirectory()) {
+                scanAndImport(f);
+            } else {
+                String name = f.getName().toLowerCase();
+                if (name.endsWith(".mp3") || name.endsWith(".wav") || name.endsWith(".flac")) {
+                    try {
+                        SongManager.SongInfo music = SongManager.readMp3(f);
+                        if (music != null) {
+                            SqliteDBManager.insertNewSong(music);
+                        }
+                    } catch (Exception ex) {
+                        // continue on errors, but log
+                        ex.printStackTrace();
+                    }
+                }
             }
         }
     }

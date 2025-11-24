@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.control.Tooltip?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <AnchorPane fx:id="rootPane" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pages.home.HomeController">
@@ -72,24 +73,42 @@
                 </GridPane>
             </children>
         </HBox>
+        <!-- Left grouped toolbar: Add / Import Folder / Pomodoro / Playlist -->
+        <HBox AnchorPane.leftAnchor="75.0" AnchorPane.topAnchor="30.0" spacing="12.0" alignment="CENTER_LEFT">
+            <children>
+                <Button mnemonicParsing="false" onAction="#AddNewMusic" styleClass="icon-btn">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-plus" iconSize="20" styleClass="iconli-font-icon"/>
+                    </graphic>
+                </Button>
+
+                <Button mnemonicParsing="false" onAction="#importFolder" styleClass="icon-btn">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-folder-plus" iconSize="20" styleClass="iconli-font-icon"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="Import folder" />
+                    </tooltip>
+                </Button>
+
+                <Button fx:id="pomodoroButton" mnemonicParsing="false" styleClass="icon-btn" onAction="#goToPomodoro">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-stopwatch" iconSize="20" styleClass="iconli-font-icon"/>
+                    </graphic>
+                </Button>
+
+                <Button onAction="#goToPlaylists" text="Playlist" styleClass="icon-btn">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-list" iconSize="20" styleClass="iconli-font-icon"/>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+
+        <!-- Settings button on the right -->
         <Button AnchorPane.rightAnchor="35.0" AnchorPane.topAnchor="30.0" mnemonicParsing="false" onAction="#goToSettings" styleClass="icon-btn">
             <graphic>
                 <FontIcon iconLiteral="fas-cog" iconSize="20" styleClass="iconli-font-icon"/>
-            </graphic>
-        </Button>
-        <Button AnchorPane.leftAnchor="75.0" AnchorPane.topAnchor="30.0" mnemonicParsing="false" onAction="#AddNewMusic" styleClass="icon-btn">
-            <graphic>
-                <FontIcon iconLiteral="fas-plus" iconSize="20" styleClass="iconli-font-icon"/>
-            </graphic>
-        </Button>
-        <Button fx:id="pomodoroButton" AnchorPane.leftAnchor="137.0" AnchorPane.topAnchor="30.0" mnemonicParsing="false" styleClass="icon-btn" onAction="#goToPomodoro">
-            <graphic>
-                <FontIcon iconLiteral="fas-stopwatch" iconSize="20" styleClass="iconli-font-icon"/>
-            </graphic>
-        </Button>
-        <Button onAction="#goToPlaylists" AnchorPane.leftAnchor="200.0" AnchorPane.topAnchor="30.0" text="Playlist" styleClass="icon-btn">
-            <graphic>
-                <FontIcon iconLiteral="fas-list" iconSize="20" styleClass="iconli-font-icon"/>
             </graphic>
         </Button>
     </children>
