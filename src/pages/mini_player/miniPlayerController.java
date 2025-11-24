@@ -13,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import models.PomodoroModel;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 public class miniPlayerController {
@@ -27,21 +28,63 @@ public class miniPlayerController {
     @FXML private Button nextButton;
     @FXML private Button prevButton;
     @FXML private Circle glowRing;
+    @FXML private Circle timerProgressRing;
+
 
     private double xOffset, yOffset;
     private final MusicPlayerManager musicManager = MusicPlayerManager.getInstance();
+    private final PomodoroModel pomodoroModel = PomodoroModel.getInstance();
     private Timeline glowPulse, visualPulse;
     private ScaleTransition currentScale;
+    private AnimationTimer ringAnimationTimer;
 
     @FXML
     public void initialize() {
+        // Ensure the mini-player starts compact before any animations run
+        if (root != null) {
+            root.setScaleX(0.75);
+            root.setScaleY(0.75);
+            // Prevent children from overflowing the mini window by clipping and bounding the root
+            root.setMaxWidth(300);
+            root.setMaxHeight(300);
+            root.setPrefWidth(300);
+            root.setPrefHeight(300);
+            root.setClip(new javafx.scene.shape.Rectangle(300, 300));
+        }
         setupDrag();
         setupHoverAnimations();
         setupGlowEffect();
+        setupTimerUpdates();
+
+        // AnimationTimer updates the ring each frame for smooth visuals
+        ringAnimationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if (timerProgressRing != null && pomodoroModel.getDurationInSeconds() > 0) {
+                    updateTimerProgress(pomodoroModel.getRemainingSeconds(), pomodoroModel.getDurationInSeconds());
+                }
+            }
+        };
+        ringAnimationTimer.start();
+
+        // Initialize the timer progress ring visuals so it matches Pomodoro page behavior
+        if (timerProgressRing != null) {
+            final double circumference = 2 * Math.PI * timerProgressRing.getRadius();
+            timerProgressRing.getStrokeDashArray().setAll(circumference);
+            timerProgressRing.setRotate(-90);
+            timerProgressRing.setVisible(false); // initially hidden until Pomodoro started/paused
+            // set initial progress from model
+            if (pomodoroModel.getDurationInSeconds() > 0) {
+                double remaining = pomodoroModel.getRemainingSeconds();
+                double fractionElapsed = 1.0 - (remaining / (double) pomodoroModel.getDurationInSeconds());
+                if (fractionElapsed < 0) fractionElapsed = 0;
+                if (fractionElapsed > 1) fractionElapsed = 1;
+                double dashOffset = fractionElapsed * circumference;
+                timerProgressRing.setStrokeDashOffset(dashOffset);
+            }
+        }
 
         // Initial state: UI hidden, music design shown
-        root.setScaleX(0.3);
-        root.setScaleY(0.3);
         uiContainer.setOpacity(0);
         musicDesign.setOpacity(1);
 
@@ -77,6 +120,33 @@ public class miniPlayerController {
         updateVisualAnimation(musicManager.isPlayingProperty().get()); // Initial call
     }
 
+    private void setupTimerUpdates() {
+        // Use the double value so we preserve sub-second resolution and get smooth updates
+        pomodoroModel.getRemainingSecondsProperty().addListener((obs, old, newVal) -> {
+            updateTimerProgress(newVal.doubleValue(), pomodoroModel.getDurationInSeconds());
+            // Make the ring visible when there is a configured duration (it will be updated by the model)
+            if (timerProgressRing != null) {
+                timerProgressRing.setVisible(pomodoroModel.getDurationInSeconds() > 0);
+            }
+        });
+    }
+
+    // Accept double to keep sub-second precision (matches PomodoroController timeline updates)
+    private void updateTimerProgress(double remainingSeconds, long totalDuration) {
+        if (timerProgressRing == null) return;
+        if (totalDuration <= 0) {
+            timerProgressRing.setStrokeDashOffset(0);
+            return;
+        }
+
+        double fractionElapsed = 1.0 - ((double) remainingSeconds / (double) totalDuration);
+        if (fractionElapsed < 0) fractionElapsed = 0;
+        if (fractionElapsed > 1.0) fractionElapsed = 1.0;
+
+        double circumference = 2 * Math.PI * timerProgressRing.getRadius();
+        timerProgressRing.setStrokeDashOffset(fractionElapsed * circumference);
+    }
+
     private void setupDrag() {
         root.setOnMousePressed(e -> { xOffset = e.getSceneX(); yOffset = e.getSceneY(); });
         root.setOnMouseDragged(e -> {
@@ -96,11 +166,11 @@ public class miniPlayerController {
         root.setOnMouseExited(e -> {
             animateFade(uiContainer, 0.0);
             animateFade(musicDesign, 1.0);
-            animateScale(root, 0.3);
+            animateScale(root, 0.75);
         });
 
-        root.setScaleX(0.75);
-        root.setScaleY(0.75);
+        // start at compact scale (already set at top of initialize)
+        // no-op here
     }
 
     private void animateFade(Node node, double targetOpacity) {

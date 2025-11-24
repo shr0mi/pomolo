@@ -14,8 +14,8 @@
     <orderEntry type="library" name="kordamp.ikonli.core" level="project" />
     <orderEntry type="library" name="kordamp.ikonli.javafx" level="project" />
     <orderEntry type="library" name="kordamp.ikonli.fontawesome5.pack" level="project" />
-    <orderEntry type="library" name="lib" level="project" />
     <orderEntry type="library" name="jakarta.websocket.api" level="project" />
     <orderEntry type="library" name="glassfish.tyrus.container.grizzly.server" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>

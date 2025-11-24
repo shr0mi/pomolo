@@ -50,4 +50,24 @@ public class Main extends Application {
     public static RootPageController getRootController(){
         return rootController;
     }
+
+    /**
+     * Show the mini player in its own undecorated, non-resizable stage.
+     * Keeps styling consistent by adding the dark theme stylesheet if available.
+     */
+    public static void showMiniPlayer(Parent miniRoot) {
+        Stage miniStage = new Stage();
+        // prefer the mini player's declared stylesheet, but ensure dark-theme is applied
+        Scene miniScene = new Scene(miniRoot);
+        try {
+            var css = Main.class.getResource("/css/dark-theme.css");
+            if (css != null) miniScene.getStylesheets().add(css.toExternalForm());
+        } catch (Exception ignored) {
+        }
+        miniStage.initStyle(StageStyle.UNDECORATED);
+        miniStage.setResizable(false);
+        miniStage.setAlwaysOnTop(true);
+        miniStage.setScene(miniScene);
+        miniStage.show();
+    }
 }

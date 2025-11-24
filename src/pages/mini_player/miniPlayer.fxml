@@ -26,6 +26,12 @@
             </effect>
         </Circle>
 
+        <!-- === Pomodoro Progress Ring === -->
+        <StackPane fx:id="ringVisualsStack" alignment="CENTER">
+            <Circle fill="transparent" radius="110.0" stroke="#FFFFFF66" strokeWidth="4.0" />
+            <Circle fx:id="timerProgressRing" fill="transparent" radius="110.0" stroke="#FFFFFF" strokeLineCap="ROUND" strokeWidth="10.0" />
+        </StackPane>
+
         <!-- === Music Design (shown when not hovered) === -->
         <StackPane fx:id="musicDesign" alignment="CENTER">
             <Circle fx:id="visualCircle"
