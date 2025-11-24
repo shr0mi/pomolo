@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import models.PomodoroModel;
 import org.kordamp.ikonli.javafx.FontIcon;
+import pages.player_bar.PlayerBarController;
 
 public class miniPlayerController {
 
@@ -27,6 +28,7 @@ public class miniPlayerController {
     @FXML private FontIcon playPauseIcon; // Added fx:id for FontIcon
     @FXML private Button nextButton;
     @FXML private Button prevButton;
+    @FXML private Button ambientButton;
     @FXML private Circle glowRing;
     @FXML private Circle timerProgressRing;
 
@@ -115,6 +117,18 @@ public class miniPlayerController {
             updateGlowAnimation(now);
             updateVisualAnimation(now); // Call new method here
         });
+
+        // Initialize ambient button style to reflect current ambient playing state
+        if (ambientButton != null) {
+            if (PlayerBarController.APM.isPlaying) {
+                ambientButton.getStyleClass().remove("mini-player-control-button");
+                ambientButton.getStyleClass().add("mini-player-control-button-selected");
+            } else {
+                ambientButton.getStyleClass().remove("mini-player-control-button-selected");
+                if (!ambientButton.getStyleClass().contains("mini-player-control-button"))
+                    ambientButton.getStyleClass().add("mini-player-control-button");
+            }
+        }
 
         updateGlowAnimation(musicManager.isPlayingProperty().get());
         updateVisualAnimation(musicManager.isPlayingProperty().get()); // Initial call
@@ -298,6 +312,21 @@ public class miniPlayerController {
         } else {
             playPauseButton.getStyleClass().add("mini-player-play-button");
             playPauseIcon.setIconLiteral("fas-play"); // Update FontIcon directly
+        }
+    }
+
+    @FXML
+    private void handleAmbientMini() {
+        if (PlayerBarController.APM == null) return;
+        if (!PlayerBarController.APM.isPlaying) {
+            ambientButton.getStyleClass().remove("mini-player-control-button");
+            ambientButton.getStyleClass().add("mini-player-control-button-selected");
+            PlayerBarController.APM.playAmbientMusic();
+        } else {
+            ambientButton.getStyleClass().remove("mini-player-control-button-selected");
+            if (!ambientButton.getStyleClass().contains("mini-player-control-button"))
+                ambientButton.getStyleClass().add("mini-player-control-button");
+            PlayerBarController.APM.stopAmbientMusic();
         }
     }
 }

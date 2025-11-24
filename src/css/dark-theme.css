@@ -64,6 +64,18 @@
     -fx-icon-color: black;
 }
 
+.mini-player-control-button-selected {
+    -fx-background-color: #A080C0; /* selected purple */
+    -fx-background-radius: 50%;
+    -fx-pref-width: 40;
+    -fx-pref-height: 40;
+}
+
+.mini-player-control-button-selected .ikonli-font-icon {
+    -fx-icon-color: white;
+    -fx-icon-size: 18px;
+}
+
 .mini-player-play-button {
     -fx-background-color: #8A6FAD; /* Aesthetic purple for play */
     -fx-background-radius: 50%;
@@ -105,8 +117,24 @@
 }
 
 .mini-player-restore-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: lightgray;
+    /* subtle secondary button */
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-text-fill: #E6E6E6;
     -fx-font-size: 13px;
-    -fx-underline: true;
+    -fx-padding: 6 12 6 12; /* top right bottom left */
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: rgba(255,255,255,0.08);
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+    -fx-underline: false;
+}
+
+.mini-player-restore-button:hover {
+    -fx-background-color: rgba(255,255,255,0.12);
+}
+
+.mini-player-restore-button:pressed {
+    -fx-background-color: rgba(255,255,255,0.16);
+    -fx-translate-y: 1px;
 }

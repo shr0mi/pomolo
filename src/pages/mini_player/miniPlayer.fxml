@@ -75,6 +75,17 @@
                     </Button>
                 </HBox>
 
+                <!-- Ambient control row placed under main controls -->
+                <HBox alignment="CENTER" spacing="8">
+                    <children>
+                        <Button fx:id="ambientButton" mnemonicParsing="false" onAction="#handleAmbientMini" styleClass="mini-player-control-button">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-tree" />
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+
                 <Button text="⤴ Restore"
                         onAction="#restoreMain"
                         styleClass="mini-player-restore-button" />
