@@ -3,8 +3,13 @@ package com;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextInputControl;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -17,7 +22,7 @@ public class Main extends Application {
     private static javafx.beans.value.ChangeListener<Number> widthListener;
     private static javafx.beans.value.ChangeListener<Number> heightListener;
     private static boolean resizingAdjusting = false;
-    private static double fixedRatio = 16.0 / 9.0; // default
+    private static double fixedRatio = 16.0 / 9.0;
 
     public static void main(String[] args) {
         launch(args);
@@ -31,23 +36,20 @@ public class Main extends Application {
         primaryStage = stage;
 
         Scene scene = new Scene(root, 1280, 720);
-        //Scene scene = new Scene(root, 960, 540);
         scene.getStylesheets().add(Main.class.getResource("/css/home.css").toExternalForm());
 
-        // 1. Remove default window decorations
+        attachHotkeys(scene);
+        setupGlobalFocusHandler(scene, root);
+
         stage.initStyle(StageStyle.UNDECORATED);
         stage.setTitle("Pomolo");
-        // allow resizing so user can change window size; fixed-aspect will be enforced if enabled
         stage.setResizable(true);
-
         stage.setScene(scene);
 
-        // Apply user preferred fixed-aspect settings if any (sanitize stored ratio)
         try {
             UserProperties up = new UserProperties();
             boolean enabled = up.getFixedAspectEnabled();
             double ratio = up.getFixedAspectRatio();
-            // sanitize: acceptable bounds 0.5..3.0 (width/height). If out of bounds, reset to 16:9
             if (Double.isNaN(ratio) || ratio <= 0 || ratio < 0.5 || ratio > 3.0) {
                 ratio = 16.0 / 9.0;
                 up.setFixedAspectRatio(ratio);
@@ -61,6 +63,75 @@ public class Main extends Application {
         fadeIn.setFromValue(0.0);
         fadeIn.setToValue(1.0);
         fadeIn.play();
+
+        root.requestFocus();
+    }
+
+    public static void attachHotkeys(Scene scene) {
+        scene.setOnKeyPressed(event -> {
+            // Context Check: Only trigger if window is focused
+            if (scene.getWindow() != null && !scene.getWindow().isFocused()) {
+                return;
+            }
+
+            // Input Check: Don't trigger if typing
+            if (event.getTarget() instanceof TextInputControl) {
+                return;
+            }
+
+            MusicPlayerManager manager = MusicPlayerManager.getInstance();
+            boolean consumed = true;
+
+            switch (event.getCode()) {
+                case SPACE:
+                    manager.playPause();
+                    break;
+                case LEFT:
+                    manager.previous();
+                    break;
+                case RIGHT:
+                    manager.next();
+                    break;
+                case UP:
+                    double volUp = manager.volumeProperty().get();
+                    manager.volumeProperty().set(Math.min(1.0, volUp + 0.05));
+                    break;
+                case DOWN:
+                    double volDown = manager.volumeProperty().get();
+                    manager.volumeProperty().set(Math.max(0.0, volDown - 0.05));
+                    break;
+                default:
+                    consumed = false;
+            }
+
+            if (consumed) {
+                event.consume();
+            }
+        });
+    }
+
+    // NEW: Aggressive Global Focus Handler
+    // This intercepts mouse clicks on the Scene. If a button is clicked,
+    // it lets the click happen but then immediately steals focus back to the root.
+    public static void setupGlobalFocusHandler(Scene scene, Parent root) {
+        scene.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
+            // We run this 'later' so the button click still registers its action
+            // but focus is immediately taken away after.
+            javafx.application.Platform.runLater(root::requestFocus);
+        });
+
+        // Also recursively strip focus traversal
+        makeButtonsNonFocusable(root);
+    }
+
+    public static void makeButtonsNonFocusable(Parent parent) {
+        for (Node node : parent.getChildrenUnmodifiable()) {
+            if (node instanceof Button) {
+                node.setFocusTraversable(false);
+            } else if (node instanceof Parent) {
+                makeButtonsNonFocusable((Parent) node);
+            }
+        }
     }
 
     @Override
@@ -73,13 +144,13 @@ public class Main extends Application {
         return rootController;
     }
 
-    /**
-     * Enable or disable a fixed window aspect ratio. When enabled, window width/height are kept to ratio.
-     * The ratio is width/height (e.g. 16.0/9.0).
-     */
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
     public static void setFixedAspectRatioEnabled(boolean enabled, double ratio) {
+        // ... (Keep existing logic unchanged) ...
         if (primaryStage == null) return;
-        // remove existing listeners first
         if (widthListener != null) primaryStage.widthProperty().removeListener(widthListener);
         if (heightListener != null) primaryStage.heightProperty().removeListener(heightListener);
         widthListener = null; heightListener = null;
@@ -115,23 +186,27 @@ public class Main extends Application {
         primaryStage.heightProperty().addListener(heightListener);
     }
 
-    /**
-     * Show the mini player in its own undecorated, non-resizable stage.
-     * Keeps styling consistent by adding the dark theme stylesheet if available.
-     */
     public static void showMiniPlayer(Parent miniRoot) {
         Stage miniStage = new Stage();
-        // prefer the mini player's declared stylesheet, but ensure dark-theme is applied
         Scene miniScene = new Scene(miniRoot);
+
+        // 1. Attach Hotkeys
+        attachHotkeys(miniScene);
+
+        // 2. Attach Aggressive Focus Handler
+        setupGlobalFocusHandler(miniScene, miniRoot);
+
         try {
             var css = Main.class.getResource("/css/dark-theme.css");
             if (css != null) miniScene.getStylesheets().add(css.toExternalForm());
-        } catch (Exception ignored) {
-        }
-        miniStage.initStyle(StageStyle.UNDECORATED);
+        } catch (Exception ignored) {}
+
+        miniStage.initStyle(StageStyle.TRANSPARENT);
         miniStage.setResizable(false);
         miniStage.setAlwaysOnTop(true);
         miniStage.setScene(miniScene);
         miniStage.show();
+
+        miniRoot.requestFocus();
     }
 }
