@@ -84,7 +84,7 @@
         </Button>
         <Button fx:id="pomodoroButton" AnchorPane.leftAnchor="137.0" AnchorPane.topAnchor="30.0" mnemonicParsing="false" styleClass="icon-btn" onAction="#goToPomodoro">
             <graphic>
-                <FontIcon iconLiteral="fas-stopwatch" iconSize="20" styleClass="iconli-font-icon"/>
+                <FontIcon iconLiteral="fas-hourglass-half" iconSize="20" styleClass="iconli-font-icon"/>
             </graphic>
         </Button>
         <Button onAction="#goToPlaylists" AnchorPane.leftAnchor="200.0" AnchorPane.topAnchor="30.0" text="Playlist" styleClass="icon-btn">

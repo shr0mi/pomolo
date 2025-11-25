@@ -176,40 +176,81 @@
 }
 
 
-.pomodoro-button {
-    /* Base style: Transparent background, white text */
+/* --- POMODORO BASE BUTTON STYLE --- */
+.pomodoro-icon-btn {
+    -fx-text-fill: white;
     -fx-background-color: transparent;
-    -fx-text-fill: #FFFFFF;
-    -fx-font-family: 'Monospaced Regular';
-    -fx-font-size: 20px;
-    -fx-padding: 10px 20px;
-
-    /* Make buttons rectangular and visible */
-    -fx-background-radius: 4px; /* A small radius for a slightly rounded rectangle */
-    -fx-border-color: white; /* Add a white border to define the rectangle */
-    -fx-border-width: 1px;
     -fx-cursor: hand;
-    -fx-font-weight: bold;
-    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.4) , 10,0,0,0 );
+    -fx-padding: 8;
 }
 
-.pomodoro-button:hover {
-    /* HOVER EFFECT: White background, black text */
-    -fx-background-color: white;
+.pomodoro-icon-btn .iconli-font-icon {
+    -fx-icon-color: white;
+    -fx-icon-size: 20px;
+}
+
+.pomodoro-icon-btn:hover {
     -fx-text-fill: black;
-    /* Remove the border on hover if you want a cleaner look */
+    -fx-background-color: white;
+}
+
+.pomodoro-icon-btn:hover .iconli-font-icon {
+    -fx-icon-color: black;
+}
+
+.pomodoro-icon-btn-selected {
+    -fx-text-fill: black;
+    -fx-background-color: white;
+    -fx-cursor: hand;
+    -fx-padding: 8;
+    -fx-border-width: 1px;
     -fx-border-color: white;
-    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.6) , 12,0,0,0 );
 }
 
-.pomodoro-button:disabled {
+.pomodoro-icon-btn-selected .iconli-font-icon {
+    -fx-icon-color: black;
+    -fx-icon-size: 20px;
+}
+
+.pom-box {
+    -fx-background-color: rgba(255, 255, 255, .1);
+    -fx-background-radius: 10px;
+    -fx-border-color: white;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-padding:4px;
+}
+
+.chart-bar {
+    -fx-bar-fill: white;
+}
+
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: transparent;
+}
+.chart-vertical-grid-lines {
+    -fx-stroke: transparent;
+}
+.chart-plot-background {
     -fx-background-color: transparent;
-    -fx-text-fill: #AAAAAA;
-    -fx-opacity: 0.9;
-    -fx-effect: none;
-    -fx-cursor: default;
 }
 
+.axis {
+    -fx-tick-label-fill: #E0E0E0;
+    -fx-stroke: transparent;
+    -fx-tick-mark-stroke: transparent;
+}
+
+.chart-content > .axis.y {
+    -fx-stroke: transparent;
+    -fx-tick-mark-stroke: transparent;
+}
+
+.chart-content > .axis.x {
+    -fx-stroke: white;
+    -fx-tick-mark-stroke: white;
+}
 /* ... other styles (.scroll-pane, etc.) ... */
 
 .close-btn{
@@ -268,5 +309,6 @@
     -fx-icon-color: black;
     -fx-icon-size: 20px;
 }
+
 
 
