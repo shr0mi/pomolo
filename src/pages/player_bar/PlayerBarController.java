@@ -54,6 +54,17 @@ public class PlayerBarController {
             playPauseIcon.setIconLiteral(isNowPlaying ? "fas-pause" : "fas-play");
         });
 
+        // Ambient button style change
+        APM.isPlayingProperty().addListener((obs, wasPlaying, isNowPlaying) -> {
+            if (isNowPlaying) {
+                ambientButton.getStyleClass().remove("icon-btn");
+                ambientButton.getStyleClass().add("icon-btn-selected");
+            } else {
+                ambientButton.getStyleClass().remove("icon-btn-selected");
+                ambientButton.getStyleClass().add("icon-btn");
+            }
+        });
+
 
         currentSongText.textProperty().bind(
                 Bindings.createStringBinding(() -> {
@@ -126,13 +137,9 @@ public class PlayerBarController {
     @FXML private void handleNext() { playerManager.next(); }
     @FXML private void handlePrevious() { playerManager.previous(); }
     @FXML private void handleAmbient(){
-        if(!APM.isPlaying) {
-            ambientButton.getStyleClass().remove("icon-btn");
-            ambientButton.getStyleClass().add("icon-btn-selected");
+        if(!APM.getIsPlaying()) {
             APM.playAmbientMusic();
         }else{
-            ambientButton.getStyleClass().remove("icon-btn-selected");
-            ambientButton.getStyleClass().add("icon-btn");
             APM.stopAmbientMusic();
         }
     }

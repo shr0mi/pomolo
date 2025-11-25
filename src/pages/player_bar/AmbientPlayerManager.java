@@ -1,10 +1,12 @@
 package pages.player_bar;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
 public class AmbientPlayerManager {
-    public boolean isPlaying = false;
+    private final BooleanProperty isPlaying = new SimpleBooleanProperty(false);
     Media rain = new Media(getClass().getResource("/ambient_sounds/rain.wav").toExternalForm());
     Media fireplace = new Media(getClass().getResource("/ambient_sounds/fireplace.mp3").toExternalForm());
     Media wind = new Media(getClass().getResource("/ambient_sounds/wind.mp3").toExternalForm());
@@ -12,6 +14,14 @@ public class AmbientPlayerManager {
     MediaPlayer rainPlayer = new MediaPlayer(rain);
     MediaPlayer firePlayer = new MediaPlayer(fireplace);
     MediaPlayer windPlayer = new MediaPlayer(wind);
+
+    public BooleanProperty isPlayingProperty() {
+        return isPlaying;
+    }
+
+    public final boolean getIsPlaying() {
+        return isPlaying.get();
+    }
 
     public void playAmbientMusic(){
         rainPlayer.setCycleCount(MediaPlayer.INDEFINITE);
@@ -21,14 +31,14 @@ public class AmbientPlayerManager {
         windPlayer.play();
         rainPlayer.play();
         firePlayer.play();
-        isPlaying = true;
+        isPlaying.set(true);
     }
 
     public void stopAmbientMusic(){
         rainPlayer.stop();
         firePlayer.stop();
         windPlayer.stop();
-        isPlaying = false;
+        isPlaying.set(false);
     }
 
     // Rain sound control

@@ -78,6 +78,18 @@ public class miniPlayerController {
         setupGlowEffect();
         setupTimerUpdates();
 
+        // Bind ambient player state
+        if (PlayerBarController.APM != null) {
+            PlayerBarController.APM.isPlayingProperty().addListener((obs, wasPlaying, isNowPlaying) -> {
+                if (isNowPlaying) {
+                    ambientButton.getStyleClass().add("selected");
+                } else {
+                    ambientButton.getStyleClass().remove("selected");
+                }
+            });
+        }
+
+
         // Initial State
         uiContainer.setOpacity(0);
         musicDesign.setOpacity(1);
@@ -294,11 +306,9 @@ public class miniPlayerController {
     @FXML
     private void handleAmbientMini() {
         if (PlayerBarController.APM == null) return;
-        if (!PlayerBarController.APM.isPlaying) {
-            ambientButton.getStyleClass().add("selected");
+        if (!PlayerBarController.APM.getIsPlaying()) {
             PlayerBarController.APM.playAmbientMusic();
         } else {
-            ambientButton.getStyleClass().remove("selected");
             PlayerBarController.APM.stopAmbientMusic();
         }
         root.requestFocus(); // Explicitly return focus to root
