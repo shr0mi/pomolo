@@ -12,6 +12,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import pages.player_bar.PlayerBarController;
 
@@ -57,6 +58,14 @@ public class SettingsController {
         // Set initial width slider value
         changeAspectRatio(up.getWindowWidth(), up.getWindowHeight());
         windowWidthSlider.setValue(Main.getRootController().getPageContainer().getPrefWidth());
+
+        windowWidthSlider.setMax(Screen.getPrimary().getVisualBounds().getWidth());
+        // If height > width: then height might end before we reach width. So, we should clamp it
+        // Max width will be determined by the available height in screen
+        if(up.getWindowHeight() > up.getWindowWidth()){
+            double max_width = aspect_ratio * Screen.getPrimary().getVisualBounds().getHeight();
+            windowWidthSlider.setMax(max_width);
+        }
 
         // Listen for changes
         windowWidthSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
