@@ -36,8 +36,8 @@ import java.util.stream.Collectors;
 
 public class PomodoroController {
     @FXML private Label timerLabel;
-    @FXML private Button togglePlayPauseButton, stopButton;
-    @FXML private FontIcon playPauseIcon;
+    @FXML private Button togglePlayPauseButton, stopButton, pomodoroButton;
+    @FXML private FontIcon playPauseIcon, pomodoroIcon;
     @FXML private StackPane ringVisualsStack;
     @FXML private Circle timerProgressRing;
     @FXML private HBox increaseButtonHBox, decreaseButtonHBox;
@@ -51,8 +51,8 @@ public class PomodoroController {
     private static final int POMODORO_DEFAULT_MINUTES = 0;
     private static int POMODORO_PREV_TIME = 0;
     private static Timeline timeline;
-    private static boolean isRunning = false, isPaused = false, isPomodoroSession = true;
-    private static int editableHours = 0, editableMinutes = POMODORO_DEFAULT_MINUTES, editableSeconds = 0;
+    private static boolean isRunning = false, isPaused = false, isPomodoroSession = true, pomodoroModeActive = false;
+    private static int editableHours = 0, editableMinutes = POMODORO_DEFAULT_MINUTES, editableSeconds = 0, previousEditableTimeSeconds = 0;
     private static double timeRemaining;
     private static long startTimeMillis;
     private static int sessionDurationSeconds;
@@ -73,6 +73,14 @@ public class PomodoroController {
 
     @FXML
     public void initialize() {
+        if (pomodoroModeActive) {
+            editableHours = 0; editableMinutes = 25; editableSeconds = 0;
+            pomodoroIcon.setIconLiteral("fas-laptop"); }
+        else {
+            editableHours = previousEditableTimeSeconds / 3600;
+            editableMinutes = (previousEditableTimeSeconds % 3600) / 60;
+            editableSeconds = previousEditableTimeSeconds % 60;
+            pomodoroIcon.setIconLiteral("fas-clock"); }
         Properties p = new Properties();
         try (FileInputStream in = new FileInputStream(CONFIG_FILE_NAME)) { p.load(in); } catch (Exception ignored) {}
         LocalDate cutoff = LocalDate.now().minusDays(7);
@@ -112,7 +120,10 @@ public class PomodoroController {
             setRingVisible(isRunning || isPaused); }
         updateTimerRingProgress();
         updateButtonStates();
-        if (wasRunning) startTimer(timeRemaining); }
+        if (wasRunning) startTimer(timeRemaining);
+
+
+    }
 
     private void syncEditableTime() {
         int totalEditableSeconds = editableHours * 3600 + editableMinutes * 60 + editableSeconds;
@@ -141,6 +152,23 @@ public class PomodoroController {
         setRingVisible(true);
         updateButtonStates(); }
 
+    @FXML
+    private void handlePomodoro(ActionEvent event) {
+        String currentIcon = pomodoroIcon.getIconLiteral();
+        if (currentIcon.equals("fas-clock")) {
+            previousEditableTimeSeconds = editableHours * 3600 + editableMinutes * 60 + editableSeconds;
+            editableHours = 0; editableMinutes = 25; editableSeconds = 0;
+            pomodoroIcon.setIconLiteral("fas-laptop");
+            pomodoroModeActive = true;
+            syncEditableTime(); }
+            else {
+            editableHours = previousEditableTimeSeconds / 3600;
+            editableMinutes = (previousEditableTimeSeconds % 3600) / 60;
+            editableSeconds = previousEditableTimeSeconds % 60;
+            pomodoroIcon.setIconLiteral("fas-clock");
+            pomodoroModeActive = false;
+            syncEditableTime(); }
+        updateButtonStates(); }
     @FXML
     private void handleStop(ActionEvent event) {
         stopTimer(); isRunning = false; isPaused = false;
@@ -232,7 +260,8 @@ public class PomodoroController {
             togglePlayPauseButton.setDisable(timerIsEmpty && !isRunning && !isPaused);
             if (playPauseIcon != null) { if (isRunning) { playPauseIcon.setIconLiteral("fas-pause"); }
             else { playPauseIcon.setIconLiteral("fas-play"); } } }
-        if (stopButton != null) { stopButton.setDisable(controlsVisible); } }
+        if (stopButton != null) stopButton.setDisable(controlsVisible);
+        if (pomodoroButton != null) pomodoroButton.setDisable(isRunning || isPaused); }
 
     private void setRingVisible(boolean visible) {
         if (ringVisualsStack != null) {
@@ -313,7 +342,7 @@ public class PomodoroController {
             seq.play(); } }
 
     private void notifyStatsUpdate() {
-        updateCurrentDayTimeLabel(); loadAndDrawStats();
+        updateCurrentDayTimeLabel();
         if (updateIndicator != null) {
             updateIndicator.setText("Updated!");
             new Timeline(new KeyFrame(Duration.seconds(0), new KeyValue(updateIndicator.opacityProperty(), 1.0)), new KeyFrame(Duration.seconds(2), new KeyValue(updateIndicator.opacityProperty(), 0.0))).play(); } }

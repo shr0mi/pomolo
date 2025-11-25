@@ -46,9 +46,20 @@
                             <FontIcon fx:id="playPauseIcon" iconLiteral="fas-play" iconSize="22" styleClass="iconli-font-icon"/>
                         </graphic>
                     </Button>
+                    <Button fx:id="pomodoroButton"
+                            onAction="#handlePomodoro"
+                            prefWidth="50" prefHeight="50"
+                            styleClass="pomodoro-icon-btn">
+                        <graphic>
+                            <FontIcon fx:id="pomodoroIcon"
+                                      iconLiteral="fas-clock"
+                                      iconSize="22"
+                                      styleClass="iconli-font-icon" />
+                        </graphic>
+                    </Button>
                     <Button fx:id="stopButton" onAction="#handleStop" prefHeight="50.0" prefWidth="50.0" style="-fx-font-size: 15pt; -fx-font-family: monospace;" styleClass="pomodoro-icon-btn">
                         <graphic>
-                            <FontIcon iconLiteral="fas-stop" iconSize="22" styleClass="iconli-font-icon"/>
+                            <FontIcon iconLiteral="fas-redo" iconSize="22" styleClass="iconli-font-icon"/>
                         </graphic>
                     </Button>
                 </VBox>
