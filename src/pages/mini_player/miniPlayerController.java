@@ -23,13 +23,14 @@ import pages.player_bar.AmbientPlayerManager;
 import pages.player_bar.PlayerBarController;
 import javafx.animation.Interpolator;
 
-
 public class miniPlayerController {
 
     @FXML private StackPane root;
     @FXML private StackPane uiContainer;
     @FXML private StackPane musicDesign;
     @FXML private Circle visualCircle;
+    @FXML private Circle visualCircle2;
+    @FXML private Circle visualCircle3;
     @FXML private Label songLabel;
     @FXML private Button playPauseButton;
     @FXML private FontIcon playPauseIcon;
@@ -44,8 +45,9 @@ public class miniPlayerController {
     private final MusicPlayerManager musicManager = MusicPlayerManager.getInstance();
     private final PomodoroModel pomodoroModel = PomodoroModel.getInstance();
     private final AmbientPlayerManager ambientPlayerManager = PlayerBarController.APM;
-    private Timeline glowPulse, visualPulse;
+    private Timeline glowPulse;
     private AnimationTimer ringAnimationTimer;
+    private ParallelTransition rippleEffect;
 
     @FXML
     public void initialize() {
@@ -83,6 +85,7 @@ public class miniPlayerController {
         setupHoverAnimations();
         setupGlowEffect();
         setupTimerUpdates();
+        setupRippleEffect();
 
         // Bind ambient player state
         if (ambientPlayerManager != null) {
@@ -110,24 +113,42 @@ public class miniPlayerController {
         uiContainer.setOpacity(0);
         musicDesign.setOpacity(1);
 
-        // Visual Animations
-        visualPulse = new Timeline(
-                new KeyFrame(Duration.ZERO,
-                        new KeyValue(visualCircle.scaleXProperty(), 1.0),
-                        new KeyValue(visualCircle.scaleYProperty(), 1.0),
-                        new KeyValue(visualCircle.opacityProperty(), 0.15)),
-                new KeyFrame(Duration.seconds(2),
-                        new KeyValue(visualCircle.scaleXProperty(), 1.15),
-                        new KeyValue(visualCircle.scaleYProperty(), 1.15),
-                        new KeyValue(visualCircle.opacityProperty(), 0.25))
-        );
-        visualPulse.setAutoReverse(true);
-        visualPulse.setCycleCount(Animation.INDEFINITE);
-
         bindMusicPlayer();
 
         // 3. Ensure Buttons aren't focusable (Extra safety)
         setButtonsNotFocusable();
+    }
+
+    private void setupRippleEffect() {
+        rippleEffect = new ParallelTransition();
+        rippleEffect.setCycleCount(Animation.INDEFINITE);
+
+        // Create animations for each circle with a delay
+        rippleEffect.getChildren().addAll(
+                createRippleAnimation(visualCircle, Duration.ZERO),
+                createRippleAnimation(visualCircle2, Duration.seconds(1)),
+                createRippleAnimation(visualCircle3, Duration.seconds(2))
+        );
+    }
+
+    private Animation createRippleAnimation(Circle circle, Duration delay) {
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(circle.scaleXProperty(), 0.1),
+                        new KeyValue(circle.scaleYProperty(), 0.1),
+                        new KeyValue(circle.opacityProperty(), 0.0)
+                ),
+                new KeyFrame(Duration.seconds(1),
+                        new KeyValue(circle.opacityProperty(), 0.3)
+                ),
+                new KeyFrame(Duration.seconds(3),
+                        new KeyValue(circle.scaleXProperty(), 1.5),
+                        new KeyValue(circle.scaleYProperty(), 1.5),
+                        new KeyValue(circle.opacityProperty(), 0.0)
+                )
+        );
+        timeline.setDelay(delay);
+        return timeline;
     }
 
     private void setButtonsNotFocusable() {
@@ -286,13 +307,16 @@ public class miniPlayerController {
     }
 
     private void updateVisualAnimation(boolean isPlaying) {
-        if (visualPulse == null) return;
+        if (rippleEffect == null) return;
         if (isPlaying) {
-            visualPulse.play();
+            rippleEffect.play();
         } else {
-            visualPulse.stop();
+            rippleEffect.stop();
             visualCircle.setScaleX(1.0);
             visualCircle.setScaleY(1.0);
+            visualCircle.setOpacity(0.15);
+            visualCircle2.setOpacity(0.0);
+            visualCircle3.setOpacity(0.0);
         }
     }
 

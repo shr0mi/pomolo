@@ -34,10 +34,9 @@
 
         <!-- === Music Design (shown when not hovered) === -->
         <StackPane fx:id="musicDesign" alignment="CENTER">
-            <Circle fx:id="visualCircle"
-                    radius="100"
-                    fill="#8A6FAD"
-                    opacity="0.15" />
+            <Circle fx:id="visualCircle3" radius="100" fill="#8A6FAD" opacity="0.0" />
+            <Circle fx:id="visualCircle2" radius="100" fill="#8A6FAD" opacity="0.0" />
+            <Circle fx:id="visualCircle" radius="100" fill="#8A6FAD" opacity="0.15" />
         </StackPane>
 
         <!-- === Main UI (shown when hovered) === -->
