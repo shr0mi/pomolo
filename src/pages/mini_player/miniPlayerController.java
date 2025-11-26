@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import models.PomodoroModel;
 import org.kordamp.ikonli.javafx.FontIcon;
+import pages.player_bar.AmbientPlayerManager;
 import pages.player_bar.PlayerBarController;
 import javafx.animation.Interpolator;
 
@@ -42,6 +43,7 @@ public class miniPlayerController {
     private double xOffset, yOffset;
     private final MusicPlayerManager musicManager = MusicPlayerManager.getInstance();
     private final PomodoroModel pomodoroModel = PomodoroModel.getInstance();
+    private final AmbientPlayerManager ambientPlayerManager = PlayerBarController.APM;
     private Timeline glowPulse, visualPulse;
     private AnimationTimer ringAnimationTimer;
 
@@ -83,8 +85,16 @@ public class miniPlayerController {
         setupTimerUpdates();
 
         // Bind ambient player state
-        if (PlayerBarController.APM != null) {
-            PlayerBarController.APM.isPlayingProperty().addListener((obs, wasPlaying, isNowPlaying) -> {
+        if (ambientPlayerManager != null) {
+            // Set initial state
+            if (ambientPlayerManager.getIsPlaying()) {
+                ambientButton.getStyleClass().add("selected");
+            } else {
+                ambientButton.getStyleClass().remove("selected");
+            }
+
+            // Listen for future changes
+            ambientPlayerManager.isPlayingProperty().addListener((obs, wasPlaying, isNowPlaying) -> {
                 if (isNowPlaying) {
                     ambientButton.getStyleClass().add("selected");
                 } else {
@@ -328,11 +338,11 @@ public class miniPlayerController {
 
     @FXML
     private void handleAmbientMini() {
-        if (PlayerBarController.APM == null) return;
-        if (!PlayerBarController.APM.getIsPlaying()) {
-            PlayerBarController.APM.playAmbientMusic();
+        if (ambientPlayerManager == null) return;
+        if (!ambientPlayerManager.getIsPlaying()) {
+            ambientPlayerManager.playAmbientMusic();
         } else {
-            PlayerBarController.APM.stopAmbientMusic();
+            ambientPlayerManager.stopAmbientMusic();
         }
         root.requestFocus(); // Explicitly return focus to root
     }

@@ -64,6 +64,10 @@
     -fx-icon-color: black;
 }
 
+.mini-player-control-button.selected {
+    -fx-background-color: #A080C0; /* selected purple */
+}
+
 .mini-player-control-button-selected {
     -fx-background-color: #A080C0; /* selected purple */
     -fx-background-radius: 50%;
