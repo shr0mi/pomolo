@@ -14,6 +14,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import models.PomodoroModel;
@@ -36,6 +37,7 @@ public class miniPlayerController {
     @FXML private Button ambientButton;
     @FXML private Circle glowRing;
     @FXML private Circle timerProgressRing;
+    @FXML private StackPane ringVisualsStack;
 
     private double xOffset, yOffset;
     private final MusicPlayerManager musicManager = MusicPlayerManager.getInstance();
@@ -148,14 +150,14 @@ public class miniPlayerController {
     private void setupTimerUpdates() {
         if (timerProgressRing == null) return;
         timerProgressRing.setRotate(-90);
-        timerProgressRing.setStyle("-fx-stroke: #a481ee; -fx-fill: transparent; -fx-stroke-width: 4;");
+        timerProgressRing.setStrokeLineCap(StrokeLineCap.ROUND);
         ringAnimationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 if (pomodoroModel.getDurationInSeconds() > 0) {
                     updateTimerProgress(pomodoroModel.getRemainingSeconds(), pomodoroModel.getDurationInSeconds());
                 } else {
-                    timerProgressRing.setVisible(false);
+                    ringVisualsStack.setVisible(false);
                 }
             }
         };
@@ -165,16 +167,16 @@ public class miniPlayerController {
     private void updateTimerProgress(double remainingSeconds, long totalDuration) {
         if (timerProgressRing == null) return;
         if (totalDuration <= 0) {
-            timerProgressRing.setVisible(false);
+            ringVisualsStack.setVisible(false);
             return;
         }
-        timerProgressRing.setVisible(true);
+        ringVisualsStack.setVisible(root.isHover());
         double progress = 1.0 - (remainingSeconds / (double) totalDuration);
         if (progress < 0) progress = 0;
         if (progress > 1) progress = 1;
         double circumference = 2 * Math.PI * timerProgressRing.getRadius();
         timerProgressRing.getStrokeDashArray().setAll(circumference);
-        timerProgressRing.setStrokeDashOffset(circumference * (1 - progress));
+        timerProgressRing.setStrokeDashOffset(progress * circumference);
     }
 
     private void setupDrag() {
@@ -199,12 +201,16 @@ public class miniPlayerController {
             root.requestFocus();
             animateFade(uiContainer, 1.0);
             animateFade(musicDesign, 0.0);
+            if (pomodoroModel.getDurationInSeconds() > 0) {
+                ringVisualsStack.setVisible(true);
+            }
             animateScale(root, hoveredScale, animationDuration);
         });
 
         root.setOnMouseExited(e -> {
             animateFade(uiContainer, 0.0);
             animateFade(musicDesign, 1.0);
+            ringVisualsStack.setVisible(false);
             animateScale(root, unhoveredScale, animationDuration);
         });
     }
