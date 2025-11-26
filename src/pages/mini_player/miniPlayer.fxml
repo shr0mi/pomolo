@@ -28,8 +28,8 @@
 
         <!-- === Pomodoro Progress Ring === -->
         <StackPane fx:id="ringVisualsStack" alignment="CENTER">
-            <Circle fill="transparent" radius="110.0" stroke="#FFFFFF66" strokeWidth="2.0" />
-            <Circle fx:id="timerProgressRing" fill="transparent" radius="110.0" stroke="#FFFFFF" strokeLineCap="ROUND" strokeWidth="6.0" />
+            <Circle fill="transparent" radius="110.0" stroke="#8A6FAD66" strokeWidth="2.0" />
+            <Circle fx:id="timerProgressRing" fill="transparent" radius="110.0" stroke="#8A6FAD" strokeLineCap="ROUND" strokeWidth="6.0" />
         </StackPane>
 
         <!-- === Music Design (shown when not hovered) === -->
@@ -42,69 +42,60 @@
 
         <!-- === Main UI (shown when hovered) === -->
         <StackPane fx:id="uiContainer" alignment="CENTER">
-            <BorderPane>
-                <top>
-                    <Label fx:id="songLabel"
-                           text="Now Playing"
-                           styleClass="mini-player-song-label"
-                           wrapText="true"
-                           textAlignment="CENTER"
-                           maxWidth="Infinity"
-                           BorderPane.alignment="CENTER">
-                        <BorderPane.margin>
-                            <Insets top="60"/>
-                        </BorderPane.margin>
-                    </Label>
-                </top>
-                <center>
-                    <GridPane alignment="CENTER" hgap="10" vgap="10">
-                        <padding>
-                            <Insets top="20" bottom="20"/>
-                        </padding>
-                        <children>
-                            <Button onAction="#restoreMain" styleClass="mini-player-control-button" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                                <graphic>
-                                    <FontIcon iconLiteral="fas-level-up-alt" />
-                                </graphic>
-                            </Button>
+            <Label fx:id="songLabel"
+                   text="Now Playing"
+                   styleClass="mini-player-song-label"
+                   wrapText="true"
+                   textAlignment="CENTER"
+                   maxWidth="Infinity"
+                   StackPane.alignment="TOP_CENTER">
+                <StackPane.margin>
+                    <Insets top="40"/>
+                </StackPane.margin>
+            </Label>
+            <GridPane alignment="CENTER" hgap="10" vgap="10">
+                <children>
+                    <Button onAction="#restoreMain" styleClass="mini-player-control-button" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <graphic>
+                            <FontIcon iconLiteral="fas-level-up-alt" />
+                        </graphic>
+                    </Button>
 
-                            <Button fx:id="prevButton" onAction="#previous" styleClass="mini-player-control-button" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                                <graphic>
-                                    <FontIcon iconLiteral="fas-backward" />
-                                </graphic>
-                            </Button>
+                    <Button fx:id="prevButton" onAction="#previous" styleClass="mini-player-control-button" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <graphic>
+                            <FontIcon iconLiteral="fas-backward" />
+                        </graphic>
+                    </Button>
 
-                            <Button fx:id="playPauseButton" onAction="#playPause" styleClass="mini-player-play-button" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                <graphic>
-                                    <FontIcon fx:id="playPauseIcon" iconLiteral="fas-play" />
-                                </graphic>
-                            </Button>
+                    <Button fx:id="playPauseButton" onAction="#playPause" styleClass="mini-player-play-button" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <graphic>
+                            <FontIcon fx:id="playPauseIcon" iconLiteral="fas-play" />
+                        </graphic>
+                    </Button>
 
-                            <Button fx:id="nextButton" onAction="#next" styleClass="mini-player-control-button" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                                <graphic>
-                                    <FontIcon iconLiteral="fas-forward" />
-                                </graphic>
-                            </Button>
+                    <Button fx:id="nextButton" onAction="#next" styleClass="mini-player-control-button" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <graphic>
+                            <FontIcon iconLiteral="fas-forward" />
+                        </graphic>
+                    </Button>
 
-                            <Button fx:id="ambientButton" mnemonicParsing="false" onAction="#handleAmbientMini" styleClass="mini-player-control-button" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                <graphic>
-                                    <FontIcon iconLiteral="fas-tree" />
-                                </graphic>
-                            </Button>
-                        </children>
-                        <columnConstraints>
-                            <ColumnConstraints halignment="CENTER" />
-                            <ColumnConstraints halignment="CENTER" />
-                            <ColumnConstraints halignment="CENTER" />
-                        </columnConstraints>
-                        <rowConstraints>
-                            <RowConstraints valignment="CENTER" />
-                            <RowConstraints valignment="CENTER" />
-                            <RowConstraints valignment="CENTER" />
-                        </rowConstraints>
-                    </GridPane>
-                </center>
-            </BorderPane>
+                    <Button fx:id="ambientButton" mnemonicParsing="false" onAction="#handleAmbientMini" styleClass="mini-player-control-button" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <graphic>
+                            <FontIcon iconLiteral="fas-tree" />
+                        </graphic>
+                    </Button>
+                </children>
+                <columnConstraints>
+                    <ColumnConstraints halignment="CENTER" />
+                    <ColumnConstraints halignment="CENTER" />
+                    <ColumnConstraints halignment="CENTER" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints valignment="CENTER" />
+                    <RowConstraints valignment="CENTER" />
+                    <RowConstraints valignment="CENTER" />
+                </rowConstraints>
+            </GridPane>
         </StackPane>
     </children>
 </StackPane>
