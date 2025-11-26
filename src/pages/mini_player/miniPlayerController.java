@@ -137,13 +137,18 @@ public class miniPlayerController {
         if (ambientButton != null) ambientButton.setFocusTraversable(false);
     }
 
-    // ... (Keep bindMusicPlayer, setupTimerUpdates, updateTimerProgress, setupDrag, setupGlowEffect, updateGlowAnimation, updateVisualAnimation EXACTLY as they were) ...
+    private String truncate(String text, int maxLength) {
+        if (text.length() <= maxLength) {
+            return text;
+        }
+        return text.substring(0, 10) + "..." + text.substring(text.length() - 10);
+    }
 
     private void bindMusicPlayer() {
         var song = musicManager.currentSongProperty().get();
-        if (song != null) songLabel.setText(song.fileName);
+        if (song != null) songLabel.setText(truncate(song.fileName, 20));
         musicManager.currentSongProperty().addListener((obs, old, val) -> {
-            if (val != null) Platform.runLater(() -> songLabel.setText(val.fileName));
+            if (val != null) Platform.runLater(() -> songLabel.setText(truncate(val.fileName, 20)));
         });
         updatePlayPauseIcon();
         musicManager.isPlayingProperty().addListener((obs, was, now) -> {
