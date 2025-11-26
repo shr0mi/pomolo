@@ -22,6 +22,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.media.AudioClip;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
+import models.PomodoroModel;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
@@ -69,6 +70,8 @@ public class PomodoroController {
     private List<DataPoint> lastSevenDaysData = new ArrayList<>();
     private List<String> xAxisCategories = new ArrayList<>();
     private static boolean animationPlayed = false;
+
+    private final PomodoroModel pomodoroModel = PomodoroModel.getInstance();
 
 
     @FXML
@@ -130,6 +133,8 @@ public class PomodoroController {
         POMODORO_PREV_TIME = totalEditableSeconds;
         timeRemaining = totalEditableSeconds;
         sessionDurationSeconds = totalEditableSeconds;
+        pomodoroModel.setDurationInSeconds(sessionDurationSeconds);
+        pomodoroModel.setRemainingSeconds(timeRemaining);
         updateTimerLabel(totalEditableSeconds);
         updateButtonStates(); }
 
@@ -177,6 +182,8 @@ public class PomodoroController {
             timeRemaining = POMODORO_PREV_TIME;
             sessionDurationSeconds = POMODORO_PREV_TIME;
             updateTimerLabel((int)timeRemaining); }
+        pomodoroModel.setRemainingSeconds(0);
+        pomodoroModel.setDurationInSeconds(0);
         setRingVisible(false); updateButtonStates(); }
 
     @FXML
@@ -201,22 +208,29 @@ public class PomodoroController {
     private void startTimer(double timeRemainingAtStartOfRun) {
         if (timeline != null) timeline.stop();
         startTimeMillis = System.currentTimeMillis();
+        pomodoroModel.setDurationInSeconds(sessionDurationSeconds);
         timeline = new Timeline(new KeyFrame(Duration.millis(50), e -> {
             long elapsedMillis = System.currentTimeMillis() - startTimeMillis;
             double elapsedSeconds = (double) elapsedMillis / 1000.0;
             timeRemaining = timeRemainingAtStartOfRun - elapsedSeconds;
             if (timeRemaining <= 0) { timeRemaining = 0; timerFinished(); }
 
+            pomodoroModel.setRemainingSeconds(timeRemaining);
             updateTimerLabel((int) Math.ceil(timeRemaining));
             updateTimerRingProgress(); }));
 
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play(); }
 
-    private void stopTimer() { if (timeline != null) timeline.stop(); }
+    private void stopTimer() {
+        if (timeline != null) timeline.stop();
+        pomodoroModel.setRemainingSeconds(timeRemaining);
+    }
 
     private void timerFinished() {
         stopTimer(); isRunning = false; isPaused = false;
+        pomodoroModel.setRemainingSeconds(0);
+        pomodoroModel.setDurationInSeconds(0);
         if (ringtone != null) ringtone.play();
         if (isPomodoroSession) {
             int successfulSessionDuration = sessionDurationSeconds;
