@@ -11,24 +11,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.DialogPane;
+import javafx.scene.control.*;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.stage.*;
 import org.kordamp.ikonli.javafx.FontIcon;
 import pages.components.Toast;
 import pages.confirmation_dialog.ConfirmationDialogController;
@@ -182,18 +175,44 @@ public class HomeController {
         alert.initStyle(StageStyle.TRANSPARENT);
         alert.setHeaderText(null);
         alert.setGraphic(null);
-        alert.setContentText("Add music from files or a folder?");
+        //alert.setContentText("Add music from files or a folder?");
+
+        // Center Label Text
+        Label label = new Label("   Add music from files or a folder?");
+        label.setWrapText(true);
+        label.setAlignment(Pos.CENTER);
+        label.setMaxWidth(Double.MAX_VALUE);
+
+        VBox box = new VBox(label);
+        box.setAlignment(Pos.CENTER);
+        box.setPadding(new Insets(15, 0, 0, 0));
+        box.setSpacing(10);
+
+        alert.getDialogPane().setContent(box);
+        alert.getDialogPane().setGraphic(null);
 
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.getStylesheets().add(getClass().getResource("/css/dark-theme.css").toExternalForm());
         dialogPane.getStyleClass().add("root");
+        dialogPane.getStyleClass().add("dialog-pane");
         dialogPane.getScene().setFill(Color.TRANSPARENT);
+
 
         ButtonType buttonTypeFiles = new ButtonType("From Files");
         ButtonType buttonTypeFolder = new ButtonType("From Folder");
         ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
         alert.getButtonTypes().setAll(buttonTypeCancel, buttonTypeFiles, buttonTypeFolder);
+
+        // Center the alert dialog at the center of the main window
+        alert.initOwner(Main.getMainStage());
+        alert.setOnShown(ev -> {
+            Stage dialogStage = (Stage) alert.getDialogPane().getScene().getWindow();
+
+            Window owner = dialogStage.getOwner();
+            dialogStage.setX(owner.getX() + (owner.getWidth() - dialogStage.getWidth()) / 2);
+            dialogStage.setY(owner.getY() + (owner.getHeight() - dialogStage.getHeight()) / 2);
+        });
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent()) {

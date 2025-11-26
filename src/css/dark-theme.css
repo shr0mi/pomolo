@@ -139,4 +139,9 @@
     -fx-translate-y: 1px;
 }
 
+/* Weired Left gap fix */
+.dialog-pane {
+    -fx-padding: 0 0 0 -20px;
+}
+
 

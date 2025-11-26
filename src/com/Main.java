@@ -17,6 +17,7 @@ import pages.root.RootPageController;
 
 public class Main extends Application {
     public static RootPageController rootController;
+    public static Stage mainStage;
 
     public static void main(String[] args) {
         launch(args);
@@ -38,7 +39,7 @@ public class Main extends Application {
         stage.setTitle("Pomolo");
         stage.setResizable(false);
         stage.setScene(scene);
-
+        mainStage = stage;
 
         stage.show();
 
@@ -125,6 +126,10 @@ public class Main extends Application {
 
     public static RootPageController getRootController(){
         return rootController;
+    }
+
+    public static Stage getMainStage(){
+        return mainStage;
     }
 
 
