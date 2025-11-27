@@ -24,7 +24,6 @@ import pages.home.HomeController;
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 public class RootPageController {
 
@@ -74,10 +73,10 @@ public class RootPageController {
         pageContainer.prefWidthProperty().bind(root.widthProperty());
         pageContainer.prefHeightProperty().bind(root.heightProperty().subtract(130));
 
-        setupDragAndDrop();
+        enableDragAndDrop();
     }
 
-    private void setupDragAndDrop() {
+    private void enableDragAndDrop() {
         final String dragOverStyle = "drag-over";
 
         root.setOnDragOver(event -> {
@@ -92,9 +91,7 @@ public class RootPageController {
             }
         });
 
-        root.setOnDragExited(event -> {
-            root.getStyleClass().remove(dragOverStyle);
-        });
+        root.setOnDragExited(event -> root.getStyleClass().remove(dragOverStyle));
 
         root.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
@@ -108,7 +105,7 @@ public class RootPageController {
                                     || lowerCaseName.endsWith(".wav")
                                     || lowerCaseName.endsWith(".flac");
                         })
-                        .collect(Collectors.toList());
+                        .toList();
 
                 int importedCount = 0;
                 for (File file : supportedFiles) {
@@ -136,10 +133,17 @@ public class RootPageController {
         });
     }
 
+    private void disableDragAndDrop() {
+        root.setOnDragOver(null);
+        root.setOnDragExited(null);
+        root.setOnDragDropped(null);
+        root.getStyleClass().remove("drag-over");
+    }
+
     private void refreshCurrentPage() {
         if (pageContainer.getChildren().isEmpty()) return;
 
-        Parent currentPage = (Parent) pageContainer.getChildren().get(0);
+        Parent currentPage = (Parent) pageContainer.getChildren().getFirst();
         Object controller = currentPage.getProperties().get("controller");
 
         if (controller instanceof HomeController) {
@@ -150,7 +154,14 @@ public class RootPageController {
     }
 
     public void setPage(Parent node) {
-        Parent currentPage = pageContainer.getChildren().isEmpty() ? null : (Parent) pageContainer.getChildren().get(0);
+        Object controller = node.getProperties().get("controller");
+        if (controller instanceof HomeController) {
+            enableDragAndDrop();
+        } else {
+            disableDragAndDrop();
+        }
+        
+        Parent currentPage = pageContainer.getChildren().isEmpty() ? null : (Parent) pageContainer.getChildren().getFirst();
 
         if (currentPage != null) {
             FadeTransition fadeout = new FadeTransition(Duration.millis(300), currentPage);
