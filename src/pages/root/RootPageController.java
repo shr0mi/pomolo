@@ -21,6 +21,7 @@ import javafx.util.Duration;
 import pages.all_songs.AllSongsPageController;
 import pages.download.DownloadPageController;
 import pages.home.HomeController;
+import pages.pomodoro.PomodoroController;
 
 import java.io.File;
 import java.io.IOException;
@@ -146,7 +147,6 @@ public class RootPageController {
     public void refreshCurrentPage() {
         if (pageContainer.getChildren().isEmpty()) return;
 
-        if (pageContainer.getChildren().isEmpty()) return; // Safety check
         Parent currentPage = (Parent) pageContainer.getChildren().get(0);
         Object controller = currentPage.getProperties().get("controller");
 
@@ -170,10 +170,16 @@ public class RootPageController {
         } else {
             Main.setFocusHandlerActive(true);
         }
-        
+
         Parent currentPage = pageContainer.getChildren().isEmpty() ? null : (Parent) pageContainer.getChildren().get(0);
 
         if (currentPage != null) {
+            // Check if we are leaving the Pomodoro page
+            Object oldController = currentPage.getProperties().get("controller");
+            if (oldController instanceof PomodoroController) {
+                ((PomodoroController) oldController).shutdown();
+            }
+
             FadeTransition fadeout = new FadeTransition(Duration.millis(300), currentPage);
             fadeout.setFromValue(1.0);
             fadeout.setToValue(0.0);
