@@ -154,7 +154,7 @@
 
 /* --- The Thumb (the draggable circle) --- */
 .slider .thumb {
-    -fx-background-color: red;
+    -fx-background-color: #8A6FAD;
     -fx-background-radius: 50%;
     -fx-pref-width: 14;
     -fx-pref-height: 14;
@@ -165,6 +165,10 @@
 .slider .thumb:hover {
     -fx-scale-x: 1.2;
     -fx-scale-y: 1.2;
+}
+
+.player-slider {
+    -fx-accent: #8A6FAD;
 }
 
 .bottom-rectangle {

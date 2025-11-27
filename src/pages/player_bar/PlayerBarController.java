@@ -87,7 +87,7 @@ public class PlayerBarController {
             if (vol_track != null) {
                 double val = volumeSlider.getValue();  // current value
                 String vol_style = String.format(
-                        "-fx-background-color: linear-gradient(to right, red %f%%, white %f%%);",
+                        "-fx-background-color: linear-gradient(to right, #8A6FAD %f%%, white %f%%);",
                         val*100.0, val*100.0
                 );
                 vol_track.setStyle(vol_style);
@@ -98,7 +98,7 @@ public class PlayerBarController {
             StackPane vol_track = (StackPane) volumeSlider.lookup(".track");
             if (vol_track != null) {
                 String vol_style = String.format(
-                        "-fx-background-color: linear-gradient(to right, red %f%%, white %f%%);",
+                        "-fx-background-color: linear-gradient(to right, #8A6FAD %f%%, white %f%%);",
                         newVal.doubleValue()*100.0, newVal.doubleValue()*100.0
                 );
                 //System.out.println(newVal.doubleValue());
@@ -115,7 +115,7 @@ public class PlayerBarController {
 
                     // progress color setting
                     StackPane track = (StackPane) progressSlider.lookup(".track");
-                    String style = String.format("-fx-background-color: linear-gradient(to right, red %f%%, white %f%%);",
+                    String style = String.format("-fx-background-color: linear-gradient(to right, #8A6FAD %f%%, white %f%%);",
                             value, value);
                     //System.out.println(value);
                     track.setStyle(style);

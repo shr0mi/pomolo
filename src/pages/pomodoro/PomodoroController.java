@@ -497,7 +497,7 @@ public class PomodoroController {
 
     private void updateCurrentDayTimeLabel() {
         if (currentDayTimeLabel != null) {
-            currentDayTimeLabel.setText(String.format(" Time:%dh %dm  Sessions:%d", currentDayTotalMinutes / 60, currentDayTotalMinutes % 60, currentDaySessionCount));
+            currentDayTimeLabel.setText(String.format("Time: %dh %dm | Sess: %d", currentDayTotalMinutes / 60, currentDayTotalMinutes % 60, currentDaySessionCount));
         }
     }
 

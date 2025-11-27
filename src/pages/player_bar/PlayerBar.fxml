@@ -59,7 +59,7 @@
                <Font name="Monospaced" size="12.0" />
             </font>
         </Text>
-        <Slider fx:id="progressSlider" stylesheets="@../../css/home.css" HBox.hgrow="ALWAYS" />
+        <Slider fx:id="progressSlider" styleClass="player-slider" HBox.hgrow="ALWAYS" />
         <Text fx:id="totalTimeText" fill="#999999" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00">
             <font>
                <Font name="Monospaced" size="12.0" />
@@ -76,7 +76,7 @@
                       <Insets left="15.0" />
                   </HBox.margin>
               </Text>
-              <Slider fx:id="volumeSlider" max="1.0" prefWidth="120.0" stylesheets="@../../css/home.css" value="0.8" />
+              <Slider fx:id="volumeSlider" max="1.0" prefWidth="120.0" styleClass="player-slider" value="0.8" />
             </children>
          </HBox>
     </children>
