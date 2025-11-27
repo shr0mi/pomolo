@@ -12,6 +12,10 @@ public class SqliteDBManager {
     private static final String DB_URL_PLAYLIST = "jdbc:sqlite:" + APP_DIR + File.separator + "playlists.db";
     private static final String SONGS_DB_PATH = APP_DIR + File.separator + "songs.db";
 
+    public static String getAppDir() {
+        return APP_DIR;
+    }
+
     public static class PlaylistInfo {
         public final String name;
         public final int songCount;

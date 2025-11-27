@@ -5,12 +5,12 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/com" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="xerial.sqlite.jdbc" level="project" />
     <orderEntry type="library" exported="" name="jaudiotagger" level="project" />
-    <orderEntry type="library" name="lib1" level="project" />
     <orderEntry type="library" name="kordamp.ikonli.core" level="project" />
     <orderEntry type="library" name="kordamp.ikonli.javafx" level="project" />
     <orderEntry type="library" name="kordamp.ikonli.fontawesome5.pack" level="project" />

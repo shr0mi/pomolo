@@ -9,12 +9,16 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class DownloadPageController {
 
@@ -30,7 +34,7 @@ public class DownloadPageController {
         // Run download in separate thread to avoid blocking UI
         new Thread(() -> {
             try {
-                String downloadPath = "downloads";
+                String downloadPath = SqliteDBManager.getAppDir() + File.separator + "songs";
                 File downloadDir = new File(downloadPath);
                 if (!downloadDir.exists()) {
                     downloadDir.mkdirs();
@@ -88,6 +92,17 @@ public class DownloadPageController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    @FXML
+    public void openLink(ActionEvent event) {
+        String url = (String) ((Node) event.getSource()).getUserData();
+        try {
+            Desktop.getDesktop().browse(new URI(url));
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+            showError("Error", "Could not open link: " + e.getMessage());
+        }
     }
 
 }

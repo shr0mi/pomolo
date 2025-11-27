@@ -23,6 +23,9 @@ import pages.download.DownloadPageController;
 import pages.home.HomeController;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Properties;
 
@@ -99,6 +102,9 @@ public class RootPageController {
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasFiles()) {
+                String songsDir = SqliteDBManager.getAppDir() + File.separator + "songs";
+                new File(songsDir).mkdirs();
+
                 List<File> files = db.getFiles();
                 List<File> supportedFiles = files.stream()
                         .filter(f -> {
@@ -112,15 +118,18 @@ public class RootPageController {
                 int importedCount = 0;
                 for (File file : supportedFiles) {
                     try {
-                        // --- FIX: CHECK FOR DUPLICATES BEFORE INSERTING ---
-                        if (!SqliteDBManager.songExists(file.getAbsolutePath())) {
-                            SongManager.SongInfo songInfo = SongManager.readMp3(file);
+                        File destFile = new File(songsDir, file.getName());
+                        if (!SqliteDBManager.songExists(destFile.getAbsolutePath())) {
+                            Files.copy(file.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                            SongManager.SongInfo songInfo = SongManager.readMp3(destFile);
                             if (songInfo != null) {
                                 SqliteDBManager.insertNewSong(songInfo);
                                 importedCount++;
                             }
                         }
-                        // --- END FIX ---
+                    } catch (IOException e) {
+                        System.err.println("Failed to copy imported file: " + file.getAbsolutePath());
+                        e.printStackTrace();
                     } catch (Exception e) {
                         System.err.println("Failed to import file: " + file.getAbsolutePath());
                         e.printStackTrace();
@@ -145,7 +154,8 @@ public class RootPageController {
     public void refreshCurrentPage() {
         if (pageContainer.getChildren().isEmpty()) return;
 
-        Parent currentPage = (Parent) pageContainer.getChildren().getFirst();
+        if (pageContainer.getChildren().isEmpty()) return; // Safety check
+        Parent currentPage = (Parent) pageContainer.getChildren().get(0);
         Object controller = currentPage.getProperties().get("controller");
 
         if (controller instanceof HomeController) {
@@ -169,7 +179,7 @@ public class RootPageController {
             Main.setFocusHandlerActive(true);
         }
         
-        Parent currentPage = pageContainer.getChildren().isEmpty() ? null : (Parent) pageContainer.getChildren().getFirst();
+        Parent currentPage = pageContainer.getChildren().isEmpty() ? null : (Parent) pageContainer.getChildren().get(0);
 
         if (currentPage != null) {
             FadeTransition fadeout = new FadeTransition(Duration.millis(300), currentPage);

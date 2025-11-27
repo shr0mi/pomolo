@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
@@ -26,17 +27,78 @@
     <ScrollPane fitToWidth="true" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="88.0">
     <content>
     <VBox spacing="10.0">
-    <children>
-    <HBox fx:id="topBar1" alignment="CENTER_LEFT" blendMode="SCREEN" prefHeight="50.0" styleClass="row-box" stylesheets="../../css/home.css">
-        <children>
-            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="The downloader uses yt-dlp and ff-mpeg. Make sure you have that installed" textAlignment="CENTER">
-                <font>
-                    <Font name="Monospaced Regular" size="13.0" />
-                </font>
-            </Text>
-        </children>
-    </HBox>
-        <HBox fx:id="topBar2" alignment="CENTER_LEFT" blendMode="SCREEN" prefHeight="50.0" styleClass="row-box" stylesheets="../../css/home.css">
+               <children>
+                  <VBox fx:id="topBar1" alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" style="-fx-background-color: transparent; -fx-padding: 15; -fx-border-color: grey; -fx-border-width: 0.5;" stylesheets="@../../css/home.css">
+                      <children>
+                          <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="The downloader requires two external tools: yt-dlp and ffmpeg. Please download them for your operating system." textAlignment="CENTER" wrappingWidth="525.0">
+                              <font>
+                                  <Font name="Monospaced Regular" size="13.0" />
+                              </font>
+                          </Text>
+                  <HBox alignment="CENTER" spacing="20.0">
+                     <children>
+                                  <VBox alignment="CENTER" spacing="5.0">
+                                      <children>
+                                          <Text fill="WHITE" text="yt-dlp">
+                                 <font>
+                                    <Font name="Monospaced Bold" size="14.0" />
+                                 </font></Text>
+                                          <Hyperlink onAction="#openLink" text="Windows" textFill="WHITE" userData="https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe" />
+                                          <Hyperlink onAction="#openLink" text="macOS" textFill="WHITE" userData="https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos" />
+                                          <Hyperlink onAction="#openLink" text="Linux" textFill="WHITE" userData="https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp" />
+                                      </children>
+                                  </VBox>
+                                  <VBox alignment="CENTER" spacing="5.0">
+                                      <children>
+                                          <Text fill="WHITE" text="ffmpeg">
+                                 <font>
+                                    <Font name="Monospaced Bold" size="14.0" />
+                                 </font></Text>
+                                          <Hyperlink onAction="#openLink" text="Windows" textFill="WHITE" userData="https://www.gyan.dev/ffmpeg/builds/" />
+                                          <Hyperlink onAction="#openLink" text="macOS" textFill="WHITE" userData="https://evermeet.cx/ffmpeg/" />
+                                          <Hyperlink onAction="#openLink" text="Linux" textFill="WHITE" userData="https://johnvansickle.com/ffmpeg/" />
+                                      </children>
+                                  </VBox>
+                     </children>
+                  </HBox>
+                      </children>
+                  </VBox>
+        <HBox fx:id="topBar2" alignment="CENTER_LEFT" style="-fx-background-color: transparent; -fx-padding: 15; -fx-border-color: grey; -fx-border-width: 0.5;" stylesheets="@../../css/home.css">
+            <VBox.margin>
+               <Insets top="10.0" />
+            </VBox.margin>
+            <children>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Alternative: Terminal Commands">
+                           <font>
+                              <Font name="Monospaced Bold" size="13.0" />
+                           </font>
+                        </Text>
+                        <HBox spacing="10.0">
+                           <children>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="macOS:">
+                                 <font>
+                                    <Font name="Monospaced Regular" size="12.0" />
+                                 </font>
+                              </Text>
+                              <TextField editable="false" prefWidth="400.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-border-color: #555555; -fx-border-width: 1; -fx-padding: 3; -fx-font-family: 'Monospaced Regular'; -fx-font-size: 12px;" text="brew install yt-dlp &amp;&amp; brew install ffmpeg" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="10.0">
+                           <children>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Linux:">
+                                 <font>
+                                    <Font name="Monospaced Regular" size="12.0" />
+                                 </font>
+                              </Text>
+                              <TextField editable="false" prefWidth="400.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-border-color: #555555; -fx-border-width: 1; -fx-padding: 3; -fx-font-family: 'Monospaced Regular'; -fx-font-size: 12px;" text="sudo apt install yt-dlp ffmpeg (or equivalent)" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+            </children></HBox>
+        <HBox fx:id="topBar21" alignment="CENTER_LEFT" prefHeight="50.0" styleClass="row-box" stylesheets="@../../css/home.css">
             <children>
                 <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter Link:" textAlignment="CENTER">
                     <font>
@@ -54,7 +116,7 @@
                      </Button>
             </children>
         </HBox>
-               <HBox fx:id="topBar21" alignment="CENTER_LEFT" blendMode="SCREEN" HBox.hgrow="ALWAYS" styleClass="row-box" stylesheets="../../css/home.css">
+      <HBox fx:id="topBar22" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS" styleClass="row-box" stylesheets="@../../css/home.css">
                   <children>
                       <VBox spacing="10.0"
                             HBox.hgrow="ALWAYS">
