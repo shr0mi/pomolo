@@ -196,48 +196,57 @@ public class RootPageController {
         }
     }
 
+    /**
+     * Sets the background image. It first tries to load the provided path,
+     * and if that fails for any reason, it loads the bundled default background.
+     * @param path The path to the user-selected image, or the default resource path.
+     */
     public void SetBackgroundImage(String path) {
-        Image image = null;
+        Image image = loadImageFromPath(path); // Try to load the user's preferred image
 
-        // If the path starts with "/", treat it as a resource within the JAR.
-        if (path != null && path.startsWith("/")) {
-            try (InputStream stream = getClass().getResourceAsStream(path)) {
-                if (stream != null) {
-                    image = new Image(stream);
-                } else {
-                    showError("Resource Error", "Could not load default background resource: " + path);
-                }
-            } catch (IOException e) {
-                showError("Resource Error", "Error reading background resource: " + e.getMessage());
-            }
-        } else {
-            // Otherwise, treat it as an external file path.
-            try {
-                File imgFile = new File(path);
-                if (imgFile.exists()) {
-                    image = new Image(imgFile.toURI().toString());
-                } else {
-                    // Fallback to default if the user-defined file is not found
-                    String defaultPath = new UserProperties().loadProperties().getProperty("default_background");
-                    try (InputStream stream = getClass().getResourceAsStream(defaultPath)) {
-                        if (stream != null) {
-                            image = new Image(stream);
-                        } else {
-                            showError("Image Error", "Could not find the selected image file and could not load the default background.");
-                        }
-                    } catch (IOException e) {
-                        showError("Resource Error", "Error reading default background resource: " + e.getMessage());
-                    }
-                }
-            } catch (Exception e) {
-                showError("Image Error", "An error occurred while setting the background image: " + e.getMessage());
-            }
+        if (image == null) { // If it failed (or wasn't set), load the default one
+            image = loadImageFromPath("/default_bg.png");
         }
 
         if (image != null) {
             backgroundImage.setImage(image);
+        } else {
+            // This is a critical failure: the default, bundled image is missing.
+            System.err.println("FATAL: The default background image '/default_bg.png' is missing or corrupt.");
+            showError("Fatal Error", "The default background image is missing. Please reinstall the application.");
         }
     }
+
+    /**
+     * Helper method to load an Image from a given path, which can be an
+     * external file path or an internal resource path (if it starts with "/").
+     * @param path The path to the image.
+     * @return An Image object, or null if loading fails for any reason.
+     */
+    private Image loadImageFromPath(String path) {
+        if (path == null || path.trim().isEmpty()) {
+            return null;
+        }
+
+        try {
+            if (path.startsWith("/")) { // It's an internal resource
+                InputStream stream = getClass().getResourceAsStream(path);
+                if (stream != null) {
+                    return new Image(stream);
+                }
+            } else { // It's an external file
+                File imgFile = new File(path);
+                if (imgFile.exists() && imgFile.isFile()) {
+                    return new Image(imgFile.toURI().toString());
+                }
+            }
+        } catch (Exception e) {
+            // Any exception during loading (e.g., invalid path, corrupt file) is logged but suppressed.
+            System.err.println("Could not load image from path: " + path);
+        }
+        return null; // Return null if any step fails
+    }
+
 
     public void setOverlayOpacity(double value) {
         overlayRect.setOpacity(value);
