@@ -118,6 +118,12 @@ public class AllSongsPageController {
 
     @FXML
     private void addSelectedSongs() {
+        if (playlistName == null || playlistName.isEmpty()) {
+            // No playlist selected — go back safely
+            Toast.show("No playlist selected", (Stage) vbox.getScene().getWindow(), this::goBackSafe);
+            return;
+        }
+
         int addedCount = 0;
         for (int i = 0; i < checkBoxes.size(); i++) {
             if (checkBoxes.get(i).isSelected()) {
