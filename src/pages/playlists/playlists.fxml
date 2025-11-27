@@ -53,6 +53,9 @@
                             <font>
                                 <Font name="Monospaced Regular" size="13.0" />
                             </font>
+                            <GridPane.margin>
+                                <Insets left="15.0" />
+                            </GridPane.margin>
                         </Text>
                         <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="SONGS" textAlignment="CENTER" GridPane.columnIndex="1">
                             <font>
