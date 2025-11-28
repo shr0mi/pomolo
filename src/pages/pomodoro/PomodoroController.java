@@ -51,7 +51,10 @@ public class PomodoroController {
 
     private static final int POMODORO_DEFAULT_MINUTES = 0;
     private static int POMODORO_PREV_TIME = 0;
+    // timeline handles VISUAL updates only (stopped when leaving page)
     private static Timeline timeline;
+    // Timer for LOGIC checks (keeps running in background)
+    private static Timeline logicTimer;
 
     // --- STATE VARIABLES (Static for global access) ---
     private static boolean isRunning = false, isPaused = false, isPomodoroSession = true, pomodoroModeActive = false;
@@ -115,9 +118,11 @@ public class PomodoroController {
                 }
             }
 
+            // Always load freshest stats on initialize
             int[] dayStats = loadCurrentDayStats();
-            int calcMinutes = dayStats[0];
-            int calcSessions = dayStats[1];
+            currentDayTotalMinutes = dayStats[0];
+            currentDaySessionCount = dayStats[1];
+
             prepareLastSevenDaysData();
 
             int savedDurationSeconds = 0;
@@ -127,8 +132,6 @@ public class PomodoroController {
 
             int finalSavedDuration = savedDurationSeconds;
             Platform.runLater(() -> {
-                currentDayTotalMinutes = calcMinutes;
-                currentDaySessionCount = calcSessions;
                 updateCurrentDayTimeLabel();
                 drawChart();
 
@@ -140,15 +143,27 @@ public class PomodoroController {
 
                 // Resume logic
                 if (isRunning) {
-                    // Calculate skip
                     long now = System.currentTimeMillis();
                     timeRemaining = (targetEndTimeMillis - now) / 1000.0;
 
                     if (timeRemaining <= 0) {
+                        // Timer finished while away. Stats already saved by background timer.
+                        // Reset UI state.
                         timeRemaining = 0;
-                        timerFinished();
+                        isRunning = false;
+                        isPaused = false;
+
+                        // Ensure UI reflects the reset state set by timerFinished()
+                        if (isPomodoroSession) {
+                            syncEditableTime();
+                        }
+
+                        setRingVisible(false);
+                        updateButtonStates();
+                        updateTimerLabel((int) timeRemaining);
                     } else {
                         startTimer();
+                        startLogicTimer();
                         playPauseIcon.setIconLiteral("fas-pause");
                     }
                 } else {
@@ -168,9 +183,23 @@ public class PomodoroController {
 
     public void shutdown() {
         if (timeline != null) {
-            timeline.stop();
+            timeline.stop(); // Stop visual updates
         }
-        // Logic continues in background via targetEndTimeMillis
+        // logicTimer continues running in background
+    }
+
+    private void startLogicTimer() {
+        if (logicTimer != null) logicTimer.stop();
+        // Check once per second if the time is up
+        logicTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            if (!isRunning) return;
+            long now = System.currentTimeMillis();
+            if (now >= targetEndTimeMillis) {
+                timerFinished();
+            }
+        }));
+        logicTimer.setCycleCount(Timeline.INDEFINITE);
+        logicTimer.play();
     }
 
     private void startTimer() {
@@ -182,10 +211,7 @@ public class PomodoroController {
             long now = System.currentTimeMillis();
             timeRemaining = (targetEndTimeMillis - now) / 1000.0;
 
-            if (timeRemaining <= 0) {
-                timeRemaining = 0;
-                timerFinished();
-            }
+            if (timeRemaining <= 0) timeRemaining = 0;
 
             pomodoroModel.setRemainingSeconds(timeRemaining);
             updateTimerLabel((int) Math.ceil(timeRemaining));
@@ -213,7 +239,8 @@ public class PomodoroController {
 
             targetEndTimeMillis = System.currentTimeMillis() + (long)(timeRemaining * 1000);
 
-            startTimer();
+            startTimer(); // Visuals
+            startLogicTimer(); // Background logic
             isRunning = true;
             isPaused = false;
             playPauseIcon.setIconLiteral("fas-pause");
@@ -222,9 +249,7 @@ public class PomodoroController {
         updateButtonStates();
     }
 
-    // --- ACCESSORS FOR MINIPLAYER (NEW) ---
-    // These allow the Miniplayer to read the state without the Pomodoro page being active
-
+    // --- ACCESSORS FOR MINIPLAYER ---
     public static double getLiveTimeRemaining() {
         if (!isRunning) return timeRemaining;
         long now = System.currentTimeMillis();
@@ -240,7 +265,7 @@ public class PomodoroController {
         return isRunning || isPaused;
     }
 
-    // --- Helper Methods (Same as before) ---
+    // --- Helper Methods ---
 
     private void loadPropertiesFromFile() {
         try (FileInputStream in = new FileInputStream(CONFIG_FILE_NAME)) {
@@ -297,10 +322,28 @@ public class PomodoroController {
         return new int[]{m, s};
     }
 
-    private void saveCurrentDayStats(int m, int s) {
+    // --- SAFE STATS SAVING ---
+    private void incrementAndSaveStats(int minutesToAdd) {
+        // 1. Disk Operations (Always Safe)
+        int[] freshStats = loadCurrentDayStats();
+        int newTotalMinutes = freshStats[0] + minutesToAdd;
+        int newSessionCount = freshStats[1] + 1;
+
         String k = SESSION_KEY_PREFIX + LocalDate.now().format(DATE_FORMATTER);
-        cachedProperties.setProperty(k, m + "," + s);
+        cachedProperties.setProperty(k, newTotalMinutes + "," + newSessionCount);
         savePropertiesToFile();
+
+        // 2. UI Updates (Must check if UI exists)
+        Platform.runLater(() -> {
+            // Update static vars
+            currentDayTotalMinutes = newTotalMinutes;
+            currentDaySessionCount = newSessionCount;
+
+            // Only update labels if they are actively part of the scene
+            if (currentDayTimeLabel != null && currentDayTimeLabel.getScene() != null) {
+                notifyStatsUpdate();
+            }
+        });
     }
 
     private void prepareLastSevenDaysData() {
@@ -427,10 +470,13 @@ public class PomodoroController {
     }
 
     private void stopTimer() {
+        // Stop both visual and logic timers
         if (timeline != null) timeline.stop();
+        if (logicTimer != null) logicTimer.stop();
         pomodoroModel.setRemainingSeconds(timeRemaining);
     }
 
+    // --- UPDATED TIMER FINISHED LOGIC WITH SAFETY CHECKS ---
     private void timerFinished() {
         stopTimer();
         isRunning = false;
@@ -438,22 +484,26 @@ public class PomodoroController {
         pomodoroModel.setRemainingSeconds(0);
         pomodoroModel.setDurationInSeconds(0);
         if (ringtone != null) ringtone.play();
+
+        // FIX: Always count the session if it was a work session.
         if (isPomodoroSession) {
-            int successfulSessionDuration = sessionDurationSeconds;
-            currentDayTotalMinutes += successfulSessionDuration / 60;
-            currentDaySessionCount++;
-            saveCurrentDayStats(currentDayTotalMinutes, currentDaySessionCount);
-            notifyStatsUpdate();
-            isPomodoroSession = false;
-            timeRemaining = POMODORO_PREV_TIME;
-            sessionDurationSeconds = POMODORO_PREV_TIME;
-        } else {
-            isPomodoroSession = true;
-            syncEditableTime();
+            int finishedMinutes = sessionDurationSeconds / 60;
+            incrementAndSaveStats(finishedMinutes);
         }
-        setRingVisible(false);
-        updateButtonStates();
-        updateTimerLabel((int) timeRemaining);
+
+        // FIX: ALWAYS reset state to ready for a new Pomodoro session.
+        // This ensures the next click starts a work session that counts.
+        isPomodoroSession = true;
+        syncEditableTime();
+
+        // Ensure UI updates happen on FX thread AND check if UI exists
+        Platform.runLater(() -> {
+            if (timerLabel != null && timerLabel.getScene() != null) {
+                setRingVisible(false);
+                updateButtonStates();
+                updateTimerLabel((int) timeRemaining);
+            }
+        });
     }
 
     private void updateTimerLabel(int totalSeconds) {
@@ -497,16 +547,16 @@ public class PomodoroController {
 
     private void updateCurrentDayTimeLabel() {
         if (currentDayTimeLabel != null) {
-            currentDayTimeLabel.setText(String.format("Time: %dh %dm | Sess: %d", currentDayTotalMinutes / 60, currentDayTotalMinutes % 60, currentDaySessionCount));
+            currentDayTimeLabel.setText(String.format("Time: %dh %dm | Sessions: %d", currentDayTotalMinutes / 60, currentDayTotalMinutes % 60, currentDaySessionCount));
         }
     }
 
     private void notifyStatsUpdate() {
         updateCurrentDayTimeLabel();
-        if (updateIndicator != null) {
-            updateIndicator.setText("Updated!");
-            new Timeline(new KeyFrame(Duration.seconds(0), new KeyValue(updateIndicator.opacityProperty(), 1.0)), new KeyFrame(Duration.seconds(2), new KeyValue(updateIndicator.opacityProperty(), 0.0))).play();
-        }
+//        if (updateIndicator != null) {
+//            updateIndicator.setText("Updated!");
+//            new Timeline(new KeyFrame(Duration.seconds(0), new KeyValue(updateIndicator.opacityProperty(), 1.0)), new KeyFrame(Duration.seconds(2), new KeyValue(updateIndicator.opacityProperty(), 0.0))).play();
+//        }
     }
 
     private static class DataPoint {
