@@ -224,10 +224,10 @@ public class RootPageController {
     }
 
     /**
-     * Helper method to load an Image from a given path, which can be an
-     * external file path or an internal resource path (if it starts with "/").
+     * Helper method to load an Image from a given path. It robustly handles
+     * internal resource paths and external file system paths.
      * @param path The path to the image.
-     * @return An Image object, or null if loading fails for any reason.
+     * @return An Image object, or null if loading fails.
      */
     private Image loadImageFromPath(String path) {
         if (path == null || path.trim().isEmpty()) {
@@ -235,22 +235,31 @@ public class RootPageController {
         }
 
         try {
-            if (path.startsWith("/")) { // It's an internal resource
-                InputStream stream = getClass().getResourceAsStream(path);
-                if (stream != null) {
-                    return new Image(stream);
+            // First, try to load it as an internal resource. This handles "/default_bg.png".
+            // getResourceAsStream is the correct way to access classpath resources.
+            InputStream stream = getClass().getResourceAsStream(path);
+            if (stream != null) {
+                Image image = new Image(stream);
+                if (!image.isError()) {
+                    return image;
                 }
-            } else { // It's an external file
-                File imgFile = new File(path);
-                if (imgFile.exists() && imgFile.isFile()) {
-                    return new Image(imgFile.toURI().toString());
+            }
+
+            // If it's not a valid resource, or if the path is an absolute file path (e.g., on Unix),
+            // getResourceAsStream will return null, so we then try loading it as a File.
+            File imgFile = new File(path);
+            if (imgFile.exists() && imgFile.isFile()) {
+                Image image = new Image(imgFile.toURI().toString());
+                if (!image.isError()) {
+                    return image;
                 }
             }
         } catch (Exception e) {
-            // Any exception during loading (e.g., invalid path, corrupt file) is logged but suppressed.
             System.err.println("Could not load image from path: " + path);
+            e.printStackTrace();
         }
-        return null; // Return null if any step fails
+
+        return null; // Return null if all attempts fail
     }
 
 

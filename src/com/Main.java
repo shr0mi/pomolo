@@ -38,7 +38,21 @@ public class Main extends Application {
 
         up = new UserProperties();
 
-        Scene scene = new Scene(root, up.getWindowWidth(), up.getWindowHeight());
+        // double initialWidth = up.getWindowWidth();
+        // double initialHeight = up.getWindowHeight();
+        // if (initialWidth < 600) {
+        //     double aspectRatio = initialHeight > 0 ? initialWidth / initialHeight : 16.0/9.0; // Avoid division by zero
+        //     initialWidth = 600;
+        //     initialHeight = initialWidth / aspectRatio;
+        //     try {
+        //         up.saveWindowDimensions(initialWidth, initialHeight);
+        //     } catch (IOException e) {
+        //         System.out.println("Settings Error, Couldn't save corrected width and height: " + e.getMessage());
+        //     }
+        // }
+
+
+        Scene scene = new Scene(root, 960, 540);
         //Scene scene = new Scene(root, 960, 540);
         scene.getStylesheets().add(Main.class.getResource("/css/home.css").toExternalForm());
 
@@ -156,8 +170,7 @@ public class Main extends Application {
         main_stage.setHeight(width / aspect_ratio);
 
         try{
-            up.setWindowWidth(width);
-            up.setWindowHeight(width / aspect_ratio);
+            up.saveWindowDimensions(width, width / aspect_ratio);
         }catch (IOException e){
             System.out.println("Settings Error, Couldn't set width and height: " + e.getMessage());
 

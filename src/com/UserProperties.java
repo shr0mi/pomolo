@@ -14,7 +14,7 @@ public class UserProperties {
     public Properties loadProperties(){
         Properties config = new Properties();
         // Correctly set the default background resource path
-        String default_bg_image = "/src/default_bg.png";
+        String default_bg_image = "/default_bg.png";
         String default_opacity = "0.0";
         String default_width = "960";
         String default_height = "540";
@@ -64,6 +64,13 @@ public class UserProperties {
         saveConfig(config);
     }
 
+    public void resetBackgroundToDefault() throws IOException {
+        Properties config = loadProperties();
+        String defaultBackground = config.getProperty("default_background", "/default_bg.png");
+        config.setProperty("background", defaultBackground);
+        saveConfig(config);
+    }
+
     public void setOverlayOpacity(double opacity) throws IOException{
         Properties config = loadProperties();
         config.setProperty("overlay_opacity", String.valueOf(opacity));
@@ -99,6 +106,13 @@ public class UserProperties {
     public void setWindowHeight(double val) throws IOException{
         Properties config = loadProperties();
         config.setProperty("window_height", String.valueOf(val));
+        saveConfig(config);
+    }
+
+    public void saveWindowDimensions(double width, double height) throws IOException {
+        Properties config = loadProperties();
+        config.setProperty("window_width", String.valueOf(width));
+        config.setProperty("window_height", String.valueOf(height));
         saveConfig(config);
     }
 

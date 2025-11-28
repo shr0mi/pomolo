@@ -20,6 +20,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class SettingsController {
@@ -37,19 +38,34 @@ public class SettingsController {
 
     @FXML
     private void initialize(){
-        // --- THIS LINE IS REMOVED ---
-        // Main.getRootController().showPlayerBar();
-        // --- END REMOVAL ---
-
         try {
             Properties settings = up.loadProperties();
             String imagePath = settings.getProperty("background");
 
-            File img = new File(imagePath);
-            if(!img.exists()){
+            // Check if the path is a resource or a file
+            boolean isResource = false;
+            if (imagePath != null) {
+                try (InputStream stream = getClass().getResourceAsStream(imagePath)) {
+                    if (stream != null) {
+                        isResource = true;
+                    }
+                }
+            }
+
+            // If it's not a resource, treat it as a file path and check for existence
+            if (imagePath != null && !isResource) {
+                File img = new File(imagePath);
+                if (!img.exists()) {
+                    // The user's custom file is missing, revert to default
+                    imagePath = settings.getProperty("default_background");
+                    up.SetProperties(imagePath);
+                }
+            } else if (imagePath == null) {
+                // If background property is missing entirely, set to default
                 imagePath = settings.getProperty("default_background");
                 up.SetProperties(imagePath);
             }
+
             path_text.setText(imagePath);
         } catch (IOException e) {
             showError("Properties Error", "Could not load user settings: " + e.getMessage());
@@ -60,6 +76,7 @@ public class SettingsController {
         windowWidthSlider.setValue(Main.getRootController().getPageContainer().getPrefWidth());
 
         windowWidthSlider.setMax(Screen.getPrimary().getVisualBounds().getWidth());
+
         // If height > width: then height might end before we reach width. So, we should clamp it
         // Max width will be determined by the available height in screen
         if(up.getWindowHeight() > up.getWindowWidth()){
@@ -150,11 +167,6 @@ public class SettingsController {
                 // Set Aspect Ratio
                 BufferedImage img = ImageIO.read(new File(imagePath));
                 changeAspectRatio(img.getWidth(), img.getHeight());
-
-                // Write Aspect Ratio in UserProperties
-                up.setWindowWidth(img.getWidth());
-                up.setWindowHeight(img.getHeight());
-                changeAspectRatio(up.getWindowWidth(), up.getWindowHeight());
 
             } catch (IOException e) {
                 showError("Properties Error", "Could not save new background image setting: " + e.getMessage());
