@@ -20,6 +20,9 @@ public class UserProperties {
         String default_opacity = "60.0"; //Default Opacity
         String default_width = "960";
         String default_height = "540";
+        String default_ytdlp_location = "yt_dlp";
+        String default_ffmpeg_location = "ffmpeg";
+        String default_download_location = "";
 
         // --- New ---
         // Ensure the directory exists before trying to load
@@ -46,6 +49,17 @@ public class UserProperties {
         }
         if(!config.containsKey("window_height")){
             config.setProperty("window_height", default_height);
+        }
+
+        // Check if yt-dlp and ffmpeg exists if not make one
+        if(!config.containsKey("yt_dlp_location")){
+            config.setProperty("yt_dlp_location", default_ytdlp_location);
+        }
+        if(!config.containsKey("ffmpeg_location")){
+            config.setProperty("ffmpeg_location", default_ffmpeg_location);
+        }
+        if(!config.containsKey("download_location")){
+            config.setProperty("download_location", default_download_location);
         }
         // --- End Updated ---
 
@@ -116,6 +130,60 @@ public class UserProperties {
             return Double.parseDouble(val);
         } catch (NumberFormatException e){
             return 540.0;
+        }
+    }
+
+    // Set yt-dlp location
+    public void set_ytdlp_location(String s) throws IOException{
+        Properties config = loadProperties();
+        config.setProperty("yt_dlp_location", s);
+        saveConfig(config);
+    }
+
+    // Get yt-dlp location
+    public String get_ytdlp_location(){
+        Properties config = loadProperties();
+        String val = config.getProperty("yt_dlp_location", "yt-dlp");
+        try{
+            return val;
+        } catch (NumberFormatException e){
+            return "yt-dlp";
+        }
+    }
+
+    // Set ffmpeg location
+    public void set_ffmpeg_location(String s) throws IOException{
+        Properties config = loadProperties();
+        config.setProperty("ffmpeg_location", s);
+        saveConfig(config);
+    }
+
+    // Get ffmpeg location
+    public String get_ffmpeg_location(){
+        Properties config = loadProperties();
+        String val = config.getProperty("ffmpeg_location", "ffmpeg");
+        try{
+            return val;
+        } catch (NumberFormatException e){
+            return "ffmpeg";
+        }
+    }
+
+    // Set download location
+    public void set_download_location(String s) throws IOException{
+        Properties config = loadProperties();
+        config.setProperty("download_location", s);
+        saveConfig(config);
+    }
+
+    // Get download location
+    public String get_download_location(){
+        Properties config = loadProperties();
+        String val = config.getProperty("download_location", "");
+        try{
+            return val;
+        } catch (NumberFormatException e){
+            return "";
         }
     }
 

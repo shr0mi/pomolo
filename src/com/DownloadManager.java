@@ -6,12 +6,14 @@ import java.util.function.Consumer;
 
 public class DownloadManager {
 
-    public static void downloadAudio(String url, String outputPath, Consumer<String> outputCallback) throws Exception {
+    UserProperties up = new UserProperties();
+
+    public static void downloadAudio(String url, String ytdlpLocation, String ffmpegLocation, String outputPath, Consumer<String> outputCallback) throws Exception {
         String output = outputPath + "/%(title)s.%(ext)s";
         ProcessBuilder pb = new ProcessBuilder(
-                "C:\\Users\\zkfua\\AppData\\Local\\Microsoft\\WinGet\\Packages\\yt-dlp.yt-dlp_Microsoft.Winget.Source_8wekyb3d8bbwe\\yt-dlp.exe",
+                ytdlpLocation,
                 "-x", "--audio-format", "mp3",
-                "--ffmpeg-location", "C:\\Users\\zkfua\\AppData\\Local\\Microsoft\\WinGet\\Packages\\yt-dlp.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-N-121583-g4348bde2d2-win64-gpl\\bin\\ffmpeg.exe",
+                "--ffmpeg-location", ffmpegLocation,
                 "-o", output,
                 url
         );

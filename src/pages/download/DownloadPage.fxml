@@ -11,7 +11,11 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="pages.download.DownloadPageController">
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.CustomMenuItem?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.text.TextFlow?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="pages.download.DownloadPageController" stylesheets="@/css/home.css">
 
     <HBox alignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
         <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Downloads" textAlignment="CENTER">
@@ -27,16 +31,80 @@
     <content>
     <VBox spacing="10.0">
     <children>
-    <HBox fx:id="topBar1" alignment="CENTER_LEFT" blendMode="SCREEN" prefHeight="50.0" styleClass="row-box" stylesheets="../../css/home.css">
-        <children>
-            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="The downloader uses yt-dlp and ff-mpeg. Make sure you have that installed" textAlignment="CENTER">
-                <font>
-                    <Font name="Monospaced Regular" size="13.0" />
-                </font>
-            </Text>
-        </children>
-    </HBox>
-        <HBox fx:id="topBar2" alignment="CENTER_LEFT" blendMode="SCREEN" prefHeight="50.0" styleClass="row-box" stylesheets="../../css/home.css">
+        <TitledPane text="Configure" expanded="false" styleClass="download-page-dropdown">
+            <content>
+                <VBox spacing="10">
+                    <HBox fx:id="topBar1" alignment="CENTER_LEFT" prefHeight="50.0" styleClass="row-box">
+                        <children>
+                            <TextFlow maxWidth="600">
+                                <Text fill="WHITE" text="The downloader uses yt-dlp and ffmpeg. Make sure you have them installed.&#10;&#10;">
+                                    <font>
+                                        <Font name="Monospaced Regular" size="13.0" />
+                                    </font>
+                                </Text>
+                                <Text fill="#00FF00" text="Windows (CMD):&#10;">
+                                    <font>
+                                        <Font name="Monospaced Bold" size="13.0" />
+                                    </font>
+                                </Text>
+                                <Text fill="WHITE" text="  where yt-dlp&#10;  where ffmpeg&#10;&#10;">
+                                    <font>
+                                        <Font name="Monospaced Regular" size="13.0" />
+                                    </font>
+                                </Text>
+                                <Text fill="#00FF00" text="macOS/Linux:&#10;">
+                                    <font>
+                                        <Font name="Monospaced Bold" size="13.0" />
+                                    </font>
+                                </Text>
+                                <Text fill="WHITE" text="  which yt-dlp&#10;  which ffmpeg">
+                                    <font>
+                                        <Font name="Monospaced Regular" size="13.0" />
+                                    </font>
+                                </Text>
+                            </TextFlow>
+                        </children>
+                    </HBox>
+
+                    <HBox fx:id="topBar12" alignment="CENTER_LEFT" prefHeight="50.0" styleClass="row-box" spacing="10">
+                        <children>
+                            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="YT-DLP Location:" textAlignment="CENTER">
+                                <font>
+                                    <Font name="Monospaced Regular" size="13.0" />
+                                </font>
+                            </Text>
+                            <TextField fx:id="yt_dlp_location" prefWidth="400" promptText="Enter yt-dlp location" styleClass="download-input" HBox.hgrow="ALWAYS"/>
+                            <Button mnemonicParsing="false" text="Enter" onAction="#setYtDlpLocation"/>
+                        </children>
+                    </HBox>
+
+                    <HBox fx:id="topBar13" alignment="CENTER_LEFT" prefHeight="50.0" styleClass="row-box" spacing="10">
+                        <children>
+                            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="FFmpeg Location:" textAlignment="CENTER">
+                                <font>
+                                    <Font name="Monospaced Regular" size="13.0" />
+                                </font>
+                            </Text>
+                            <TextField fx:id="ffmpeg_location" prefWidth="400" promptText="Enter ffmpeg location" styleClass="download-input" HBox.hgrow="ALWAYS"/>
+                            <Button mnemonicParsing="false" text="Enter" onAction="#setFfmpegLocation"/>
+                        </children>
+                    </HBox>
+
+                    <HBox fx:id="topBar14" alignment="CENTER_LEFT" prefHeight="50.0" styleClass="row-box" spacing="10">
+                        <children>
+                            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Output Location:" textAlignment="CENTER">
+                                <font>
+                                    <Font name="Monospaced Regular" size="13.0" />
+                                </font>
+                            </Text>
+                            <TextField fx:id="download_location" prefWidth="400" promptText="Enter output location" styleClass="download-input" HBox.hgrow="ALWAYS"/>
+                            <Button mnemonicParsing="false" text="Enter" onAction="#setDownloadLocation"/>
+                        </children>
+                    </HBox>
+                </VBox>
+            </content>
+        </TitledPane>
+        <HBox fx:id="topBar2" alignment="CENTER_LEFT" blendMode="SCREEN" prefHeight="50.0" styleClass="row-box">
             <children>
                 <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter Link:" textAlignment="CENTER">
                     <font>
@@ -54,7 +122,7 @@
                      </Button>
             </children>
         </HBox>
-               <HBox fx:id="topBar21" alignment="CENTER_LEFT" blendMode="SCREEN" HBox.hgrow="ALWAYS" styleClass="row-box" stylesheets="../../css/home.css">
+               <HBox fx:id="topBar21" alignment="CENTER_LEFT" blendMode="SCREEN" HBox.hgrow="ALWAYS" styleClass="row-box">
                   <children>
                       <VBox spacing="10.0"
                             HBox.hgrow="ALWAYS">
@@ -71,7 +139,9 @@
                               <TextArea fx:id="terminalOutput"
                                         editable="false"
                                         prefHeight="200"
-                                        VBox.vgrow="ALWAYS">
+                                        VBox.vgrow="ALWAYS"
+                                        styleClass="download-terminal"
+                              >
 
                               </TextArea>
 

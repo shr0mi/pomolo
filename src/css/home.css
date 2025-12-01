@@ -331,5 +331,49 @@
     -fx-icon-color: #FF6347; /* Tomato red on hover */
 }
 
+/* Download Page CSS */
+.download-page-dropdown{
+    -fx-background-color: transparent;
+    -fx-border-width: 2px;
+    -fx-border-color: white;
+
+}
+
+.download-page-dropdown > .title {
+    -fx-background-color: transparent;
+}
+
+.download-page-dropdown > .title > .text {
+    -fx-fill: white;  /* For Text nodes */
+}
+
+.download-page-dropdown > .content {
+    -fx-background-color: transparent;
+}
+
+.download-page-dropdown .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.download-page-dropdown .arrow {
+    -fx-background-color: white;
+}
+
+.download-terminal {
+    -fx-control-inner-background: transparent;
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-border-width: 2px;
+    -fx-border-color: white;
+}
+
+.download-terminal:hover {
+    -fx-text-fill: black;
+    -fx-border-width: 2px;
+    -fx-border-color: black;
+}
+
+
+
 
 

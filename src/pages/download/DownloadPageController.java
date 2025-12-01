@@ -2,6 +2,7 @@ package pages.download;
 
 import com.Main;
 import com.DownloadManager;
+import com.UserProperties;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,7 +18,26 @@ public class DownloadPageController {
 
     @FXML TextField linkInput;
     @FXML TextArea terminalOutput;
+    @FXML TextField yt_dlp_location;
+    @FXML TextField ffmpeg_location;
+    @FXML TextField download_location;
 
+    UserProperties up = new UserProperties();
+
+    String ytdlpLocation = "yt-dlp";
+    String ffmpegLocation = "ffmpeg";
+    String downloadLocation = "";
+
+    @FXML
+    private void initialize(){
+        yt_dlp_location.setText(up.get_ytdlp_location());
+        ffmpeg_location.setText(up.get_ffmpeg_location());
+        download_location.setText(up.get_download_location());
+
+        ytdlpLocation = up.get_ytdlp_location();
+        ffmpegLocation = up.get_ffmpeg_location();
+        downloadLocation = up.get_download_location();
+    }
 
     @FXML
     public void download(ActionEvent e) throws Exception{
@@ -29,7 +49,9 @@ public class DownloadPageController {
             try {
                 DownloadManager.downloadAudio(
                         linkInput.getText(),
-                        "",
+                        ytdlpLocation,
+                        ffmpegLocation,
+                        downloadLocation,
                         line -> Platform.runLater(() -> terminalOutput.appendText(line))
                 );
                 Platform.runLater(() -> terminalOutput.appendText("\nDownload completed successfully!\n"));
@@ -51,6 +73,37 @@ public class DownloadPageController {
             showError("Navigation Error", "Could not load home page: " + ioException.getMessage());
         }
     }
+
+    @FXML
+    public void setYtDlpLocation(ActionEvent e){
+        try {
+            up.set_ytdlp_location(yt_dlp_location.getText());
+            ytdlpLocation = up.get_ytdlp_location();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @FXML
+    public void setFfmpegLocation(ActionEvent e){
+        try {
+            up.set_ffmpeg_location(ffmpeg_location.getText());
+            ffmpegLocation = up.get_ffmpeg_location();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @FXML
+    public void setDownloadLocation(ActionEvent e){
+        try {
+            up.set_download_location(download_location.getText());
+            downloadLocation = up.get_download_location();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
 
     private void showError(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
