@@ -1,135 +1,96 @@
-##**POMOLO**
 
-A Minimal, Fast, and Beautiful Productivity App based on the Pomodoro Technique.
+# 🌟Pomolo
 
----
-
-# 📌 Sections
-
-* [About](#about)
-* [Features](#features)
-* [Team](#meet-the-team)
-* [Installation](#installation)
-* [License](#license)
-* [Social](#social)
-
----
-
-# 🧡 About
-
-**Pomolo** is a modern Pomodoro productivity app designed to keep you focused, consistent, and motivated.
-With clean UI, smart reminders, and beautiful animations, Pomolo helps you **work smarter — not harder**.
+Pomolo is a minimalist lofi music player–productivity app that lets users enjoy relaxing music with downloadable tracks, a smooth floating miniplayer, and tools to stay focused while tracking their progress through detailed statistics.
 
 ---
 
 # ✨ Features
 
-Below are the **7 main features**, each with a screenshot/GIF placeholder.
+## 1. 🎨 Customizable UI
 
-## 1. 🍅 Pomodoro Timer
+Customizable backgrounds, adjustable app window size, and black overlay opacity for perfect brightness control.
 
-Simple, beautiful, and customizable Pomodoro timer. <img src="assets/feature_timer.gif" width="70%" />
 
----
-
-## 2. 📊 Analytics & Statistics
-
-Daily, weekly, and monthly productivity breakdown. <img src="assets/feature_stats.png" width="70%" />
+<img src="assets/bg.png" width="70%" /> <img src="assets/bg1.png" width="70%" />
 
 ---
 
-## 3. 🔔 Smart Reminders
+## 2. 🍅 Pomodoro Timer & Focus Statistics
 
-Auto-start cycles, session notifications, and smart reminders to stay consistent. <img src="assets/feature_reminder.gif" width="70%" />
+Pomodoro timer for focused sessions, with weekly statistics to track and analyze user productivity. 
 
----
 
-## 4. 🎨 Themes & Personalization
-
-Light, dark, AMOLED, and dynamic color options. <img src="assets/feature_theme.png" width="70%" />
+<img src="assets/pomodoro.png" width="70%" />
 
 ---
 
-## 5. 📝 Tasks & To-Dos
+## 3. 🎵 Cozy Miniplayer
 
-Built-in lightweight task manager integrated with sessions. <img src="assets/feature_tasks.png" width="70%" />
+Minimalist floating miniplayer with smooth animations, allowing music control without interrupting your workflow.
 
----
 
-## 6. 🎵 Ambient Soundscapes
-
-Background sounds (rain, wind, café, etc.) for deeper focus. <img src="assets/feature_sound.gif" width="70%" />
+<img src="assets/miniplayer.png" width="70%" />
 
 ---
 
-## 7. 💾 Cloud Sync (optional)
+## 4. 🎶 Playlist System
 
-Sync your sessions & preferences across devices. <img src="assets/feature_sync.png" width="70%" />
+Custom playlist system for organizing music according to different moods and tastes, including a dedicated liked songs playlist. 
 
----
 
-# 🖼 Screenshots / GIFs
-
-> Add general app screenshots here.
-
-<p>
-<img src="screens/home.png" width="45%" />
-<img src="screens/session.png" width="45%" />
-</p>
+<img src="assets/playlist.png" width="70%" />
 
 ---
 
-# 👥 Meet the Team
+## 5. ⬇️ Download Music
 
-| Name           | Role        | GitHub                                       |
-| -------------- | ----------- | -------------------------------------------- |
-| **Your Name**  | Developer   | [@yourgithub](https://github.com/yourgithub) |
-| **Teammate 1** | Designer    | [@teammate1](https://github.com/teammate1)   |
-| **Teammate 2** | Developer   | [@teammate2](https://github.com/teammate2)   |
-| **Teammate 3** | QA / Tester | [@teammate3](https://github.com/teammate3)   |
+Download tracks directly for offline listening using yt-dlp or ffmpeg. 
 
-Add more contributors as needed.
+
+<img src="assets/download.png" width="70%" />
 
 ---
 
-# 📥 Installation
+## 6. 🎚️ Ambient Sound Mixer
 
-Pomolo is available for:
+Ambient sound mixer with rain, wind, and fireplace sounds to enhance focus and productivity. 
 
-* **Android**
-* **Windows**
-* (Add more platforms if needed)
 
-Download from the Releases page:
-👉 [https://github.com/yourname/pomolo/releases](https://github.com/yourname/pomolo/releases)
+<img src="assets/ambient.png" width="70%" />
 
 ---
 
-# 📄 License
+# 👥 Contributers
 
-```
-© Copyright 2025 Pomolo
-- You may read/modify the code for personal use or contributions.
-- Redistribution under a different name or license without permission is not allowed.
-```
+| Name           
+| -------------- 
+| **Sazid Alam**  
+| **Khaza Asif** 
+| **Sakib Mujbain Sadat** 
+| **Faiaz Ibne Iqbal** 
 
----
 
-# 🌐 Social
 
-* Telegram (Updates): [https://t.me/pomolo_channel](https://t.me/pomolo_channel)
-* Discord: [https://discord.gg/your-server](https://discord.gg/your-server)
-* GitHub Issues: [https://github.com/yourname/pomolo/issues](https://github.com/yourname/pomolo/issues)
 
-⭐ If you like the project, please consider starring the repo!
 
----
 
-If you want, I can also:
 
-✅ insert your **real logo**
-✅ write a more unique **Pomolo-style description**
-✅ format it in a more modern or minimal style
-✅ generate matching badge colors or icons
 
-Just tell me!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
