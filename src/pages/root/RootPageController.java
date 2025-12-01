@@ -19,9 +19,15 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import pages.all_songs.AllSongsPageController;
+import pages.download.DownloadPageController;
 import pages.home.HomeController;
+import pages.pomodoro.PomodoroController;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -39,6 +45,7 @@ public class RootPageController {
 
     @FXML
     private void initialize() {
+        SqliteDBManager.verifyAndCleanSongDatabase();
         root.setOpacity(0.0);
 
         try {
@@ -76,10 +83,10 @@ public class RootPageController {
         pageContainer.prefWidthProperty().bind(root.widthProperty());
         pageContainer.prefHeightProperty().bind(root.heightProperty().subtract(130));
 
-        setupDragAndDrop();
+        enableDragAndDrop();
     }
 
-    private void setupDragAndDrop() {
+    private void enableDragAndDrop() {
         final String dragOverStyle = "drag-over";
 
         root.setOnDragOver(event -> {
@@ -94,14 +101,15 @@ public class RootPageController {
             }
         });
 
-        root.setOnDragExited(event -> {
-            root.getStyleClass().remove(dragOverStyle);
-        });
+        root.setOnDragExited(event -> root.getStyleClass().remove(dragOverStyle));
 
         root.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasFiles()) {
+                String songsDir = SqliteDBManager.getAppDir() + File.separator + "songs";
+                new File(songsDir).mkdirs();
+
                 List<File> files = db.getFiles();
                 List<File> supportedFiles = files.stream()
                         .filter(f -> {
@@ -110,20 +118,23 @@ public class RootPageController {
                                     || lowerCaseName.endsWith(".wav")
                                     || lowerCaseName.endsWith(".flac");
                         })
-                        .collect(Collectors.toList());
+                        .toList();
 
                 int importedCount = 0;
                 for (File file : supportedFiles) {
                     try {
-                        // --- FIX: CHECK FOR DUPLICATES BEFORE INSERTING ---
-                        if (!SqliteDBManager.songExists(file.getAbsolutePath())) {
-                            SongManager.SongInfo songInfo = SongManager.readMp3(file);
+                        File destFile = new File(songsDir, file.getName());
+                        if (!SqliteDBManager.songExists(destFile.getAbsolutePath())) {
+                            Files.copy(file.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                            SongManager.SongInfo songInfo = SongManager.readMp3(destFile);
                             if (songInfo != null) {
                                 SqliteDBManager.insertNewSong(songInfo);
                                 importedCount++;
                             }
                         }
-                        // --- END FIX ---
+                    } catch (IOException e) {
+                        System.err.println("Failed to copy imported file: " + file.getAbsolutePath());
+                        e.printStackTrace();
                     } catch (Exception e) {
                         System.err.println("Failed to import file: " + file.getAbsolutePath());
                         e.printStackTrace();
@@ -138,7 +149,14 @@ public class RootPageController {
         });
     }
 
-    private void refreshCurrentPage() {
+    private void disableDragAndDrop() {
+        root.setOnDragOver(null);
+        root.setOnDragExited(null);
+        root.setOnDragDropped(null);
+        root.getStyleClass().remove("drag-over");
+    }
+
+    public void refreshCurrentPage() {
         if (pageContainer.getChildren().isEmpty()) return;
 
         Parent currentPage = (Parent) pageContainer.getChildren().get(0);
@@ -152,9 +170,28 @@ public class RootPageController {
     }
 
     public void setPage(Parent node) {
+        Object controller = node.getProperties().get("controller");
+        if (controller instanceof HomeController) {
+            enableDragAndDrop();
+        } else {
+            disableDragAndDrop();
+        }
+
+        if (controller instanceof DownloadPageController) {
+            Main.setFocusHandlerActive(false);
+        } else {
+            Main.setFocusHandlerActive(true);
+        }
+
         Parent currentPage = pageContainer.getChildren().isEmpty() ? null : (Parent) pageContainer.getChildren().get(0);
 
         if (currentPage != null) {
+            // Check if we are leaving the Pomodoro page
+            Object oldController = currentPage.getProperties().get("controller");
+            if (oldController instanceof PomodoroController) {
+                ((PomodoroController) oldController).shutdown();
+            }
+
             FadeTransition fadeout = new FadeTransition(Duration.millis(300), currentPage);
             fadeout.setFromValue(1.0);
             fadeout.setToValue(0.0);

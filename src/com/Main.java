@@ -23,6 +23,7 @@ public class Main extends Application {
     public static UserProperties up;
 
     public static Stage mainStage;
+    private static boolean focusHandlerActive = true;
 
 
     public static void main(String[] args) {
@@ -113,14 +114,21 @@ public class Main extends Application {
     // it lets the click happen but then immediately steals focus back to the root.
     public static void setupGlobalFocusHandler(Scene scene, Parent root) {
         scene.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
-            // We run this 'later' so the button click still registers its action
-            // but focus is immediately taken away after.
-            javafx.application.Platform.runLater(root::requestFocus);
+            if (focusHandlerActive) {
+                // We run this 'later' so the button click still registers its action
+                // but focus is immediately taken away after.
+                javafx.application.Platform.runLater(root::requestFocus);
+            }
         });
 
         // Also recursively strip focus traversal
         makeButtonsNonFocusable(root);
     }
+
+    public static void setFocusHandlerActive(boolean active) {
+        focusHandlerActive = active;
+    }
+
 
     public static void makeButtonsNonFocusable(Parent parent) {
         for (Node node : parent.getChildrenUnmodifiable()) {

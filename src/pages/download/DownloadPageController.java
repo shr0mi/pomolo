@@ -1,8 +1,8 @@
 package pages.download;
 
 import com.Main;
-import com.DownloadManager;
 import com.UserProperties;
+import com.DownloadManager;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

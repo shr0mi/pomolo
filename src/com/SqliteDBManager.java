@@ -12,6 +12,10 @@ public class SqliteDBManager {
     private static final String DB_URL_PLAYLIST = "jdbc:sqlite:" + APP_DIR + File.separator + "playlists.db";
     private static final String SONGS_DB_PATH = APP_DIR + File.separator + "songs.db";
 
+    public static String getAppDir() {
+        return APP_DIR;
+    }
+
     public static class PlaylistInfo {
         public final String name;
         public final int songCount;
@@ -253,7 +257,7 @@ public class SqliteDBManager {
         List<PlaylistInfo> playlists = new ArrayList<>();
         createPlaylistTable(); // Ensure table exists
         String sql = """
-            SELECT p.name, COUNT(ps.song_id), SUM(s.duration)
+            SELECT p.name, COUNT(s.id), SUM(s.duration)
             FROM playlists p
             LEFT JOIN playlist_songs ps ON p.id = ps.playlist_id
             LEFT JOIN songs_db.songs s ON ps.song_id = s.id
@@ -305,5 +309,35 @@ public class SqliteDBManager {
             System.err.println("Error getting songs for playlist: " + e.getMessage());
         }
         return songs;
+    }
+
+    public static void verifyAndCleanSongDatabase() {
+        createTable(); // Ensure the table exists before we start.
+        List<String> pathsToDelete = new ArrayList<>();
+        String sql = "SELECT path FROM songs";
+
+        try (Connection conn = connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                String path = rs.getString("path");
+                if (path != null && !new File(path).exists()) {
+                    pathsToDelete.add(path);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error verifying song database: " + e.getMessage());
+            return; // Exit if we can't read the database.
+        }
+
+        // Now, delete all the invalid paths we found.
+        if (!pathsToDelete.isEmpty()) {
+            System.out.println("Found " + pathsToDelete.size() + " missing songs. Cleaning database...");
+            for (String path : pathsToDelete) {
+                deleteSong(path); // Use the existing deleteSong method.
+            }
+            System.out.println("Database cleaning complete.");
+        }
     }
 }

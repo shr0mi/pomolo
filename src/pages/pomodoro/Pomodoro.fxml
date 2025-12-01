@@ -146,6 +146,7 @@
                 <Label fx:id="currentDayTimeLabel"
                        style="-fx-font-family: monospace; -fx-font-size: 18pt; -fx-text-fill: #FFFFFF;"
                        text="Today: 0m (0 sessions)" />
+                <Label fx:id="updateIndicator" text="•" style="-fx-text-fill: #4CAF50; -fx-font-size: 20pt;" />
             </HBox>
 
             <Line stroke="#696969" startX="0.0" endX="420.0" strokeWidth="1.0" />
@@ -181,4 +182,3 @@
 
     <Button AnchorPane.rightAnchor="35.0" AnchorPane.topAnchor="30.0" mnemonicParsing="false" onAction="#goToHome" text="X" styleClass="close-btn"/>
 </AnchorPane>
-

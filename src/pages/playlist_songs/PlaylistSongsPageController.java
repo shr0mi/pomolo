@@ -20,6 +20,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.kordamp.ikonli.javafx.FontIcon;
 import pages.all_songs.AllSongsPageController;
 import pages.components.Toast;
 import pages.confirmation_dialog.ConfirmationDialogController;
@@ -52,6 +53,7 @@ public class PlaylistSongsPageController {
 
     private void loadSongs() {
         playlistSongs = SqliteDBManager.getSongsForPlaylist(playlistName);
+        playerManager.setQueue(playlistSongs);
         vbox.getChildren().clear();
         int index = 0;
         for (SongManager.SongInfo s : playlistSongs) {
@@ -127,7 +129,9 @@ public class PlaylistSongsPageController {
         durationText.setFill(Color.WHITE);
         durationText.setFont(Font.font("Monospaced", 13));
 
-        Button deleteButton = new Button("Delete");
+        Button deleteButton = new Button();
+        deleteButton.setGraphic(new FontIcon("fas-trash-alt"));
+        deleteButton.getStyleClass().add("delete-btn");
         deleteButton.setOnAction(e -> {
             e.consume(); // Prevent the row's onMouseClicked from firing
             try {

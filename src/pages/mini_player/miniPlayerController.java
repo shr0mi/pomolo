@@ -14,13 +14,15 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import models.PomodoroModel;
+import models.PomodoroModel; // We use PomodoroController static methods now, but this import is fine
+import pages.pomodoro.PomodoroController; // IMPORT ADDED
 import org.kordamp.ikonli.javafx.FontIcon;
+import pages.player_bar.AmbientPlayerManager;
 import pages.player_bar.PlayerBarController;
 import javafx.animation.Interpolator;
-
 
 public class miniPlayerController {
 
@@ -28,6 +30,8 @@ public class miniPlayerController {
     @FXML private StackPane uiContainer;
     @FXML private StackPane musicDesign;
     @FXML private Circle visualCircle;
+    @FXML private Circle visualCircle2;
+    @FXML private Circle visualCircle3;
     @FXML private Label songLabel;
     @FXML private Button playPauseButton;
     @FXML private FontIcon playPauseIcon;
@@ -36,12 +40,15 @@ public class miniPlayerController {
     @FXML private Button ambientButton;
     @FXML private Circle glowRing;
     @FXML private Circle timerProgressRing;
+    @FXML private StackPane ringVisualsStack;
 
     private double xOffset, yOffset;
     private final MusicPlayerManager musicManager = MusicPlayerManager.getInstance();
-    private final PomodoroModel pomodoroModel = PomodoroModel.getInstance();
-    private Timeline glowPulse, visualPulse;
+    // private final PomodoroModel pomodoroModel = PomodoroModel.getInstance(); // Not needed for the ring anymore
+    private final AmbientPlayerManager ambientPlayerManager = PlayerBarController.APM;
+    private Timeline glowPulse;
     private AnimationTimer ringAnimationTimer;
+    private ParallelTransition rippleEffect;
 
     @FXML
     public void initialize() {
@@ -79,10 +86,19 @@ public class miniPlayerController {
         setupHoverAnimations();
         setupGlowEffect();
         setupTimerUpdates();
+        setupRippleEffect();
 
         // Bind ambient player state
-        if (PlayerBarController.APM != null) {
-            PlayerBarController.APM.isPlayingProperty().addListener((obs, wasPlaying, isNowPlaying) -> {
+        if (ambientPlayerManager != null) {
+            // Set initial state
+            if (ambientPlayerManager.getIsPlaying()) {
+                ambientButton.getStyleClass().add("selected");
+            } else {
+                ambientButton.getStyleClass().remove("selected");
+            }
+
+            // Listen for future changes
+            ambientPlayerManager.isPlayingProperty().addListener((obs, wasPlaying, isNowPlaying) -> {
                 if (isNowPlaying) {
                     ambientButton.getStyleClass().add("selected");
                 } else {
@@ -98,24 +114,42 @@ public class miniPlayerController {
         uiContainer.setOpacity(0);
         musicDesign.setOpacity(1);
 
-        // Visual Animations
-        visualPulse = new Timeline(
-                new KeyFrame(Duration.ZERO,
-                        new KeyValue(visualCircle.scaleXProperty(), 1.0),
-                        new KeyValue(visualCircle.scaleYProperty(), 1.0),
-                        new KeyValue(visualCircle.opacityProperty(), 0.15)),
-                new KeyFrame(Duration.seconds(2),
-                        new KeyValue(visualCircle.scaleXProperty(), 1.15),
-                        new KeyValue(visualCircle.scaleYProperty(), 1.15),
-                        new KeyValue(visualCircle.opacityProperty(), 0.25))
-        );
-        visualPulse.setAutoReverse(true);
-        visualPulse.setCycleCount(Animation.INDEFINITE);
-
         bindMusicPlayer();
 
         // 3. Ensure Buttons aren't focusable (Extra safety)
         setButtonsNotFocusable();
+    }
+
+    private void setupRippleEffect() {
+        rippleEffect = new ParallelTransition();
+        rippleEffect.setCycleCount(Animation.INDEFINITE);
+
+        // Create animations for each circle with a delay
+        rippleEffect.getChildren().addAll(
+                createRippleAnimation(visualCircle, Duration.ZERO),
+                createRippleAnimation(visualCircle2, Duration.seconds(1)),
+                createRippleAnimation(visualCircle3, Duration.seconds(2))
+        );
+    }
+
+    private Animation createRippleAnimation(Circle circle, Duration delay) {
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(circle.scaleXProperty(), 0.1),
+                        new KeyValue(circle.scaleYProperty(), 0.1),
+                        new KeyValue(circle.opacityProperty(), 0.0)
+                ),
+                new KeyFrame(Duration.seconds(1),
+                        new KeyValue(circle.opacityProperty(), 0.3)
+                ),
+                new KeyFrame(Duration.seconds(3),
+                        new KeyValue(circle.scaleXProperty(), 1.5),
+                        new KeyValue(circle.scaleYProperty(), 1.5),
+                        new KeyValue(circle.opacityProperty(), 0.0)
+                )
+        );
+        timeline.setDelay(delay);
+        return timeline;
     }
 
     private void setButtonsNotFocusable() {
@@ -125,13 +159,26 @@ public class miniPlayerController {
         if (ambientButton != null) ambientButton.setFocusTraversable(false);
     }
 
-    // ... (Keep bindMusicPlayer, setupTimerUpdates, updateTimerProgress, setupDrag, setupGlowEffect, updateGlowAnimation, updateVisualAnimation EXACTLY as they were) ...
+    private String truncate(String text, int maxLength) {
+        if (text.length() <= maxLength) {
+            return text;
+        }
+        return text.substring(0, 10) + "..." + text.substring(text.length() - 10);
+    }
 
     private void bindMusicPlayer() {
         var song = musicManager.currentSongProperty().get();
-        if (song != null) songLabel.setText(song.fileName);
+        if (song != null) {
+            songLabel.setText(truncate(song.fileName, 20));
+        } else {
+            songLabel.setText("No song playing");
+        }
         musicManager.currentSongProperty().addListener((obs, old, val) -> {
-            if (val != null) Platform.runLater(() -> songLabel.setText(val.fileName));
+            if (val != null) {
+                Platform.runLater(() -> songLabel.setText(truncate(val.fileName, 20)));
+            } else {
+                Platform.runLater(() -> songLabel.setText("No song playing"));
+            }
         });
         updatePlayPauseIcon();
         musicManager.isPlayingProperty().addListener((obs, was, now) -> {
@@ -148,14 +195,19 @@ public class miniPlayerController {
     private void setupTimerUpdates() {
         if (timerProgressRing == null) return;
         timerProgressRing.setRotate(-90);
-        timerProgressRing.setStyle("-fx-stroke: #a481ee; -fx-fill: transparent; -fx-stroke-width: 4;");
+        timerProgressRing.setStrokeLineCap(StrokeLineCap.ROUND);
+
         ringAnimationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (pomodoroModel.getDurationInSeconds() > 0) {
-                    updateTimerProgress(pomodoroModel.getRemainingSeconds(), pomodoroModel.getDurationInSeconds());
+                // FIXED: Use Static Methods from PomodoroController to get live data
+                double total = PomodoroController.getLiveTotalDuration();
+
+                if (total > 0 && PomodoroController.isTimerActive()) {
+                    double remaining = PomodoroController.getLiveTimeRemaining();
+                    updateTimerProgress(remaining, (long) total);
                 } else {
-                    timerProgressRing.setVisible(false);
+                    ringVisualsStack.setVisible(false);
                 }
             }
         };
@@ -165,16 +217,20 @@ public class miniPlayerController {
     private void updateTimerProgress(double remainingSeconds, long totalDuration) {
         if (timerProgressRing == null) return;
         if (totalDuration <= 0) {
-            timerProgressRing.setVisible(false);
+            ringVisualsStack.setVisible(false);
             return;
         }
-        timerProgressRing.setVisible(true);
+        // Force visible if active, regardless of hover (or keep your hover logic if you prefer)
+        // Your previous code had: ringVisualsStack.setVisible(root.isHover());
+        // If you want it always visible when running:
+        ringVisualsStack.setVisible(true);
+
         double progress = 1.0 - (remainingSeconds / (double) totalDuration);
         if (progress < 0) progress = 0;
         if (progress > 1) progress = 1;
         double circumference = 2 * Math.PI * timerProgressRing.getRadius();
         timerProgressRing.getStrokeDashArray().setAll(circumference);
-        timerProgressRing.setStrokeDashOffset(circumference * (1 - progress));
+        timerProgressRing.setStrokeDashOffset(progress * circumference);
     }
 
     private void setupDrag() {
@@ -199,12 +255,19 @@ public class miniPlayerController {
             root.requestFocus();
             animateFade(uiContainer, 1.0);
             animateFade(musicDesign, 0.0);
+
+            // Only show ring if timer is actually active/paused
+            if (PomodoroController.isTimerActive()) {
+                ringVisualsStack.setVisible(true);
+            }
+
             animateScale(root, hoveredScale, animationDuration);
         });
 
         root.setOnMouseExited(e -> {
             animateFade(uiContainer, 0.0);
             animateFade(musicDesign, 1.0);
+            ringVisualsStack.setVisible(false);
             animateScale(root, unhoveredScale, animationDuration);
         });
     }
@@ -257,13 +320,16 @@ public class miniPlayerController {
     }
 
     private void updateVisualAnimation(boolean isPlaying) {
-        if (visualPulse == null) return;
+        if (rippleEffect == null) return;
         if (isPlaying) {
-            visualPulse.play();
+            rippleEffect.play();
         } else {
-            visualPulse.stop();
+            rippleEffect.stop();
             visualCircle.setScaleX(1.0);
             visualCircle.setScaleY(1.0);
+            visualCircle.setOpacity(0.15);
+            visualCircle2.setOpacity(0.0);
+            visualCircle3.setOpacity(0.0);
         }
     }
 
@@ -291,6 +357,9 @@ public class miniPlayerController {
     }
 
     @FXML private void restoreMain() {
+        // Stop the local timer loop when closing
+        if (ringAnimationTimer != null) ringAnimationTimer.stop();
+
         Stage miniStage = (Stage) root.getScene().getWindow();
         miniStage.close();
         if (Main.getRootController() != null && Main.getRootController().getRootPane() != null) {
@@ -322,11 +391,11 @@ public class miniPlayerController {
 
     @FXML
     private void handleAmbientMini() {
-        if (PlayerBarController.APM == null) return;
-        if (!PlayerBarController.APM.getIsPlaying()) {
-            PlayerBarController.APM.playAmbientMusic();
+        if (ambientPlayerManager == null) return;
+        if (!ambientPlayerManager.getIsPlaying()) {
+            ambientPlayerManager.playAmbientMusic();
         } else {
-            PlayerBarController.APM.stopAmbientMusic();
+            ambientPlayerManager.stopAmbientMusic();
         }
         root.requestFocus(); // Explicitly return focus to root
     }

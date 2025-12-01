@@ -1,11 +1,12 @@
 .root {
     -fx-background-color: #2b2b2b;
-    -fx-font-family: "System"; /* Changed to a more universal font */
+    -fx-font-family: "System", "Helvetica Neue", "Arial"; /* Match main window font stack */
 }
 
 .label {
     -fx-text-fill: #ffffff;
     -fx-font-size: 14px;
+    -fx-font-family: "System", "Helvetica Neue", "Arial"; /* ensure dialog labels use same font */
 }
 
 .text-field {
@@ -17,14 +18,15 @@
 }
 
 .button {
-    -fx-background-color: #4CAF50; /* A green accent color */
+    -fx-background-color: #8A6FAD; /* Use mini-player purple as dialog option color */
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-background-radius: 5;
+    -fx-font-family: "System", "Helvetica Neue", "Arial"; /* ensure dialog buttons use same font */
 }
 
 .button:hover {
-    -fx-background-color: #45a049;
+    -fx-background-color: #A080C0; /* Slightly lighter purple on hover */
 }
 
 /* MiniPlayer specific styles */
@@ -38,6 +40,7 @@
     -fx-text-fill: white;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
+    -fx-alignment: center;
 }
 
 .mini-player-icon-label {
@@ -62,6 +65,10 @@
 
 .mini-player-control-button:hover .ikonli-font-icon {
     -fx-icon-color: black;
+}
+
+.mini-player-control-button.selected {
+    -fx-background-color: #A080C0; /* selected purple */
 }
 
 .mini-player-control-button-selected {
@@ -143,5 +150,3 @@
 .dialog-pane {
     -fx-padding: 0 0 0 -20px;
 }
-
-

@@ -17,6 +17,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.kordamp.ikonli.javafx.FontIcon;
 import pages.components.Toast;
 import pages.confirmation_dialog.ConfirmationDialogController;
 import pages.new_playlist_dialog.NewPlaylistDialogController;
@@ -139,7 +140,9 @@ public class PlaylistsPageController {
         durationText.setFill(Color.WHITE);
         durationText.setFont(Font.font("Monospaced", 13));
 
-        Button deleteButton = new Button("Delete");
+        Button deleteButton = new Button();
+        deleteButton.setGraphic(new FontIcon("fas-trash-alt"));
+        deleteButton.getStyleClass().add("delete-btn");
         deleteButton.setOnAction(e -> {
             e.consume(); // Prevent the row's onMouseClicked from firing
             handleDeletePlaylist(playlist);
@@ -157,6 +160,10 @@ public class PlaylistsPageController {
     }
 
     private void handleDeletePlaylist(SqliteDBManager.PlaylistInfo playlist) {
+        if ("liked_songs".equals(playlist.name)) {
+            Toast.show("'liked_songs' can't be deleted", (Stage) rootPane.getScene().getWindow());
+            return;
+        }
         try {
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("/pages/confirmation_dialog/ConfirmationDialog.fxml"));
             Parent root = loader.load();
