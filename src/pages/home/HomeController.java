@@ -211,8 +211,8 @@ public class HomeController {
         dialogPane.getScene().setFill(Color.TRANSPARENT);
 
 
-        ButtonType buttonTypeFiles = new ButtonType("From Files");
-        ButtonType buttonTypeFolder = new ButtonType("From Folder");
+        ButtonType buttonTypeFiles = new ButtonType("From Files", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeFolder = new ButtonType("From Folder", ButtonBar.ButtonData.OK_DONE);
         ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
         alert.getButtonTypes().setAll(buttonTypeCancel, buttonTypeFiles, buttonTypeFolder);
