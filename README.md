@@ -39,7 +39,6 @@ A minimalist lofi music player built for focus and productivity
 * Ambient sound mixer that blends rain, wind, fireplace sounds with the music.
 * Smooth music management allowing seamless addition, import, and downloading of tracks.
 
----
 
 
 
