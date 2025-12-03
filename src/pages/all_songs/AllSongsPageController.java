@@ -7,7 +7,6 @@ import com.SqliteDBManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
@@ -83,34 +82,16 @@ public class AllSongsPageController {
         HBox.setHgrow(grid, Priority.ALWAYS);
 
         ColumnConstraints col1 = new ColumnConstraints();
-        col1.setPercentWidth(50);
+        col1.setPercentWidth(100);
         col1.setHgrow(Priority.ALWAYS);
 
-        ColumnConstraints col2 = new ColumnConstraints();
-        col2.setPercentWidth(30);
-        col2.setHalignment(HPos.CENTER);
-
-        ColumnConstraints col3 = new ColumnConstraints();
-        col3.setPercentWidth(20);
-        col3.setHalignment(HPos.RIGHT);
-
-        grid.getColumnConstraints().addAll(col1, col2, col3);
+        grid.getColumnConstraints().add(col1);
 
         Text titleText = new Text(song.fileName);
         titleText.setFill(Color.WHITE);
         titleText.setFont(Font.font("Monospaced", 13));
 
-        Text artistText = new Text(song.artist);
-        artistText.setFill(Color.WHITE);
-        artistText.setFont(Font.font("Monospaced", 13));
-
-        Text durationText = new Text(formatDuration(song.duration));
-        durationText.setFill(Color.WHITE);
-        durationText.setFont(Font.font("Monospaced", 13));
-
         grid.add(titleText, 0, 0);
-        grid.add(artistText, 1, 0);
-        grid.add(durationText, 2, 0);
 
         songRow.getChildren().addAll(checkBox, grid);
         return songRow;
@@ -158,17 +139,5 @@ public class AllSongsPageController {
                 e.printStackTrace();
             }
         });
-    }
-
-    private String formatDuration(int seconds) {
-        int h = seconds / 3600;
-        int m = (seconds % 3600) / 60;
-        int s = seconds % 60;
-
-        if (h > 0) {
-            return String.format("%d hr %02d min %02d s", h, m, s);
-        } else {
-            return String.format("%02d min %02d s", m, s);
-        }
     }
 }
