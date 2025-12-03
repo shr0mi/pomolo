@@ -81,27 +81,32 @@ public class PlayerBarController {
         );
 
         volumeSlider.valueProperty().bindBidirectional(playerManager.volumeProperty());
+
         //Initial Style
         Platform.runLater(() -> {
             StackPane vol_track = (StackPane) volumeSlider.lookup(".track");
             if (vol_track != null) {
                 double val = volumeSlider.getValue();  // current value
+                // MODIFIED: Added transparent layer and insets to preserve 3px visual height
                 String vol_style = String.format(
-                        "-fx-background-color: linear-gradient(to right, #8A6FAD %f%%, white %f%%);",
+                        "-fx-background-color: transparent, linear-gradient(to right, #8A6FAD %f%%, white %f%%);" +
+                                "-fx-background-insets: 0, 8.5 0 8.5 0;",
                         val*100.0, val*100.0
                 );
                 vol_track.setStyle(vol_style);
             }
         });
+
         // volume progress color setting
         volumeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
             StackPane vol_track = (StackPane) volumeSlider.lookup(".track");
             if (vol_track != null) {
+                // MODIFIED: Added transparent layer and insets to preserve 3px visual height
                 String vol_style = String.format(
-                        "-fx-background-color: linear-gradient(to right, #8A6FAD %f%%, white %f%%);",
+                        "-fx-background-color: transparent, linear-gradient(to right, #8A6FAD %f%%, white %f%%);" +
+                                "-fx-background-insets: 0, 8.5 0 8.5 0;",
                         newVal.doubleValue()*100.0, newVal.doubleValue()*100.0
                 );
-                //System.out.println(newVal.doubleValue());
                 vol_track.setStyle(vol_style);
             }
         });
@@ -115,9 +120,11 @@ public class PlayerBarController {
 
                     // progress color setting
                     StackPane track = (StackPane) progressSlider.lookup(".track");
-                    String style = String.format("-fx-background-color: linear-gradient(to right, #8A6FAD %f%%, white %f%%);",
+                    // MODIFIED: Added transparent layer and insets to preserve 3px visual height
+                    String style = String.format(
+                            "-fx-background-color: transparent, linear-gradient(to right, #8A6FAD %f%%, white %f%%);" +
+                                    "-fx-background-insets: 0, 8.5 0 8.5 0;",
                             value, value);
-                    //System.out.println(value);
                     track.setStyle(style);
                 }
             }
@@ -151,6 +158,4 @@ public class PlayerBarController {
         long s = seconds % 60;
         return String.format("%02d:%02d", m, s);
     }
-
-
 }

@@ -62,16 +62,17 @@
 }
 
 /* --- row-box slider CSS for settings page  --- */
-.row-box .slider .track {
-    -fx-background-color: white; /* default line color */
+.row-box .slider {
+    -fx-cursor: hand;
 }
+
 .row-box .slider .thumb {
     -fx-background-color: white; /* default knob color */
 }
 
 /* --- When hovered over the whole row --- */
 .row-box:hover .slider .track {
-    -fx-background-color: black; /* line turns black */
+    -fx-background-color: transparent, black; /* line turns black */
 }
 .row-box:hover .slider .thumb {
     -fx-background-color: black; /* line turns black */
@@ -145,11 +146,16 @@
     -fx-fill: #a481ee; /* Lofi purple accent */
 }
 
+.slider {
+    -fx-cursor: hand;
+}
+
 /* --- The Track (background bar) --- */
 .slider .track {
-    -fx-background-color: white;
+    -fx-pref-height: 20px; /* This creates a larger, invisible clickable area */
+    -fx-background-color: transparent, white;
+    -fx-background-insets: 0, 8.5 0 8.5 0; /* This centers the 3px visible line within the 20px space */
     -fx-background-radius: 2;
-    -fx-pref-height: 3; /* thin bar */
 }
 
 /* --- The Thumb (the draggable circle) --- */
@@ -169,6 +175,7 @@
 
 .player-slider {
     -fx-accent: #8A6FAD;
+    -fx-cursor: hand;
 }
 
 .bottom-rectangle {
@@ -384,7 +391,7 @@
      -fx-background-color: transparent;
      -fx-text-fill: white;
      -fx-border-width: 2px;
-     -fx-border-color: white;
+     -border-color: white;
 }
 
 
