@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -44,8 +45,14 @@ public class Main extends Application {
 
         main_stage = stage;
 
-        // 1. Remove default window decorations
+        // set icons
+        stage.getIcons().addAll(
+                new Image(getClass().getResourceAsStream("/icons/logo16x16.png")),
+                new Image(getClass().getResourceAsStream("/icons/logo32x32.png")),
+                new Image(getClass().getResourceAsStream("/icons/logo64x64.png"))
+        );
 
+        // 1. Remove default window decorations
         attachHotkeys(scene);
         setupGlobalFocusHandler(scene, root);
 
