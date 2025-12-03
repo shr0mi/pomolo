@@ -1,7 +1,9 @@
 package com;
 
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.scene.media.Media;
+import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
@@ -18,6 +20,10 @@ public class MusicPlayerManager {
     private List<SongManager.SongInfo> songQueue = Collections.emptyList();
     private int currentSongIndex = -1;
 
+    // Store playback state for recovery
+    private double savedPosition = 0.0;
+    private boolean wasPlayingBeforeError = false;
+
     // --- JavaFX Properties for UI Binding ---
     private final ReadOnlyObjectWrapper<SongManager.SongInfo> currentSong = new ReadOnlyObjectWrapper<>();
     private final ReadOnlyBooleanWrapper isPlaying = new ReadOnlyBooleanWrapper(false);
@@ -29,7 +35,11 @@ public class MusicPlayerManager {
     private MusicPlayerManager() {
         volume.addListener((obs, oldVol, newVol) -> {
             if (mediaPlayer != null) {
-                mediaPlayer.setVolume(newVol.doubleValue());
+                try {
+                    mediaPlayer.setVolume(newVol.doubleValue());
+                } catch (Exception e) {
+                    System.err.println("Error setting volume: " + e.getMessage());
+                }
             }
         });
     }
@@ -76,8 +86,13 @@ public class MusicPlayerManager {
         SongManager.SongInfo song = songQueue.get(currentSongIndex);
 
         if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
+            try {
+                mediaPlayer.stop();
+                mediaPlayer.dispose();
+            } catch (Exception e) {
+                System.err.println("Error disposing old media player: " + e.getMessage());
+            }
+            mediaPlayer = null;
         }
 
         try {
@@ -88,11 +103,36 @@ public class MusicPlayerManager {
             Media media = new Media(file.toURI().toString());
             mediaPlayer = new MediaPlayer(media);
 
+            // Add error handler to catch sleep/wake issues
+            mediaPlayer.setOnError(() -> {
+                MediaException error = mediaPlayer.getError();
+                System.err.println("MediaPlayer Error: " + (error != null ? error.getMessage() : "Unknown"));
+                handleMediaPlayerError();
+            });
+
+            // Handle stalled playback (common after system sleep)
+            mediaPlayer.setOnStalled(() -> {
+                System.out.println("Playback stalled, attempting recovery...");
+                handleStalledPlayback();
+            });
+
             mediaPlayer.setOnReady(() -> {
                 totalDuration.set(mediaPlayer.getMedia().getDuration());
                 currentSong.set(song);
                 isPlaying.set(true);
-                mediaPlayer.play();
+
+                // Restore position if recovering from error
+                if (savedPosition > 0) {
+                    mediaPlayer.seek(Duration.seconds(savedPosition));
+                    savedPosition = 0.0;
+                }
+
+                try {
+                    mediaPlayer.play();
+                } catch (Exception e) {
+                    System.err.println("Error starting playback: " + e.getMessage());
+                    handleMediaPlayerError();
+                }
             });
 
             mediaPlayer.currentTimeProperty().addListener((obs, oldTime, newTime) -> {
@@ -109,14 +149,67 @@ public class MusicPlayerManager {
         }
     }
 
+    private void handleMediaPlayerError() {
+        if (mediaPlayer == null) return;
+
+        try {
+            // Save current state
+            savedPosition = mediaPlayer.getCurrentTime().toSeconds();
+            wasPlayingBeforeError = isPlaying.get();
+
+            Platform.runLater(() -> {
+                if (wasPlayingBeforeError && currentSongIndex >= 0) {
+                    System.out.println("Attempting to recover playback from position: " + savedPosition);
+                    // Recreate the media player with the same song
+                    playSong(currentSongIndex);
+                } else {
+                    isPlaying.set(false);
+                }
+            });
+        } catch (Exception e) {
+            System.err.println("Error during recovery: " + e.getMessage());
+            isPlaying.set(false);
+        }
+    }
+
+    private void handleStalledPlayback() {
+        if (mediaPlayer == null) return;
+
+        try {
+            savedPosition = mediaPlayer.getCurrentTime().toSeconds();
+
+            Platform.runLater(() -> {
+                try {
+                    // Try simple recovery first
+                    mediaPlayer.pause();
+                    Thread.sleep(100);
+                    mediaPlayer.seek(Duration.seconds(savedPosition));
+                    mediaPlayer.play();
+                } catch (Exception e) {
+                    System.err.println("Simple recovery failed, recreating player: " + e.getMessage());
+                    // Fall back to full recreation
+                    wasPlayingBeforeError = true;
+                    handleMediaPlayerError();
+                }
+            });
+        } catch (Exception e) {
+            System.err.println("Error handling stalled playback: " + e.getMessage());
+        }
+    }
+
     public void playPause() {
         if (mediaPlayer != null) {
-            if (isPlaying.get()) {
-                mediaPlayer.pause();
-                isPlaying.set(false);
-            } else {
-                mediaPlayer.play();
-                isPlaying.set(true);
+            try {
+                if (isPlaying.get()) {
+                    mediaPlayer.pause();
+                    isPlaying.set(false);
+                } else {
+                    mediaPlayer.play();
+                    isPlaying.set(true);
+                }
+            } catch (Exception e) {
+                System.err.println("Error in playPause: " + e.getMessage());
+                handleMediaPlayerError();
             }
         } else if (!songQueue.isEmpty()) {
             playSong(0);
@@ -125,26 +218,38 @@ public class MusicPlayerManager {
 
     public void next() {
         if (songQueue.isEmpty()) return;
+        savedPosition = 0.0; // Reset saved position for new song
         currentSongIndex = (currentSongIndex + 1) % songQueue.size(); // Wrap around
         playSong(currentSongIndex);
     }
 
     public void previous() {
         if (songQueue.isEmpty()) return;
+        savedPosition = 0.0; // Reset saved position for new song
         currentSongIndex = (currentSongIndex - 1 + songQueue.size()) % songQueue.size(); // Wrap around
         playSong(currentSongIndex);
     }
 
     public void seek(Duration duration) {
         if (mediaPlayer != null) {
-            mediaPlayer.seek(duration);
+            try {
+                mediaPlayer.seek(duration);
+            } catch (Exception e) {
+                System.err.println("Error seeking: " + e.getMessage());
+                handleMediaPlayerError();
+            }
         }
     }
 
     public void shutdown() {
         if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
+            try {
+                mediaPlayer.stop();
+                mediaPlayer.dispose();
+            } catch (Exception e) {
+                System.err.println("Error during shutdown: " + e.getMessage());
+            }
+            mediaPlayer = null;
         }
     }
 }
