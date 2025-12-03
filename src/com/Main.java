@@ -115,6 +115,13 @@ public class Main extends Application {
     public static void setupGlobalFocusHandler(Scene scene, Parent root) {
         scene.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
             if (focusHandlerActive) {
+                Node target = (Node) evt.getTarget();
+                while (target != null) {
+                    if ("searchTextField".equals(target.getId())) {
+                        return; // It's the search text field or one of its children, so don't interfere
+                    }
+                    target = target.getParent();
+                }
                 // We run this 'later' so the button click still registers its action
                 // but focus is immediately taken away after.
                 javafx.application.Platform.runLater(root::requestFocus);

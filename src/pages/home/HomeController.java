@@ -492,6 +492,7 @@ public class HomeController {
         searchTextField.setManaged(true);
         searchTextField.setPrefWidth(0);
 
+
         // Animate width growth
         Timeline widthAnimation = new Timeline(
                 new KeyFrame(Duration.millis(300),
