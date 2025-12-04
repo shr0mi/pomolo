@@ -82,6 +82,7 @@ public class PlayerBarController {
 
         volumeSlider.valueProperty().bindBidirectional(playerManager.volumeProperty());
 
+
         //Initial Style
         Platform.runLater(() -> {
             StackPane vol_track = (StackPane) volumeSlider.lookup(".track");
