@@ -27,7 +27,7 @@
                     AnchorPane.leftAnchor="35.0"
                     AnchorPane.rightAnchor="35.0"
                     AnchorPane.topAnchor="159.0"
-                    AnchorPane.bottomAnchor="35.0"
+                    AnchorPane.bottomAnchor="60.0"
         >
             <content>
                 <VBox fx:id="vbox" prefHeight="0.0">
