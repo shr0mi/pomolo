@@ -64,7 +64,8 @@ public class PomodoroController {
     private static long targetEndTimeMillis = 0; // The source of truth for time
 
     private static AudioClip ringtone;
-    private static final String CONFIG_FILE_NAME = "config.properties";
+    private static final String APP_DIR = System.getProperty("user.home") + File.separator + ".LofiMusicPlayer";
+    private static final String CONFIG_FILE_NAME = APP_DIR + File.separator + "pomodoro.properties";;
     private static final String DURATION_KEY = "pomodoro_duration_seconds";
 
     private static final String SESSION_KEY_PREFIX = "session.";
