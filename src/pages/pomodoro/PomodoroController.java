@@ -64,7 +64,8 @@ public class PomodoroController {
     private static long targetEndTimeMillis = 0; // The source of truth for time
 
     private static AudioClip ringtone;
-    private static final String CONFIG_FILE_NAME = "config.properties";
+    private static final String APP_DIR = System.getProperty("user.home") + File.separator + ".LofiMusicPlayer";
+    private static final String CONFIG_FILE_NAME = APP_DIR + File.separator + "pomodoro.properties";;
     private static final String DURATION_KEY = "pomodoro_duration_seconds";
 
     private static final String SESSION_KEY_PREFIX = "session.";
@@ -101,10 +102,26 @@ public class PomodoroController {
             setRingVisible(isRunning || isPaused);
         }
 
-        new Thread(() -> {
-            loadPropertiesFromFile();
-            boolean saveNeeded = cleanupOldData();
-            if (saveNeeded) savePropertiesToFile();
+        // Create custom Runnable for initialization logic
+        InitializationTask initTask = new InitializationTask(this);
+        Thread initThread = new Thread(initTask, "PomodoroInitThread");
+        initThread.setDaemon(true);
+        initThread.start();
+    }
+
+    // --- CUSTOM RUNNABLE FOR INITIALIZATION ---
+    private static class InitializationTask implements Runnable {
+        private final PomodoroController controller;
+
+        public InitializationTask(PomodoroController controller) {
+            this.controller = controller;
+        }
+
+        @Override
+        public void run() {
+            controller.loadPropertiesFromFile();
+            boolean saveNeeded = controller.cleanupOldData();
+            if (saveNeeded) controller.savePropertiesToFile();
 
             if (ringtone == null) {
                 try {
@@ -119,21 +136,21 @@ public class PomodoroController {
             }
 
             // Always load freshest stats on initialize
-            int[] dayStats = loadCurrentDayStats();
+            int[] dayStats = controller.loadCurrentDayStats();
             currentDayTotalMinutes = dayStats[0];
             currentDaySessionCount = dayStats[1];
 
-            prepareLastSevenDaysData();
+            controller.prepareLastSevenDaysData();
 
             int savedDurationSeconds = 0;
             if (editableMinutes == 0 && !isRunning && !isPaused) {
-                savedDurationSeconds = manageDurationPersistence(null);
+                savedDurationSeconds = controller.manageDurationPersistence(null);
             }
 
             int finalSavedDuration = savedDurationSeconds;
             Platform.runLater(() -> {
-                updateCurrentDayTimeLabel();
-                drawChart();
+                controller.updateCurrentDayTimeLabel();
+                controller.drawChart();
 
                 if (editableMinutes == 0 && !isRunning && !isPaused) {
                     editableHours = finalSavedDuration / 3600;
@@ -155,30 +172,30 @@ public class PomodoroController {
 
                         // Ensure UI reflects the reset state set by timerFinished()
                         if (isPomodoroSession) {
-                            syncEditableTime();
+                            controller.syncEditableTime();
                         }
 
-                        setRingVisible(false);
-                        updateButtonStates();
-                        updateTimerLabel((int) timeRemaining);
+                        controller.setRingVisible(false);
+                        controller.updateButtonStates();
+                        controller.updateTimerLabel((int) timeRemaining);
                     } else {
-                        startTimer();
-                        startLogicTimer();
-                        playPauseIcon.setIconLiteral("fas-pause");
+                        controller.startTimer();
+                        controller.startLogicTimer();
+                        controller.playPauseIcon.setIconLiteral("fas-pause");
                     }
                 } else {
-                    if (!isPaused) syncEditableTime();
+                    if (!isPaused) controller.syncEditableTime();
                     else {
-                        updateTimerLabel((int) Math.ceil(timeRemaining));
-                        playPauseIcon.setIconLiteral("fas-play");
+                        controller.updateTimerLabel((int) Math.ceil(timeRemaining));
+                        controller.playPauseIcon.setIconLiteral("fas-play");
                     }
                 }
 
-                updateTimerRingProgress();
-                updateButtonStates();
+                controller.updateTimerRingProgress();
+                controller.updateButtonStates();
             });
 
-        }).start();
+        }
     }
 
     public void shutdown() {
@@ -342,6 +359,9 @@ public class PomodoroController {
             // Only update labels if they are actively part of the scene
             if (currentDayTimeLabel != null && currentDayTimeLabel.getScene() != null) {
                 notifyStatsUpdate();
+
+                // Redraw the graph
+                loadAndDrawStats();
             }
         });
     }
@@ -350,7 +370,7 @@ public class PomodoroController {
         lastSevenDaysData.clear();
         xAxisCategories.clear();
         LocalDate t = LocalDate.now();
-        for (int i = 7; i >= 1; i--) {
+        for (int i = 6; i >= 0; i--) {
             LocalDate d = t.minusDays(i);
             String k = SESSION_KEY_PREFIX + d.format(DATE_FORMATTER);
             String lbl = d.getDayOfWeek().name().substring(0, 3);
@@ -380,6 +400,8 @@ public class PomodoroController {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         List<Double> vals = lastSevenDaysData.stream().map(d -> d.minutes / 60.0).collect(Collectors.toList());
         for (int i = 0; i < lastSevenDaysData.size(); i++) series.getData().add(new XYChart.Data<>(lastSevenDaysData.get(i).day, animationPlayed ? vals.get(i) : 0));
+
+
         pomodoroBarChart.getData().add(series);
         if (!animationPlayed) {
             animationPlayed = true;
@@ -395,9 +417,33 @@ public class PomodoroController {
         }
     }
 
+    private void drawChartWithAnimation() {
+        if (pomodoroBarChart == null || pomodoroBarChart.getData().isEmpty()) return;
+
+        // Get the current series (already drawn on chart)
+        XYChart.Series<String, Number> series = pomodoroBarChart.getData().get(0);
+
+        // Find today's bar (last bar in the series, index 6)
+        int todayIndex = lastSevenDaysData.size() - 1;
+        XYChart.Data<String, Number> todayBar = series.getData().get(todayIndex);
+
+        // Get the current value and target value
+        double currentValue = todayBar.YValueProperty().get().doubleValue();
+        double targetValue = lastSevenDaysData.get(todayIndex).minutes / 60.0;
+
+        // Animate only if there's a change
+        if (Math.abs(targetValue - currentValue) > 0.01) {
+            Timeline timeline = new Timeline(
+                    new KeyFrame(Duration.ZERO, new KeyValue(todayBar.YValueProperty(), currentValue)),
+                    new KeyFrame(Duration.millis(300), new KeyValue(todayBar.YValueProperty(), targetValue, Interpolator.EASE_OUT))
+            );
+            timeline.play();
+        }
+    }
+
     private void loadAndDrawStats() {
         prepareLastSevenDaysData();
-        drawChart();
+        drawChartWithAnimation();
     }
 
     private void syncEditableTime() {
@@ -564,3 +610,4 @@ public class PomodoroController {
         DataPoint(String d, int m) { day = d; minutes = m; }
     }
 }
+
